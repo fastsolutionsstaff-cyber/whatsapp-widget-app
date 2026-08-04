@@ -2,7 +2,7 @@
 
 client_id = "de9123bc62cdaad408b0075187582b2a"
 name = "widget-whatsapp"
-application_url = "https://example.com"
+application_url = "https://whatsapp-widget-app.vercel.app"
 embedded = true
 
 [webhooks]
@@ -21,8 +21,9 @@ api_version = "2026-10"
 scopes = ""
 
 [auth]
-redirect_urls = [ "https://example.com/api/auth" ]
+redirect_urls = [
+  "https://whatsapp-widget-app.vercel.app/api/auth/callback"
+]
 
 [build]
-include_config_on_deploy = true
 automatically_update_urls_on_dev = true
