@@ -36,12 +36,42 @@
 {% assign encoded_msg = dynamic_message | strip | url_encode %}
 {% assign whatsapp_url = "https://wa.me/" | append: target_phone | append: "?text=" | append: encoded_msg %}
 
+<!-- Floating WhatsApp Widget Container -->
 <div id="wa-floating-widget" class="wa-position-{{ position }}">
-  <a href="{{ whatsapp_url }}" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+
+  <!-- WhatsApp Chat Popup Modal -->
+  <div id="wa-chat-popup" class="wa-popup-hidden">
+    <div class="wa-popup-header" style="background-color: {{ button_color }};">
+      <div class="wa-avatar">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="#ffffff"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+      </div>
+      <div class="wa-header-info">
+        <h4>Customer Support</h4>
+        <p>Typically replies in a few minutes</p>
+      </div>
+      <button id="wa-popup-close" type="button">&times;</button>
+    </div>
+
+    <div class="wa-popup-body">
+      <div class="wa-chat-bubble">
+        👋 Hi there! How can we help you today?
+      </div>
+    </div>
+
+    <div class="wa-popup-footer">
+      <a href="{{ whatsapp_url }}" target="_blank" rel="noopener noreferrer" class="wa-start-chat-btn" style="background-color: {{ button_color }};">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="#ffffff"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+        Start Chat
+      </a>
+    </div>
+  </div>
+
+  <!-- Toggle Button (Icon) -->
+  <button id="wa-toggle-btn" type="button" aria-label="Chat on WhatsApp" style="background-color: {{ button_color }};">
     <svg class="wa-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="#ffffff" width="30" height="30">
       <path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3 18.6-68.1-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18.1-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18.1-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/>
     </svg>
-  </a>
+  </button>
 </div>
 
 <style>
@@ -49,9 +79,7 @@
     position: fixed;
     bottom: 24px;
     z-index: 999999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   }
   #wa-floating-widget.wa-position-bottom-right {
     right: 24px;
@@ -59,23 +87,142 @@
   #wa-floating-widget.wa-position-bottom-left {
     left: 24px;
   }
-  #wa-floating-widget a {
-    background-color: {{ button_color }};
+
+  /* Main Button Styling */
+  #wa-toggle-btn {
     width: 60px;
     height: 60px;
     border-radius: 50%;
+    border: none;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.25);
     transition: transform 0.25s ease, box-shadow 0.25s ease;
-    text-decoration: none;
   }
-  #wa-floating-widget a:hover {
+  #wa-toggle-btn:hover {
     transform: scale(1.1);
     box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.35);
   }
+
+  /* Popup Box Styling */
+  #wa-chat-popup {
+    position: absolute;
+    bottom: 75px;
+    width: 290px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+  .wa-position-bottom-right #wa-chat-popup {
+    right: 0;
+  }
+  .wa-position-bottom-left #wa-chat-popup {
+    left: 0;
+  }
+
+  .wa-popup-hidden {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(15px);
+    pointer-events: none;
+  }
+  .wa-popup-header {
+    padding: 12px 14px;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+  }
+  .wa-avatar {
+    width: 34px;
+    height: 34px;
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .wa-header-info h4 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+  }
+  .wa-header-info p {
+    margin: 2px 0 0 0;
+    font-size: 11px;
+    opacity: 0.9;
+    color: #ffffff;
+  }
+  #wa-popup-close {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 20px;
+    cursor: pointer;
+    line-height: 1;
+  }
+  .wa-popup-body {
+    padding: 16px;
+    background: #e5ddd5;
+    min-height: 70px;
+  }
+  .wa-chat-bubble {
+    background: #ffffff;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #333333;
+    line-height: 1.4;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.12);
+  }
+  .wa-popup-footer {
+    padding: 12px;
+    background: #ffffff;
+  }
+  .wa-start-chat-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px;
+    border-radius: 20px;
+    color: #ffffff !important;
+    text-decoration: none !important;
+    font-weight: 600;
+    font-size: 14px;
+    transition: opacity 0.2s ease;
+  }
+  .wa-start-chat-btn:hover {
+    opacity: 0.9;
+  }
 </style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const toggleBtn = document.getElementById("wa-toggle-btn");
+    const popup = document.getElementById("wa-chat-popup");
+    const closeBtn = document.getElementById("wa-popup-close");
+
+    if (toggleBtn && popup && closeBtn) {
+      toggleBtn.addEventListener("click", function() {
+        popup.classList.toggle("wa-popup-hidden");
+      });
+
+      closeBtn.addEventListener("click", function() {
+        popup.classList.add("wa-popup-hidden");
+      });
+    }
+  });
+</script>
 
 {% schema %}
 {
