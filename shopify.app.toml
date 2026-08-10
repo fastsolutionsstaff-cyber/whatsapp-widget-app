@@ -25,3 +25,23 @@ scopes = ""
 
 [auth]
 redirect_urls = [ "https://whatsapp-widget-app.vercel.app/api/auth/callback" ]
+
+[app_navigation]
+name = "Dashboard"
+url = "/app"
+
+  [[app_navigation.subnav]]
+  name = "Privacy Policy"
+  url = "/app/legal/privacy-policy"
+
+  [[app_navigation.subnav]]
+  name = "Terms of Service"
+  url = "/app/legal/terms-of-service"
+
+  [[app_navigation.subnav]]
+  name = "Refund Policy"
+  url = "/app/legal/refund-policy"
+
+  [[app_navigation.subnav]]
+  name = "Support"
+  url = "/app/legal/support"
