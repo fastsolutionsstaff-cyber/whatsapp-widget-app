@@ -1,6 +1,6 @@
 {% comment %}
-  Shopify App Extension - Product Page Inline Block
-  100% Error-free, Light Mode Optimized, and Fully Mobile Responsive.
+  Shopify App Extension - Premium & Professional Product Page Inline Block
+  100% Error-free, Light-Mode Optimized, and High-Converting UX.
 {% endcomment %}
 
 {% assign target_phone = block.settings.phone_number %}
@@ -10,12 +10,12 @@
 
 {% assign button_text = block.settings.button_text %}
 {% if button_text == blank %}
-  {% assign button_text = "Inquire on WhatsApp" %}
+  {% assign button_text = "Inquire via WhatsApp" %}
 {% endif %}
 
 {% assign custom_msg = block.settings.default_message %}
 {% if custom_msg == blank %}
-  {% assign custom_msg = "Hello! I want to inquire about this product." %}
+  {% assign custom_msg = "Hello! I am interested in this product and want to know more details." %}
 {% endif %}
 
 {% capture dynamic_message %}
@@ -25,62 +25,145 @@
 {% assign encoded_msg = dynamic_message | strip | url_encode %}
 {% assign whatsapp_url = "https://wa.me/" | append: target_phone | append: "?text=" | append: encoded_msg %}
 
-<!-- Block Container -->
-<div class="wa-prod-inline-wrapper" style="margin-top: {{ block.settings.margin_top }}px; margin-bottom: {{ block.settings.margin_bottom }}px;">
-  <a href="{{ whatsapp_url }}" target="_blank" rel="noopener noreferrer" class="wa-prod-inline-btn" style="background-color: {{ block.settings.btn_bg_color }}; color: {{ block.settings.btn_text_color }};">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+<!-- Premium WA Block Container -->
+<div class="wa-premium-block-card" style="margin-top: {{ block.settings.margin_top }}px; margin-bottom: {{ block.settings.margin_bottom }}px;">
+  
+  <!-- Status Bar (Online Indicator) -->
+  <div class="wa-status-bar">
+    <span class="wa-pulse-dot"></span>
+    <span class="wa-status-text">{{ block.settings.status_text | escape }}</span>
+  </div>
+
+  <!-- Main Action Button -->
+  <a href="{{ whatsapp_url }}" target="_blank" rel="noopener noreferrer" class="wa-premium-btn" style="background-color: {{ block.settings.btn_bg_color }}; color: {{ block.settings.btn_text_color }};">
+    <svg class="wa-btn-svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
       <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/>
     </svg>
-    <span>{{ button_text | escape }}</span>
+    <span class="wa-btn-text-content">{{ button_text | escape }}</span>
   </a>
+
+  <!-- Footer Subtext -->
+  {% if block.settings.footer_text != blank %}
+    <p class="wa-card-footer-text">{{ block.settings.footer_text | escape }}</p>
+  {% endif %}
 </div>
 
 <style>
-  .wa-prod-inline-wrapper {
+  .wa-premium-block-card {
     width: 100%;
-    display: block;
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border: 1px solid #e8e8e8;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
     box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
-  .wa-prod-inline-btn {
-    display: inline-flex;
+
+  /* Online Status Indicator */
+  .wa-status-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .wa-status-text {
+    font-size: 13px;
+    color: #4a4a4a;
+    font-weight: 500;
+  }
+  .wa-pulse-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #25D366;
+    border-radius: 50%;
+    display: inline-block;
+    position: relative;
+  }
+  .wa-pulse-dot::after {
+    content: '';
+    width: 100%;
+    height: 100%;
+    background-color: #25D366;
+    border-radius: 50%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    animation: wa-pulse 2s infinite ease-in-out;
+    opacity: 0.6;
+  }
+
+  @keyframes wa-pulse {
+    0% { transform: scale(1); opacity: 0.6; }
+    100% { transform: scale(2.8); opacity: 0; }
+  }
+
+  /* Main Premium Button */
+  .wa-premium-btn {
+    display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 12px;
     width: 100%;
-    padding: 12px 24px;
+    padding: 14px 28px;
     font-size: 16px;
     font-weight: 600;
     text-decoration: none !important;
     border-radius: 6px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-    transition: background-color 0.2s ease, transform 0.1s ease;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     border: none;
     box-sizing: border-box;
     cursor: pointer;
+    box-shadow: 0 2px 4px rgba(37, 211, 102, 0.2);
   }
-  .wa-prod-inline-btn:hover {
-    opacity: 0.95;
-    transform: translateY(-1px);
+  .wa-premium-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(37, 211, 102, 0.35);
+    filter: brightness(1.05);
   }
-  .wa-prod-inline-btn svg {
+  .wa-premium-btn:active {
+    transform: translateY(0);
+  }
+  .wa-btn-svg {
     flex-shrink: 0;
   }
 
-  /* Strict Mobile Responsiveness */
+  /* Card Footer text */
+  .wa-card-footer-text {
+    margin: 10px 0 0 0;
+    font-size: 12px;
+    color: #717171;
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  /* Strict Mobile Responsiveness Optimization */
   @media screen and (max-width: 749px) {
-    .wa-prod-inline-btn {
+    .wa-premium-block-card {
+      padding: 14px;
+    }
+    .wa-premium-btn {
       padding: 14px 20px;
       font-size: 15px;
+    }
+    .wa-status-text {
+      font-size: 12px;
     }
   }
 </style>
 
 {% schema %}
 {
-  "name": "WA Product Page Block",
+  "name": "WA Premium Product Block",
   "target": "section",
   "templates": ["product"],
   "settings": [
+    {
+      "type": "header",
+      "content": "Configuration"
+    },
     {
       "type": "text",
       "id": "phone_number",
@@ -89,15 +172,19 @@
     },
     {
       "type": "text",
-      "id": "button_text",
-      "label": "Button Text",
-      "default": "Inquire on WhatsApp"
-    },
-    {
-      "type": "text",
       "id": "default_message",
       "label": "Pre-filled Message",
       "default": "Hello! I am interested in this product."
+    },
+    {
+      "type": "header",
+      "content": "Button Appearance"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Inquire via WhatsApp"
     },
     {
       "type": "color",
@@ -110,6 +197,26 @@
       "id": "btn_text_color",
       "label": "Button Text Color",
       "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Card Content & Trust Badges"
+    },
+    {
+      "type": "text",
+      "id": "status_text",
+      "label": "Status Bar Text",
+      "default": "Support Team is Online"
+    },
+    {
+      "type": "text",
+      "id": "footer_text",
+      "label": "Footer Help Text",
+      "default": "Instant support. Typical response time is under 5 minutes."
+    },
+    {
+      "type": "header",
+      "content": "Spacing Layout"
     },
     {
       "type": "range",
