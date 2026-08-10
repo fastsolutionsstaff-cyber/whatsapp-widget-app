@@ -31,17 +31,13 @@ name = "Dashboard"
 url = "/app"
 
   [[app_navigation.subnav]]
-  name = "Privacy Policy"
-  url = "/app/legal/privacy-policy"
+  name = "Widget Analytics"
+  url = "/app/analytics"
 
   [[app_navigation.subnav]]
-  name = "Terms of Service"
-  url = "/app/legal/terms-of-service"
+  name = "Custom Styling"
+  url = "/app/styling"
 
   [[app_navigation.subnav]]
-  name = "Refund Policy"
-  url = "/app/legal/refund-policy"
-
-  [[app_navigation.subnav]]
-  name = "Support"
-  url = "/app/legal/support"
+  name = "FAQ & Help"
+  url = "/app/help"
