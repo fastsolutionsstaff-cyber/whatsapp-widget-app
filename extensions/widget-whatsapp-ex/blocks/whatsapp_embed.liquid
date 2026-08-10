@@ -101,7 +101,7 @@
       {% case selected_icon %}
         {% when 'custom-upload' %}
           {% if custom_icon_url != blank %}
-            <img src="{{ custom_icon_url }}" alt="WhatsApp Icon" style="width: {{ desktop_icon_size_px }}px; height: {{ desktop_icon_size_px }}px; object-fit: contain;" />
+            <img src="{{ custom_icon_url }}" alt="WhatsApp Icon" width="{{ desktop_icon_size_px }}" height="{{ desktop_icon_size_px }}" style="width: {{ desktop_icon_size_px }}px; height: {{ desktop_icon_size_px }}px; object-fit: contain;" />
           {% else %}
             <svg viewBox="0 0 24 24" width="{{ desktop_icon_size_px }}" height="{{ desktop_icon_size_px }}" fill="none"><path d="M12 8v8m-4-4h8" stroke="#ffffff" stroke-width="2" stroke-linecap="round" /></svg>
           {% endif %}
@@ -125,7 +125,7 @@
       {% case selected_icon %}
         {% when 'custom-upload' %}
           {% if custom_icon_url != blank %}
-            <img src="{{ custom_icon_url }}" alt="WhatsApp Icon" style="width: {{ mobile_icon_size_px }}px; height: {{ mobile_icon_size_px }}px; object-fit: contain;" />
+            <img src="{{ custom_icon_url }}" alt="WhatsApp Icon" width="{{ mobile_icon_size_px }}" height="{{ mobile_icon_size_px }}" style="width: {{ mobile_icon_size_px }}px; height: {{ mobile_icon_size_px }}px; object-fit: contain;" />
           {% else %}
             <svg viewBox="0 0 24 24" width="{{ mobile_icon_size_px }}" height="{{ mobile_icon_size_px }}" fill="none"><path d="M12 8v8m-4-4h8" stroke="#ffffff" stroke-width="2" stroke-linecap="round" /></svg>
           {% endif %}
