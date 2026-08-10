@@ -34,6 +34,8 @@
   {% assign selected_icon = "whatsapp-classic" %}
 {% endif %}
 
+{% assign custom_icon_url = app_settings.customIconUrl %}
+
 {% comment %} DESKTOP VALUES {% endcomment %}
 {% assign desktop_position = app_settings.position | default: "bottom-right" %}
 {% assign desktop_size_px = app_settings.widgetSizePx | default: 56 %}
@@ -94,8 +96,15 @@
     aria-label="Chat on WhatsApp" 
     style="background-color: {{ button_color }};"
   >
+    <!-- Desktop Icon Render -->
     <div class="wa-desktop-icon">
       {% case selected_icon %}
+        {% when 'custom-upload' %}
+          {% if custom_icon_url != blank %}
+            <img src="{{ custom_icon_url }}" alt="WhatsApp Icon" style="width: {{ desktop_icon_size_px }}px; height: {{ desktop_icon_size_px }}px; object-fit: contain;" />
+          {% else %}
+            <svg viewBox="0 0 24 24" width="{{ desktop_icon_size_px }}" height="{{ desktop_icon_size_px }}" fill="none"><path d="M12 8v8m-4-4h8" stroke="#ffffff" stroke-width="2" stroke-linecap="round" /></svg>
+          {% endif %}
         {% when 'agent-headset' %}
           <svg viewBox="0 0 24 24" width="{{ desktop_icon_size_px }}" height="{{ desktop_icon_size_px }}" fill="none"><path d="M12 6a6 6 0 00-6 6v3.5A2.5 2.5 0 008.5 18H9v-5H7.5v-1a4.5 4.5 0 119 0v1H15v5h.5a2.5 2.5 0 002.5-2.5V12a6 6 0 00-6-6z" fill="#ffffff" /></svg>
         {% when 'paper-plane' %}
@@ -111,8 +120,15 @@
       {% endcase %}
     </div>
 
+    <!-- Mobile Icon Render -->
     <div class="wa-mobile-icon">
       {% case selected_icon %}
+        {% when 'custom-upload' %}
+          {% if custom_icon_url != blank %}
+            <img src="{{ custom_icon_url }}" alt="WhatsApp Icon" style="width: {{ mobile_icon_size_px }}px; height: {{ mobile_icon_size_px }}px; object-fit: contain;" />
+          {% else %}
+            <svg viewBox="0 0 24 24" width="{{ mobile_icon_size_px }}" height="{{ mobile_icon_size_px }}" fill="none"><path d="M12 8v8m-4-4h8" stroke="#ffffff" stroke-width="2" stroke-linecap="round" /></svg>
+          {% endif %}
         {% when 'agent-headset' %}
           <svg viewBox="0 0 24 24" width="{{ mobile_icon_size_px }}" height="{{ mobile_icon_size_px }}" fill="none"><path d="M12 6a6 6 0 00-6 6v3.5A2.5 2.5 0 008.5 18H9v-5H7.5v-1a4.5 4.5 0 119 0v1H15v5h.5a2.5 2.5 0 002.5-2.5V12a6 6 0 00-6-6z" fill="#ffffff" /></svg>
         {% when 'paper-plane' %}

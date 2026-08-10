@@ -90,14 +90,17 @@ const UNIQUE_ICONS = [
     },
   },
   {
-    id: "wave-message",
-    name: "Direct Wave",
-    render: (color, sizePx = 54) => {
+    id: "custom-upload",
+    name: "Custom Image",
+    render: (color, sizePx = 54, customUrl = "") => {
       const iconSize = Math.round(sizePx * 0.52);
+      if (customUrl) {
+        return <img src={customUrl} alt="Custom Icon" style={{ width: iconSize, height: iconSize, objectFit: "contain" }} />;
+      }
       return (
         <svg width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="none">
-          <circle cx="12" cy="12" r="10" fill={color} />
-          <path d="M7 12a2 2 0 012-2h6a2 2 0 012 2v3a2 2 0 01-2 2h-2l-3 2v-2H9a2 2 0 01-2-2v-3z" fill="#ffffff" />
+          <rect width="24" height="24" rx="12" fill={color} />
+          <path d="M12 8v8m-4-4h8" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" />
         </svg>
       );
     },
@@ -127,6 +130,7 @@ export const loader = async ({ request }) => {
       defaultMessage: "Hello! I have a question about your store.",
       widgetColor: "#25D366",
       selectedIcon: "whatsapp-classic",
+      customIconUrl: "",
       position: "bottom-right",
       widgetSizePx: 56,
       mobilePosition: "bottom-right",
@@ -147,6 +151,7 @@ export const loader = async ({ request }) => {
         defaultMessage: "Hello! I have a question about your store.",
         widgetColor: "#25D366",
         selectedIcon: "whatsapp-classic",
+        customIconUrl: "",
         position: "bottom-right",
         widgetSizePx: 56,
         mobilePosition: "bottom-right",
@@ -168,6 +173,7 @@ export const action = async ({ request }) => {
     defaultMessage: formData.get("defaultMessage") || "",
     widgetColor: formData.get("widgetColor") || "#25D366",
     selectedIcon: formData.get("selectedIcon") || "whatsapp-classic",
+    customIconUrl: formData.get("customIconUrl") || "",
     position: formData.get("position") || "bottom-right",
     widgetSizePx: Number(formData.get("widgetSizePx")) || 56,
     mobilePosition: formData.get("mobilePosition") || "bottom-right",
@@ -248,6 +254,7 @@ export default function Index() {
   const [defaultMessage, setDefaultMessage] = useState(loadedSettings.defaultMessage);
   const [widgetColor, setWidgetColor] = useState(loadedSettings.widgetColor);
   const [selectedIcon, setSelectedIcon] = useState(loadedSettings.selectedIcon || "whatsapp-classic");
+  const [customIconUrl, setCustomIconUrl] = useState(loadedSettings.customIconUrl || "");
 
   // Desktop Sizing & Position
   const [position, setPosition] = useState(loadedSettings.position);
@@ -269,6 +276,7 @@ export default function Index() {
       setDefaultMessage(actionData.settings.defaultMessage);
       setWidgetColor(actionData.settings.widgetColor);
       setSelectedIcon(actionData.settings.selectedIcon);
+      setCustomIconUrl(actionData.settings.customIconUrl || "");
       setPosition(actionData.settings.position);
       setWidgetSizePx(Number(actionData.settings.widgetSizePx) || 56);
       setMobilePosition(actionData.settings.mobilePosition || "bottom-right");
@@ -290,6 +298,7 @@ export default function Index() {
     formData.append("defaultMessage", defaultMessage);
     formData.append("widgetColor", widgetColor);
     formData.append("selectedIcon", selectedIcon);
+    formData.append("customIconUrl", customIconUrl);
     formData.append("position", position);
     formData.append("widgetSizePx", widgetSizePx.toString());
     formData.append("mobilePosition", mobilePosition);
@@ -301,8 +310,6 @@ export default function Index() {
   };
 
   const activeIconObj = UNIQUE_ICONS.find((item) => item.id === selectedIcon) || UNIQUE_ICONS[0];
-
-  // Active view values for live preview
   const activeSizePx = previewDevice === "mobile" ? mobileWidgetSizePx : widgetSizePx;
   const activePos = previewDevice === "mobile" ? mobilePosition : position;
 
@@ -354,7 +361,7 @@ export default function Index() {
 
                   {/* Icon Selector Grid */}
                   <Text as="p" variant="bodySm" fontWeight="medium">
-                    Select Unique Icon Style:
+                    Select Icon Style:
                   </Text>
                   <Grid>
                     {UNIQUE_ICONS.map((icon) => (
@@ -372,7 +379,7 @@ export default function Index() {
                           }}
                         >
                           <div style={{ display: "flex", justifyContent: "center", marginBottom: "4px" }}>
-                            {icon.render(widgetColor, 40)}
+                            {icon.render(widgetColor, 40, customIconUrl)}
                           </div>
                           <Text variant="bodyXs" as="span" alignment="center">
                             {icon.name}
@@ -381,6 +388,20 @@ export default function Index() {
                       </Grid.Cell>
                     ))}
                   </Grid>
+
+                  {/* Custom Icon Image URL Input */}
+                  {selectedIcon === "custom-upload" && (
+                    <Box style={{ backgroundColor: "#f9fafb", padding: "12px", borderRadius: "8px", border: "1px solid #e5e7eb" }}>
+                      <TextField
+                        label="Custom Icon Image URL (.png, .jpg, .svg)"
+                        placeholder="https://cdn.shopify.com/s/files/1/.../my-icon.png"
+                        value={customIconUrl}
+                        onChange={setCustomIconUrl}
+                        helpText="Upload image in Shopify Admin > Content > Files and paste the URL here."
+                        autoComplete="off"
+                      />
+                    </Box>
+                  )}
 
                   <InlineStack gap="300" align="start" blockAlign="end">
                     <Box style={{ width: "110px" }}>
@@ -510,7 +531,6 @@ export default function Index() {
                   </ButtonGroup>
                 </InlineStack>
 
-                {/* Device Frame View */}
                 <div
                   style={{
                     width: "100%",
@@ -603,7 +623,7 @@ export default function Index() {
                       </div>
                     </div>
 
-                    {/* Dynamic Slider-Scaled Floating Button */}
+                    {/* Dynamic Floating Button */}
                     <div
                       style={{
                         position: "absolute",
@@ -621,7 +641,7 @@ export default function Index() {
                         transition: "width 0.1s ease, height 0.1s ease",
                       }}
                     >
-                      {activeIconObj.render(widgetColor, activeSizePx)}
+                      {activeIconObj.render(widgetColor, activeSizePx, customIconUrl)}
                     </div>
                   </div>
                 </div>
