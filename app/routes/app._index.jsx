@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { json } from "@remix-run/node";
-import { useLoaderData, useSubmit, useNavigation } from "@remix-run/react";
+import { useLoaderData, useSubmit, useNavigation, useActionData } from "@remix-run/react";
 import {
   Page,
   Layout,
@@ -18,13 +18,13 @@ import {
 } from "@shopify/polaris";
 import { authenticate } from "../shopify.server";
 
-// 5-6 Icon SVG options for selection
+// 6 Interactive Widget Icons
 const WIDGET_ICONS = [
   {
     id: "whatsapp-classic",
     name: "Classic WhatsApp",
     svg: (color) => (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" fill={color} stroke="#ffffff" />
       </svg>
     ),
@@ -43,7 +43,7 @@ const WIDGET_ICONS = [
   },
   {
     id: "support-headset",
-    name: "Customer Support",
+    name: "Support Agent",
     svg: (color) => (
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
         <rect width="24" height="24" rx="12" fill={color} />
@@ -83,6 +83,7 @@ const WIDGET_ICONS = [
   },
 ];
 
+// 1. Loader: Fetch existing WhatsApp settings from App Metafields
 export const loader = async ({ request }) => {
   const { admin } = await authenticate.admin(request);
 
@@ -109,13 +110,14 @@ export const loader = async ({ request }) => {
       selectedIcon: "whatsapp-classic",
       greetingHeader: "Chat with us on WhatsApp",
       greetingSubtext: "We typically reply in a few minutes.",
+      isEnabled: "true",
     };
 
     return json({
       settings: rawMetafield ? { ...defaultSettings, ...JSON.parse(rawMetafield) } : defaultSettings,
     });
   } catch (error) {
-    console.error("Loader error:", error);
+    console.error("Loader Error:", error);
     return json({
       settings: {
         phoneNumber: "923424593231",
@@ -125,11 +127,13 @@ export const loader = async ({ request }) => {
         selectedIcon: "whatsapp-classic",
         greetingHeader: "Chat with us on WhatsApp",
         greetingSubtext: "We typically reply in a few minutes.",
+        isEnabled: "true",
       },
     });
   }
 };
 
+// 2. Action: Save settings to App Metafields via GraphQL with robust error handling
 export const action = async ({ request }) => {
   const { admin } = await authenticate.admin(request);
   const formData = await request.formData();
@@ -142,28 +146,41 @@ export const action = async ({ request }) => {
     selectedIcon: formData.get("selectedIcon") || "whatsapp-classic",
     greetingHeader: formData.get("greetingHeader") || "Chat with us on WhatsApp",
     greetingSubtext: formData.get("greetingSubtext") || "We typically reply in a few minutes.",
+    isEnabled: "true",
   };
 
   try {
+    // Get current App Installation ID
     const appInstallResponse = await admin.graphql(`
       #graphql
       query {
-        currentAppInstallation { id }
+        currentAppInstallation {
+          id
+        }
       }
     `);
     const appInstallData = await appInstallResponse.json();
     const ownerId = appInstallData.data?.currentAppInstallation?.id;
 
     if (!ownerId) {
-      return json({ status: "error", message: "Could not find app installation ID." });
+      return json({ status: "error", message: "App installation ID not found." }, { status: 400 });
     }
 
+    // Set App Metafield
     const mutationResponse = await admin.graphql(
       `
       #graphql
       mutation setMetafield($metafields: [MetafieldsSetInput!]!) {
         metafieldsSet(metafields: $metafields) {
-          userErrors { field message }
+          metafields {
+            id
+            key
+            value
+          }
+          userErrors {
+            field
+            message
+          }
         }
       }
     `,
@@ -186,29 +203,50 @@ export const action = async ({ request }) => {
     const errors = result.data?.metafieldsSet?.userErrors;
 
     if (errors && errors.length > 0) {
-      return json({ status: "error", message: errors[0].message });
+      return json({ status: "error", message: errors[0].message }, { status: 400 });
     }
 
-    return json({ status: "success", message: "Settings saved successfully!" });
+    return json({ status: "success", message: "Settings saved successfully!", settings: settingsPayload });
   } catch (error) {
-    console.error("Action error:", error);
-    return json({ status: "error", message: "An unexpected error occurred while saving." });
+    console.error("Action save error:", error);
+    return json({ status: "error", message: "Failed to save settings. Please try again." }, { status: 500 });
   }
 };
 
+// 3. UI Component with Realtime Sync & Live Preview
 export default function Index() {
-  const { settings } = useLoaderData();
+  const { settings: initialSettings } = useLoaderData();
+  const actionData = useActionData();
   const submit = useSubmit();
   const navigation = useNavigation();
 
-  const [phoneNumber, setPhoneNumber] = useState(settings.phoneNumber);
-  const [defaultMessage, setDefaultMessage] = useState(settings.defaultMessage);
-  const [widgetColor, setWidgetColor] = useState(settings.widgetColor);
-  const [position, setPosition] = useState(settings.position);
-  const [selectedIcon, setSelectedIcon] = useState(settings.selectedIcon || "whatsapp-classic");
-  const [greetingHeader, setGreetingHeader] = useState(settings.greetingHeader || "Chat with us on WhatsApp");
-  const [greetingSubtext, setGreetingSubtext] = useState(settings.greetingSubtext || "We typically reply in a few minutes.");
+  // Primary state initialization
+  const [phoneNumber, setPhoneNumber] = useState(initialSettings.phoneNumber);
+  const [defaultMessage, setDefaultMessage] = useState(initialSettings.defaultMessage);
+  const [widgetColor, setWidgetColor] = useState(initialSettings.widgetColor);
+  const [position, setPosition] = useState(initialSettings.position);
+  const [selectedIcon, setSelectedIcon] = useState(initialSettings.selectedIcon || "whatsapp-classic");
+  const [greetingHeader, setGreetingHeader] = useState(initialSettings.greetingHeader || "Chat with us on WhatsApp");
+  const [greetingSubtext, setGreetingSubtext] = useState(initialSettings.greetingSubtext || "We typically reply in a few minutes.");
+  
   const [savedSuccess, setSavedSuccess] = useState(false);
+
+  // Sync state if action returned new saved settings
+  useEffect(() => {
+    if (actionData?.status === "success" && actionData?.settings) {
+      setPhoneNumber(actionData.settings.phoneNumber);
+      setDefaultMessage(actionData.settings.defaultMessage);
+      setWidgetColor(actionData.settings.widgetColor);
+      setPosition(actionData.settings.position);
+      setSelectedIcon(actionData.settings.selectedIcon);
+      setGreetingHeader(actionData.settings.greetingHeader);
+      setGreetingSubtext(actionData.settings.greetingSubtext);
+      
+      setSavedSuccess(true);
+      const timer = setTimeout(() => setSavedSuccess(false), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [actionData]);
 
   const isSaving = navigation.state === "submitting";
 
@@ -223,16 +261,14 @@ export default function Index() {
     formData.append("greetingSubtext", greetingSubtext);
 
     submit(formData, { method: "post" });
-    setSavedSuccess(true);
-    setTimeout(() => setSavedSuccess(false), 4000);
   };
 
   const activeIconObj = WIDGET_ICONS.find((i) => i.id === selectedIcon) || WIDGET_ICONS[0];
 
   return (
     <Page
-      title="WhatsApp Widget Configuration"
-      subtitle="Customize your WhatsApp live chat widget and preview changes in real-time."
+      title="WhatsApp Widget Settings"
+      subtitle="Configure chat widget details and see real-time updates on preview."
       primaryAction={
         <Button primary loading={isSaving} onClick={handleSave}>
           Save Settings
@@ -241,14 +277,17 @@ export default function Index() {
     >
       <BlockStack gap="500">
         {savedSuccess && (
-          <Banner title="Settings saved successfully! Storefront widget updated." tone="success" />
+          <Banner title="Settings saved successfully!" tone="success" />
+        )}
+
+        {actionData?.status === "error" && (
+          <Banner title={actionData.message} tone="critical" />
         )}
 
         <Layout>
-          {/* LEFT SIDE: Settings Controls */}
+          {/* Main Configuration Controls */}
           <Layout.Section>
             <BlockStack gap="400">
-              {/* Card 1: Merchant Details */}
               <Card>
                 <BlockStack gap="400">
                   <InlineStack align="space-between">
@@ -263,8 +302,8 @@ export default function Index() {
                     type="text"
                     value={phoneNumber}
                     onChange={setPhoneNumber}
-                    placeholder="e.g. 923424593231 (With country code, no +)"
-                    helpText="Customer messages will be routed directly to this WhatsApp number."
+                    placeholder="e.g. 923424593231 (Include country code without + or dashes)"
+                    helpText="Customer messages will be routed to this number."
                     autoComplete="off"
                   />
 
@@ -273,13 +312,13 @@ export default function Index() {
                     type="text"
                     value={defaultMessage}
                     onChange={setDefaultMessage}
-                    helpText="Preset greeting text attached when customers launch chat."
+                    helpText="Initial greeting before product details or page link are attached."
                     autoComplete="off"
                   />
                 </BlockStack>
               </Card>
 
-              {/* Card 2: Customization & Icons */}
+              {/* Icon Picker & Style Customization */}
               <Card>
                 <BlockStack gap="400">
                   <Text as="h2" variant="headingMd">
@@ -287,9 +326,9 @@ export default function Index() {
                   </Text>
 
                   <Text as="p" variant="bodySm">
-                    Select Widget Icon Style:
+                    Select Widget Icon:
                   </Text>
-                  
+
                   <Grid>
                     {WIDGET_ICONS.map((icon) => (
                       <Grid.Cell key={icon.id} columnSpan={{ xs: 2, sm: 2, md: 2, lg: 2 }}>
@@ -298,14 +337,14 @@ export default function Index() {
                           style={{
                             border: selectedIcon === icon.id ? `2px solid ${widgetColor}` : "1px solid #d2d6dc",
                             borderRadius: "10px",
-                            padding: "12px 8px",
+                            padding: "10px 6px",
                             textAlign: "center",
                             cursor: "pointer",
                             backgroundColor: selectedIcon === icon.id ? "#f4fbf7" : "#ffffff",
                             transition: "all 0.2s ease",
                           }}
                         >
-                          <div style={{ display: "flex", justifyContent: "center", marginBottom: "6px" }}>
+                          <div style={{ display: "flex", justifyContent: "center", marginBottom: "4px" }}>
                             {icon.svg(widgetColor)}
                           </div>
                           <Text variant="bodyXs" as="span" alignment="center">
@@ -343,20 +382,20 @@ export default function Index() {
                 </BlockStack>
               </Card>
 
-              {/* Card 3: Greeting Box Text */}
+              {/* Additional Modal Customization */}
               <Card>
                 <BlockStack gap="400">
                   <Text as="h2" variant="headingMd">
-                    Modal / Popup Greetings
+                    Popup Greeting Customization
                   </Text>
                   <TextField
-                    label="Header Title"
+                    label="Greeting Header"
                     value={greetingHeader}
                     onChange={setGreetingHeader}
                     autoComplete="off"
                   />
                   <TextField
-                    label="Subheading Description"
+                    label="Greeting Subtext"
                     value={greetingSubtext}
                     onChange={setGreetingSubtext}
                     autoComplete="off"
@@ -366,7 +405,7 @@ export default function Index() {
             </BlockStack>
           </Layout.Section>
 
-          {/* RIGHT SIDE: Real-time Live Preview Box */}
+          {/* Right Column: Real-Time Preview Box */}
           <Layout.Section variant="oneThird">
             <Card>
               <BlockStack gap="400">
@@ -377,11 +416,10 @@ export default function Index() {
                   <Badge tone="info">Real-Time</Badge>
                 </InlineStack>
 
-                {/* Simulated Storefront Container */}
                 <div
                   style={{
                     width: "100%",
-                    height: "440px",
+                    height: "420px",
                     backgroundColor: "#f6f6f7",
                     borderRadius: "12px",
                     border: "1px dashed #c9cccf",
@@ -394,13 +432,13 @@ export default function Index() {
                     boxSizing: "border-box",
                   }}
                 >
-                  {/* Top Store Header Mockup */}
+                  {/* Top Store Bar Placeholder */}
                   <div style={{ backgroundColor: "#ffffff", padding: "10px", borderRadius: "6px", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
                     <div style={{ width: "60px", height: "8px", backgroundColor: "#e1e3e5", borderRadius: "4px", marginBottom: "6px" }}></div>
                     <div style={{ width: "100px", height: "6px", backgroundColor: "#f1f2f3", borderRadius: "3px" }}></div>
                   </div>
 
-                  {/* WhatsApp Popup Card Mockup */}
+                  {/* WhatsApp Popup Card */}
                   <div
                     style={{
                       backgroundColor: "#ffffff",
@@ -408,10 +446,8 @@ export default function Index() {
                       boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
                       border: "1px solid #e1e3e5",
                       overflow: "hidden",
-                      transition: "all 0.3s ease",
                     }}
                   >
-                    {/* Header */}
                     <div style={{ backgroundColor: widgetColor, padding: "12px", color: "#ffffff" }}>
                       <Text variant="headingSm" as="h3">
                         <span style={{ color: "#ffffff" }}>{greetingHeader || "Chat with us"}</span>
@@ -421,7 +457,6 @@ export default function Index() {
                       </p>
                     </div>
 
-                    {/* Chat Body */}
                     <div style={{ padding: "12px", backgroundColor: "#efeae2" }}>
                       <div
                         style={{
@@ -438,7 +473,6 @@ export default function Index() {
                       </div>
                     </div>
 
-                    {/* Start Chat Button */}
                     <div style={{ padding: "8px 12px", backgroundColor: "#ffffff" }}>
                       <div
                         style={{
@@ -449,18 +483,14 @@ export default function Index() {
                           borderRadius: "6px",
                           fontWeight: "bold",
                           fontSize: "12px",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          gap: "6px",
                         }}
                       >
-                        <span>Start Chat</span>
+                        Start Chat
                       </div>
                     </div>
                   </div>
 
-                  {/* Floating Trigger Icon Mockup */}
+                  {/* Floating Action Icon */}
                   <div
                     style={{
                       position: "absolute",
@@ -475,17 +505,15 @@ export default function Index() {
                       alignItems: "center",
                       justifyContent: "center",
                       boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
-                      cursor: "pointer",
-                      transition: "all 0.3s ease",
                     }}
                   >
                     {activeIconObj.svg(widgetColor)}
                   </div>
                 </div>
 
-                <Text variant="bodyXs" tone="subdued" alignment="center">
-                  Target Number: {phoneNumber ? `+${phoneNumber}` : "Not Set"}
-                </Text>
+                <Button fullWidth primary loading={isSaving} onClick={handleSave}>
+                  Save Settings
+                </Button>
               </BlockStack>
             </Card>
           </Layout.Section>
