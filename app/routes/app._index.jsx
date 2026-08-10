@@ -20,7 +20,7 @@ import {
 } from "@shopify/polaris";
 import { authenticate } from "../shopify.server";
 
-// 6 Unique SVG Icons
+// Unique SVG Icons
 const UNIQUE_ICONS = [
   {
     id: "whatsapp-classic",
@@ -127,7 +127,7 @@ export const loader = async ({ request }) => {
       widgetColor: "#25D366",
       selectedIcon: "whatsapp-classic",
       position: "bottom-right",
-      widgetSizePx: 56, // Numeric value for slider (range 35px - 90px)
+      widgetSizePx: 56,
       greetingHeader: "Chat with us on WhatsApp",
       greetingSubtext: "We typically reply in a few minutes.",
       isEnabled: "true",
@@ -332,7 +332,7 @@ export default function Index() {
 
                   {/* Icon Selector Grid */}
                   <Text as="p" variant="bodySm" fontWeight="medium">
-                    Select Icon Style:
+                    Select Unique Icon Style:
                   </Text>
                   <Grid>
                     {UNIQUE_ICONS.map((icon) => (
@@ -360,20 +360,20 @@ export default function Index() {
                     ))}
                   </Grid>
 
-                  {/* Size Slider Bar */}
-                  <Box style={{ padding: "8px 0" }}>
-                    <RangeSlider
-                      label={`Widget Size: ${widgetSizePx}px`}
-                      value={widgetSizePx}
-                      onChange={setWidgetSizePx}
-                      min={35}
-                      max={90}
-                      step={1}
-                      output
-                    />
-                  </Box>
-
+                  {/* SWIPE / SLIDER BAR FOR SIZE */}
                   <Grid>
+                    <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6 }}>
+                      <RangeSlider
+                        label={`Widget Size: ${widgetSizePx}px`}
+                        value={widgetSizePx}
+                        onChange={setWidgetSizePx}
+                        min={30}
+                        max={100}
+                        step={1}
+                        output
+                      />
+                    </Grid.Cell>
+
                     <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6 }}>
                       <Select
                         label="Screen Position"
@@ -385,24 +385,22 @@ export default function Index() {
                         onChange={setPosition}
                       />
                     </Grid.Cell>
-
-                    <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6 }}>
-                      <InlineStack gap="300" align="start" blockAlign="end">
-                        <Box style={{ width: "110px" }}>
-                          <TextField
-                            label="Accent Color"
-                            type="color"
-                            value={widgetColor}
-                            onChange={setWidgetColor}
-                            autoComplete="off"
-                          />
-                        </Box>
-                        <Box style={{ paddingBottom: "8px" }}>
-                          <Badge tone="info">{widgetColor.toUpperCase()}</Badge>
-                        </Box>
-                      </InlineStack>
-                    </Grid.Cell>
                   </Grid>
+
+                  <InlineStack gap="300" align="start" blockAlign="end">
+                    <Box style={{ width: "110px" }}>
+                      <TextField
+                        label="Accent Color"
+                        type="color"
+                        value={widgetColor}
+                        onChange={setWidgetColor}
+                        autoComplete="off"
+                      />
+                    </Box>
+                    <Box style={{ paddingBottom: "8px" }}>
+                      <Badge tone="info">{widgetColor.toUpperCase()}</Badge>
+                    </Box>
+                  </InlineStack>
                 </BlockStack>
               </Card>
 
