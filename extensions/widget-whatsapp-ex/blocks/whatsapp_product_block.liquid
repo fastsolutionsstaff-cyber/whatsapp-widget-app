@@ -1,0 +1,136 @@
+{% comment %}
+  Shopify App Extension - Product Page Inline Block
+  100% Error-free, Light Mode Optimized, and Fully Mobile Responsive.
+{% endcomment %}
+
+{% assign target_phone = block.settings.phone_number %}
+{% if target_phone == blank %}
+  {% assign target_phone = "14155552671" %}
+{% endif %}
+
+{% assign button_text = block.settings.button_text %}
+{% if button_text == blank %}
+  {% assign button_text = "Inquire on WhatsApp" %}
+{% endif %}
+
+{% assign custom_msg = block.settings.default_message %}
+{% if custom_msg == blank %}
+  {% assign custom_msg = "Hello! I want to inquire about this product." %}
+{% endif %}
+
+{% capture dynamic_message %}
+  {{ custom_msg }} - Product: "{{ product.title }}" ({{ shop.url }}{{ product.url }})
+{% endcapture %}
+
+{% assign encoded_msg = dynamic_message | strip | url_encode %}
+{% assign whatsapp_url = "https://wa.me/" | append: target_phone | append: "?text=" | append: encoded_msg %}
+
+<!-- Block Container -->
+<div class="wa-prod-inline-wrapper" style="margin-top: {{ block.settings.margin_top }}px; margin-bottom: {{ block.settings.margin_bottom }}px;">
+  <a href="{{ whatsapp_url }}" target="_blank" rel="noopener noreferrer" class="wa-prod-inline-btn" style="background-color: {{ block.settings.btn_bg_color }}; color: {{ block.settings.btn_text_color }};">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/>
+    </svg>
+    <span>{{ button_text | escape }}</span>
+  </a>
+</div>
+
+<style>
+  .wa-prod-inline-wrapper {
+    width: 100%;
+    display: block;
+    box-sizing: border-box;
+  }
+  .wa-prod-inline-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none !important;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    border: none;
+    box-sizing: border-box;
+    cursor: pointer;
+  }
+  .wa-prod-inline-btn:hover {
+    opacity: 0.95;
+    transform: translateY(-1px);
+  }
+  .wa-prod-inline-btn svg {
+    flex-shrink: 0;
+  }
+
+  /* Strict Mobile Responsiveness */
+  @media screen and (max-width: 749px) {
+    .wa-prod-inline-btn {
+      padding: 14px 20px;
+      font-size: 15px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "WA Product Page Block",
+  "target": "section",
+  "templates": ["product"],
+  "settings": [
+    {
+      "type": "text",
+      "id": "phone_number",
+      "label": "WhatsApp Number (With Country Code)",
+      "default": "14155552671"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Inquire on WhatsApp"
+    },
+    {
+      "type": "text",
+      "id": "default_message",
+      "label": "Pre-filled Message",
+      "default": "Hello! I am interested in this product."
+    },
+    {
+      "type": "color",
+      "id": "btn_bg_color",
+      "label": "Button Background Color",
+      "default": "#25D366"
+    },
+    {
+      "type": "color",
+      "id": "btn_text_color",
+      "label": "Button Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "label": "Margin Top",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "label": "Margin Bottom",
+      "default": 16
+    }
+  ]
+}
+{% endschema %}
