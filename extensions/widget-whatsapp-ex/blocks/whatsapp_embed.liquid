@@ -1,8 +1,8 @@
-{% unless template contains 'product' %}
+{% comment %} Read metafields saved from Admin Dashboard {% endcomment %}
 {% assign app_settings = app.metafields.whatsapp_widget.settings.value %}
 {% assign phone_number = app_settings.phoneNumber %}
 
-{% comment %} Fallback: if merchant hasn't saved a number in dashboard yet, use default placeholder {% endcomment %}
+{% comment %} Fallbacks for all fields {% endcomment %}
 {% if phone_number == blank or phone_number == null %}
   {% assign target_phone = "14155552671" %}
 {% else %}
@@ -12,6 +12,16 @@
 {% assign default_msg = app_settings.defaultMessage %}
 {% if default_msg == blank or default_msg == null %}
   {% assign default_msg = "Hello! I have an inquiry." %}
+{% endif %}
+
+{% assign greeting_header = app_settings.greetingHeader %}
+{% if greeting_header == blank or greeting_header == null %}
+  {% assign greeting_header = "Customer Support" %}
+{% endif %}
+
+{% assign greeting_subtext = app_settings.greetingSubtext %}
+{% if greeting_subtext == blank or greeting_subtext == null %}
+  {% assign greeting_subtext = "Typically replies in a few minutes" %}
 {% endif %}
 
 {% assign position = app_settings.position %}
@@ -47,15 +57,15 @@
         <svg viewBox="0 0 24 24" width="22" height="22" fill="#ffffff"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
       </div>
       <div class="wa-header-info">
-        <h4>Customer Support</h4>
-        <p>Typically replies in a few minutes</p>
+        <h4>{{ greeting_header }}</h4>
+        <p>{{ greeting_subtext }}</p>
       </div>
       <button id="wa-popup-close" type="button" aria-label="Close Chat Popup">&times;</button>
     </div>
 
     <div class="wa-popup-body">
       <div class="wa-chat-bubble">
-        👋 Hi there! How can we help you today?
+        👋 {{ default_msg }}
       </div>
     </div>
 
@@ -263,7 +273,6 @@
     }
   })();
 </script>
-{% endunless %}
 
 {% schema %}
 {
