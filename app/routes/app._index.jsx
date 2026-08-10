@@ -18,7 +18,71 @@ import {
 } from "@shopify/polaris";
 import { authenticate } from "../shopify.server";
 
-// 1. Loader: Always fetch FRESH Metafield data without caching
+// 6 Unique & Attractive SVG Icons
+const UNIQUE_ICONS = [
+  {
+    id: "whatsapp-classic",
+    name: "Classic WA",
+    render: (color) => (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="10" fill={color} />
+        <path d="M17.5 14.3c-.3-.1-1.7-.8-1.9-.9-.3-.1-.5-.1-.7.1s-.8 1-.9 1.2c-.1.2-.3.2-.6.1s-1.3-.5-2.4-1.5c-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.2-.5s0-.4-.1-.5c-.1-.1-.7-1.7-.9-2.3-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4s-1.2 1.2-1.2 2.9 1.2 3.4 1.4 3.6c.2.2 2.4 3.7 5.9 5.2.8.4 1.5.6 2 .8.8.3 1.6.2 2.2.1.7-.1 2.2-.9 2.5-1.8.3-.9.3-1.6.2-1.8-.1-.1-.3-.2-.6-.3z" fill="#ffffff" />
+      </svg>
+    ),
+  },
+  {
+    id: "agent-headset",
+    name: "Live Support",
+    render: (color) => (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+        <rect width="24" height="24" rx="12" fill={color} />
+        <path d="M12 6a6 6 0 00-6 6v3.5A2.5 2.5 0 008.5 18H9v-5H7.5v-1a4.5 4.5 0 119 0v1H15v5h.5a2.5 2.5 0 002.5-2.5V12a6 6 0 00-6-6z" fill="#ffffff" />
+      </svg>
+    ),
+  },
+  {
+    id: "paper-plane",
+    name: "Instant Send",
+    render: (color) => (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="10" fill={color} />
+        <path d="M8 12l8-4-3 9-2-3-3-2z" fill="#ffffff" stroke="#ffffff" strokeWidth="1.5" strokeLinejoin="round" />
+      </svg>
+    ),
+  },
+  {
+    id: "sparkle-chat",
+    name: "Smart Chat",
+    render: (color) => (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+        <rect width="24" height="24" rx="8" fill={color} />
+        <path d="M7 8h10M7 12h7m-7 4h4" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" />
+        <circle cx="17" cy="15" r="1.5" fill="#ffffff" />
+      </svg>
+    ),
+  },
+  {
+    id: "badge-verified",
+    name: "Official Badge",
+    render: (color) => (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="10" fill={color} />
+        <path d="M8.5 12.5l2.5 2.5 5-5" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    ),
+  },
+  {
+    id: "wave-message",
+    name: "Direct Wave",
+    render: (color) => (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="10" fill={color} />
+        <path d="M7 12a2 2 0 012-2h6a2 2 0 012 2v3a2 2 0 01-2 2h-2l-3 2v-2H9a2 2 0 01-2-2v-3z" fill="#ffffff" />
+      </svg>
+    ),
+  },
+];
+
 export const loader = async ({ request }) => {
   const { admin } = await authenticate.admin(request);
 
@@ -38,39 +102,36 @@ export const loader = async ({ request }) => {
     const rawMetafield = data.data?.currentAppInstallation?.metafield?.value;
 
     const defaultSettings = {
-      phoneNumber: "14155552671",
+      phoneNumber: "923424593231",
       defaultMessage: "Hello! I have a question about your store.",
       widgetColor: "#25D366",
+      selectedIcon: "whatsapp-classic",
       position: "bottom-right",
-      greetingHeader: "Customer Support",
-      greetingSubtext: "Typically replies in a few minutes",
+      greetingHeader: "Chat with us on WhatsApp",
+      greetingSubtext: "We typically reply in a few minutes.",
       isEnabled: "true",
     };
 
-    const parsedSettings = rawMetafield ? JSON.parse(rawMetafield) : defaultSettings;
-
-    // Prevent caching issue in Remix / Vercel
     return json(
-      { settings: parsedSettings },
+      { settings: rawMetafield ? { ...defaultSettings, ...JSON.parse(rawMetafield) } : defaultSettings },
       { headers: { "Cache-Control": "no-cache, no-store, must-revalidate" } }
     );
   } catch (error) {
-    console.error("Loader Error:", error);
     return json({
       settings: {
-        phoneNumber: "14155552671",
+        phoneNumber: "923424593231",
         defaultMessage: "Hello! I have a question about your store.",
         widgetColor: "#25D366",
+        selectedIcon: "whatsapp-classic",
         position: "bottom-right",
-        greetingHeader: "Customer Support",
-        greetingSubtext: "Typically replies in a few minutes",
+        greetingHeader: "Chat with us on WhatsApp",
+        greetingSubtext: "We typically reply in a few minutes.",
         isEnabled: "true",
       },
     });
   }
 };
 
-// 2. Action: Save settings to App Metafield
 export const action = async ({ request }) => {
   const { admin } = await authenticate.admin(request);
   const formData = await request.formData();
@@ -79,9 +140,10 @@ export const action = async ({ request }) => {
     phoneNumber: formData.get("phoneNumber") || "",
     defaultMessage: formData.get("defaultMessage") || "",
     widgetColor: formData.get("widgetColor") || "#25D366",
+    selectedIcon: formData.get("selectedIcon") || "whatsapp-classic",
     position: formData.get("position") || "bottom-right",
-    greetingHeader: formData.get("greetingHeader") || "Customer Support",
-    greetingSubtext: formData.get("greetingSubtext") || "Typically replies in a few minutes",
+    greetingHeader: formData.get("greetingHeader") || "Chat with us on WhatsApp",
+    greetingSubtext: formData.get("greetingSubtext") || "We typically reply in a few minutes.",
     isEnabled: "true",
   };
 
@@ -142,34 +204,32 @@ export const action = async ({ request }) => {
 
     return json({ status: "success", message: "Settings saved successfully!", settings: settingsPayload });
   } catch (error) {
-    console.error("Action error:", error);
     return json({ status: "error", message: "Failed to save settings." }, { status: 500 });
   }
 };
 
-// 3. UI Component: Realtime Live Syncing
 export default function Index() {
   const { settings: loadedSettings } = useLoaderData();
   const actionData = useActionData();
   const submit = useSubmit();
   const navigation = useNavigation();
 
-  // Active state initialized from loader
   const [phoneNumber, setPhoneNumber] = useState(loadedSettings.phoneNumber);
   const [defaultMessage, setDefaultMessage] = useState(loadedSettings.defaultMessage);
   const [widgetColor, setWidgetColor] = useState(loadedSettings.widgetColor);
+  const [selectedIcon, setSelectedIcon] = useState(loadedSettings.selectedIcon || "whatsapp-classic");
   const [position, setPosition] = useState(loadedSettings.position);
   const [greetingHeader, setGreetingHeader] = useState(loadedSettings.greetingHeader);
   const [greetingSubtext, setGreetingSubtext] = useState(loadedSettings.greetingSubtext);
 
   const [savedSuccess, setSavedSuccess] = useState(false);
 
-  // EXACT FIX: Action save hotay hi Live state ko force update karo
   useEffect(() => {
     if (actionData?.status === "success" && actionData?.settings) {
       setPhoneNumber(actionData.settings.phoneNumber);
       setDefaultMessage(actionData.settings.defaultMessage);
       setWidgetColor(actionData.settings.widgetColor);
+      setSelectedIcon(actionData.settings.selectedIcon);
       setPosition(actionData.settings.position);
       setGreetingHeader(actionData.settings.greetingHeader);
       setGreetingSubtext(actionData.settings.greetingSubtext);
@@ -187,12 +247,15 @@ export default function Index() {
     formData.append("phoneNumber", phoneNumber);
     formData.append("defaultMessage", defaultMessage);
     formData.append("widgetColor", widgetColor);
+    formData.append("selectedIcon", selectedIcon);
     formData.append("position", position);
     formData.append("greetingHeader", greetingHeader);
     formData.append("greetingSubtext", greetingSubtext);
 
     submit(formData, { method: "post" });
   };
+
+  const activeIconObj = UNIQUE_ICONS.find((item) => item.id === selectedIcon) || UNIQUE_ICONS[0];
 
   return (
     <Page
@@ -208,9 +271,9 @@ export default function Index() {
         {actionData?.status === "error" && <Banner title={actionData.message} tone="critical" />}
 
         <Layout>
-          {/* Controls Form */}
           <Layout.Section>
             <BlockStack gap="400">
+              {/* Merchant Setup */}
               <Card>
                 <BlockStack gap="400">
                   <Text as="h2" variant="headingMd">
@@ -233,23 +296,56 @@ export default function Index() {
                 </BlockStack>
               </Card>
 
+              {/* Widget Customization */}
               <Card>
                 <BlockStack gap="400">
                   <Text as="h2" variant="headingMd">
-                    Widget Style Customization
+                    Widget Style & Icons
                   </Text>
-                  <InlineStack gap="400" align="start" blockAlign="center">
-                    <Box style={{ flexGrow: 1 }}>
+
+                  {/* 6 Unique Icons Grid */}
+                  <Text as="p" variant="bodySm" fontWeight="medium">
+                    Choose Widget Icon:
+                  </Text>
+                  <Grid>
+                    {UNIQUE_ICONS.map((icon) => (
+                      <Grid.Cell key={icon.id} columnSpan={{ xs: 2, sm: 2, md: 2, lg: 2 }}>
+                        <div
+                          onClick={() => setSelectedIcon(icon.id)}
+                          style={{
+                            border: selectedIcon === icon.id ? `2px solid ${widgetColor}` : "1px solid #d2d6dc",
+                            borderRadius: "10px",
+                            padding: "8px 4px",
+                            textAlign: "center",
+                            cursor: "pointer",
+                            backgroundColor: selectedIcon === icon.id ? "#f4fbf7" : "#ffffff",
+                            transition: "all 0.2s ease",
+                          }}
+                        >
+                          <div style={{ display: "flex", justifyContent: "center", marginBottom: "4px" }}>
+                            {icon.render(widgetColor)}
+                          </div>
+                          <Text variant="bodyXs" as="span" alignment="center">
+                            {icon.name}
+                          </Text>
+                        </div>
+                      </Grid.Cell>
+                    ))}
+                  </Grid>
+
+                  {/* FIXED: Compact/Small Color Picker */}
+                  <InlineStack gap="300" align="start" blockAlign="end">
+                    <Box style={{ width: "110px" }}>
                       <TextField
-                        label="Button Accent Color"
+                        label="Button Color"
                         type="color"
                         value={widgetColor}
                         onChange={setWidgetColor}
                         autoComplete="off"
                       />
                     </Box>
-                    <Box style={{ paddingTop: "22px" }}>
-                      <Badge>{widgetColor.toUpperCase()}</Badge>
+                    <Box style={{ paddingBottom: "8px" }}>
+                      <Badge tone="info">{widgetColor.toUpperCase()}</Badge>
                     </Box>
                   </InlineStack>
 
@@ -265,6 +361,7 @@ export default function Index() {
                 </BlockStack>
               </Card>
 
+              {/* Popup Customization */}
               <Card>
                 <BlockStack gap="400">
                   <Text as="h2" variant="headingMd">
@@ -287,7 +384,7 @@ export default function Index() {
             </BlockStack>
           </Layout.Section>
 
-          {/* Real-time Live Preview */}
+          {/* Right Column: Real-Time Preview */}
           <Layout.Section variant="oneThird">
             <Card>
               <BlockStack gap="400">
@@ -366,7 +463,7 @@ export default function Index() {
                     </div>
                   </div>
 
-                  {/* Floating Action Button */}
+                  {/* Floating Icon selected from Grid */}
                   <div
                     style={{
                       position: "absolute",
@@ -383,14 +480,7 @@ export default function Index() {
                       boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
                     }}
                   >
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-                      <path
-                        d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"
-                        fill={widgetColor}
-                        stroke="#ffffff"
-                        strokeWidth="2"
-                      />
-                    </svg>
+                    {activeIconObj.render(widgetColor)}
                   </div>
                 </div>
 
