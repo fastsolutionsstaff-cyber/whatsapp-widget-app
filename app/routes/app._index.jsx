@@ -366,7 +366,7 @@ export default function Index() {
                       <RangeSlider
                         label={`Widget Size: ${widgetSizePx}px`}
                         value={widgetSizePx}
-                        onChange={setWidgetSizePx}
+                        onChange={(val) => setWidgetSizePx(Number(val))}
                         min={30}
                         max={100}
                         step={1}
@@ -501,6 +501,7 @@ export default function Index() {
                         overflow: "hidden",
                         width: previewDevice === "mobile" ? "100%" : "260px",
                         alignSelf: position === "bottom-left" ? "flex-start" : "flex-end",
+                        marginBottom: `${Math.max(10, widgetSizePx * 0.7)}px`,
                       }}
                     >
                       <div style={{ backgroundColor: widgetColor, padding: "8px 10px", color: "#ffffff" }}>
@@ -560,7 +561,7 @@ export default function Index() {
                         alignItems: "center",
                         justifyContent: "center",
                         boxShadow: "0 4px 12px rgba(0,0,0,0.25)",
-                        transition: "width 0.15s ease, height 0.15s ease",
+                        transition: "width 0.1s ease, height 0.1s ease",
                       }}
                     >
                       {activeIconObj.render(widgetColor, widgetSizePx)}
