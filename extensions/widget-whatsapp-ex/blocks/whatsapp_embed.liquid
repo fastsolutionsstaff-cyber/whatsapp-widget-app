@@ -39,6 +39,11 @@
   {% assign selected_icon = "whatsapp-classic" %}
 {% endif %}
 
+{% assign widget_size = app_settings.widgetSize %}
+{% if widget_size == blank or widget_size == null %}
+  {% assign widget_size = "medium" %}
+{% endif %}
+
 {% capture dynamic_message %}
   {% if template contains 'product' %}
     {{ default_msg }} I am looking at "{{ product.title }}" ({{ shop.url }}{{ product.url }})
@@ -53,7 +58,7 @@
 {% assign whatsapp_url = "https://wa.me/" | append: target_phone | append: "?text=" | append: encoded_msg %}
 
 <!-- Floating WhatsApp Widget Container -->
-<div id="wa-floating-widget" class="wa-position-{{ position }}">
+<div id="wa-floating-widget" class="wa-position-{{ position }} wa-size-{{ widget_size }}">
 
   <!-- WhatsApp Chat Popup Modal -->
   <div id="wa-chat-popup" class="wa-popup-hidden" role="dialog" aria-modal="true">
@@ -86,36 +91,17 @@
   <button id="wa-toggle-btn" type="button" aria-label="Chat on WhatsApp" style="background-color: {{ button_color }};">
     {% case selected_icon %}
       {% when 'agent-headset' %}
-        <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
-          <path d="M12 6a6 6 0 00-6 6v3.5A2.5 2.5 0 008.5 18H9v-5H7.5v-1a4.5 4.5 0 119 0v1H15v5h.5a2.5 2.5 0 002.5-2.5V12a6 6 0 00-6-6z" fill="#ffffff" />
-        </svg>
-
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 6a6 6 0 00-6 6v3.5A2.5 2.5 0 008.5 18H9v-5H7.5v-1a4.5 4.5 0 119 0v1H15v5h.5a2.5 2.5 0 002.5-2.5V12a6 6 0 00-6-6z" fill="#ffffff" /></svg>
       {% when 'paper-plane' %}
-        <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
-          <path d="M8 12l8-4-3 9-2-3-3-2z" fill="#ffffff" stroke="#ffffff" stroke-width="1.5" stroke-linejoin="round" />
-        </svg>
-
+        <svg viewBox="0 0 24 24" fill="none"><path d="M8 12l8-4-3 9-2-3-3-2z" fill="#ffffff" stroke="#ffffff" stroke-width="1.5" stroke-linejoin="round" /></svg>
       {% when 'sparkle-chat' %}
-        <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
-          <path d="M7 8h10M7 12h7m-7 4h4" stroke="#ffffff" stroke-width="2" stroke-linecap="round" />
-          <circle cx="17" cy="15" r="1.5" fill="#ffffff" />
-        </svg>
-
+        <svg viewBox="0 0 24 24" fill="none"><path d="M7 8h10M7 12h7m-7 4h4" stroke="#ffffff" stroke-width="2" stroke-linecap="round" /><circle cx="17" cy="15" r="1.5" fill="#ffffff" /></svg>
       {% when 'badge-verified' %}
-        <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
-          <path d="M8.5 12.5l2.5 2.5 5-5" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-
+        <svg viewBox="0 0 24 24" fill="none"><path d="M8.5 12.5l2.5 2.5 5-5" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" /></svg>
       {% when 'wave-message' %}
-        <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
-          <path d="M7 12a2 2 0 012-2h6a2 2 0 012 2v3a2 2 0 01-2 2h-2l-3 2v-2H9a2 2 0 01-2-2v-3z" fill="#ffffff" />
-        </svg>
-
+        <svg viewBox="0 0 24 24" fill="none"><path d="M7 12a2 2 0 012-2h6a2 2 0 012 2v3a2 2 0 01-2 2h-2l-3 2v-2H9a2 2 0 01-2-2v-3z" fill="#ffffff" /></svg>
       {% else %}
-        <!-- Classic WhatsApp Icon -->
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-          <path d="M17.5 14.3c-.3-.1-1.7-.8-1.9-.9-.3-.1-.5-.1-.7.1s-.8 1-.9 1.2c-.1.2-.3.2-.6.1s-1.3-.5-2.4-1.5c-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.2-.5s0-.4-.1-.5c-.1-.1-.7-1.7-.9-2.3-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4s-1.2 1.2-1.2 2.9 1.2 3.4 1.4 3.6c.2.2 2.4 3.7 5.9 5.2.8.4 1.5.6 2 .8.8.3 1.6.2 2.2.1.7-.1 2.2-.9 2.5-1.8.3-.9.3-1.6.2-1.8-.1-.1-.3-.2-.6-.3z" fill="#ffffff" />
-        </svg>
+        <svg viewBox="0 0 24 24" fill="none"><path d="M17.5 14.3c-.3-.1-1.7-.8-1.9-.9-.3-.1-.5-.1-.7.1s-.8 1-.9 1.2c-.1.2-.3.2-.6.1s-1.3-.5-2.4-1.5c-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.2-.5s0-.4-.1-.5c-.1-.1-.7-1.7-.9-2.3-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4s-1.2 1.2-1.2 2.9 1.2 3.4 1.4 3.6c.2.2 2.4 3.7 5.9 5.2.8.4 1.5.6 2 .8.8.3 1.6.2 2.2.1.7-.1 2.2-.9 2.5-1.8.3-.9.3-1.6.2-1.8-.1-.1-.3-.2-.6-.3z" fill="#ffffff" /></svg>
     {% endcase %}
   </button>
 </div>
@@ -123,28 +109,35 @@
 <style>
   #wa-floating-widget {
     position: fixed;
-    bottom: 24px;
     z-index: 999999;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
-  #wa-floating-widget.wa-position-bottom-right { right: 24px; }
-  #wa-floating-widget.wa-position-bottom-left { left: 24px; }
+  
+  /* Desktop Offsets */
+  #wa-floating-widget.wa-position-bottom-right { bottom: 24px; right: 24px; }
+  #wa-floating-widget.wa-position-bottom-left { bottom: 24px; left: 24px; }
+
+  /* Dynamic Button Sizing */
+  .wa-size-small #wa-toggle-btn { width: 46px; height: 46px; }
+  .wa-size-small #wa-toggle-btn svg { width: 22px; height: 22px; }
+
+  .wa-size-medium #wa-toggle-btn { width: 56px; height: 56px; }
+  .wa-size-medium #wa-toggle-btn svg { width: 28px; height: 28px; }
+
+  .wa-size-large #wa-toggle-btn { width: 66px; height: 66px; }
+  .wa-size-large #wa-toggle-btn svg { width: 34px; height: 34px; }
 
   #wa-toggle-btn {
-    width: 60px;
-    height: 60px;
     border-radius: 50%;
     border: none;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.25);
+    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.22);
     transition: transform 0.25s ease, box-shadow 0.25s ease;
   }
-  #wa-toggle-btn:hover {
-    transform: scale(1.08);
-  }
+  #wa-toggle-btn:hover { transform: scale(1.08); }
 
   #wa-chat-popup {
     position: absolute;
@@ -165,39 +158,21 @@
     transform: translateY(15px);
     pointer-events: none;
   }
-  .wa-popup-header {
-    padding: 12px 14px;
-    color: #ffffff;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    position: relative;
-  }
-  .wa-avatar {
-    width: 34px;
-    height: 34px;
-    background: rgba(255, 255, 255, 0.25);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+  .wa-popup-header { padding: 12px 14px; color: #ffffff; display: flex; align-items: center; gap: 10px; position: relative; }
+  .wa-avatar { width: 34px; height: 34px; background: rgba(255, 255, 255, 0.25); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
   .wa-header-info h4 { margin: 0; font-size: 14px; color: #ffffff; }
   .wa-header-info p { margin: 2px 0 0 0; font-size: 11px; color: #ffffff; opacity: 0.9; }
-  #wa-popup-close {
-    position: absolute;
-    top: 8px; right: 12px;
-    background: none; border: none;
-    color: #ffffff; font-size: 20px;
-    cursor: pointer;
-  }
+  #wa-popup-close { position: absolute; top: 8px; right: 12px; background: none; border: none; color: #ffffff; font-size: 20px; cursor: pointer; }
   .wa-popup-body { padding: 16px; background: #e5ddd5; min-height: 70px; }
   .wa-chat-bubble { background: #ffffff; padding: 10px 12px; border-radius: 8px; font-size: 13px; color: #333; }
   .wa-popup-footer { padding: 12px; background: #ffffff; }
-  .wa-start-chat-btn {
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    padding: 10px; border-radius: 20px; color: #ffffff !important;
-    text-decoration: none !important; font-weight: 600; font-size: 14px;
+  .wa-start-chat-btn { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; border-radius: 20px; color: #ffffff !important; text-decoration: none !important; font-weight: 600; font-size: 14px; }
+
+  /* Mobile responsiveness adjustment */
+  @media only screen and (max-width: 600px) {
+    #wa-floating-widget.wa-position-bottom-right { bottom: 16px; right: 16px; }
+    #wa-floating-widget.wa-position-bottom-left { bottom: 16px; left: 16px; }
+    #wa-chat-popup { width: 270px; }
   }
 </style>
 
