@@ -16,71 +16,90 @@ import {
   Badge,
   Grid,
   ButtonGroup,
+  RangeSlider,
 } from "@shopify/polaris";
 import { authenticate } from "../shopify.server";
 
-// 6 Unique & Attractive SVG Icons
+// 6 Unique SVG Icons
 const UNIQUE_ICONS = [
   {
     id: "whatsapp-classic",
     name: "Classic WA",
-    render: (color, sizeScale = 1) => (
-      <svg width={28 * sizeScale} height={28 * sizeScale} viewBox="0 0 24 24" fill="none">
-        <circle cx="12" cy="12" r="10" fill={color} />
-        <path d="M17.5 14.3c-.3-.1-1.7-.8-1.9-.9-.3-.1-.5-.1-.7.1s-.8 1-.9 1.2c-.1.2-.3.2-.6.1s-1.3-.5-2.4-1.5c-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.2-.5s0-.4-.1-.5c-.1-.1-.7-1.7-.9-2.3-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4s-1.2 1.2-1.2 2.9 1.2 3.4 1.4 3.6c.2.2 2.4 3.7 5.9 5.2.8.4 1.5.6 2 .8.8.3 1.6.2 2.2.1.7-.1 2.2-.9 2.5-1.8.3-.9.3-1.6.2-1.8-.1-.1-.3-.2-.6-.3z" fill="#ffffff" />
-      </svg>
-    ),
+    render: (color, sizePx = 54) => {
+      const iconSize = Math.round(sizePx * 0.52);
+      return (
+        <svg width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" fill={color} />
+          <path d="M17.5 14.3c-.3-.1-1.7-.8-1.9-.9-.3-.1-.5-.1-.7.1s-.8 1-.9 1.2c-.1.2-.3.2-.6.1s-1.3-.5-2.4-1.5c-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.2-.5s0-.4-.1-.5c-.1-.1-.7-1.7-.9-2.3-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4s-1.2 1.2-1.2 2.9 1.2 3.4 1.4 3.6c.2.2 2.4 3.7 5.9 5.2.8.4 1.5.6 2 .8.8.3 1.6.2 2.2.1.7-.1 2.2-.9 2.5-1.8.3-.9.3-1.6.2-1.8-.1-.1-.3-.2-.6-.3z" fill="#ffffff" />
+        </svg>
+      );
+    },
   },
   {
     id: "agent-headset",
     name: "Live Support",
-    render: (color, sizeScale = 1) => (
-      <svg width={28 * sizeScale} height={28 * sizeScale} viewBox="0 0 24 24" fill="none">
-        <rect width="24" height="24" rx="12" fill={color} />
-        <path d="M12 6a6 6 0 00-6 6v3.5A2.5 2.5 0 008.5 18H9v-5H7.5v-1a4.5 4.5 0 119 0v1H15v5h.5a2.5 2.5 0 002.5-2.5V12a6 6 0 00-6-6z" fill="#ffffff" />
-      </svg>
-    ),
+    render: (color, sizePx = 54) => {
+      const iconSize = Math.round(sizePx * 0.52);
+      return (
+        <svg width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="none">
+          <rect width="24" height="24" rx="12" fill={color} />
+          <path d="M12 6a6 6 0 00-6 6v3.5A2.5 2.5 0 008.5 18H9v-5H7.5v-1a4.5 4.5 0 119 0v1H15v5h.5a2.5 2.5 0 002.5-2.5V12a6 6 0 00-6-6z" fill="#ffffff" />
+        </svg>
+      );
+    },
   },
   {
     id: "paper-plane",
     name: "Instant Send",
-    render: (color, sizeScale = 1) => (
-      <svg width={28 * sizeScale} height={28 * sizeScale} viewBox="0 0 24 24" fill="none">
-        <circle cx="12" cy="12" r="10" fill={color} />
-        <path d="M8 12l8-4-3 9-2-3-3-2z" fill="#ffffff" stroke="#ffffff" strokeWidth="1.5" strokeLinejoin="round" />
-      </svg>
-    ),
+    render: (color, sizePx = 54) => {
+      const iconSize = Math.round(sizePx * 0.52);
+      return (
+        <svg width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" fill={color} />
+          <path d="M8 12l8-4-3 9-2-3-3-2z" fill="#ffffff" stroke="#ffffff" strokeWidth="1.5" strokeLinejoin="round" />
+        </svg>
+      );
+    },
   },
   {
     id: "sparkle-chat",
     name: "Smart Chat",
-    render: (color, sizeScale = 1) => (
-      <svg width={28 * sizeScale} height={28 * sizeScale} viewBox="0 0 24 24" fill="none">
-        <rect width="24" height="24" rx="8" fill={color} />
-        <path d="M7 8h10M7 12h7m-7 4h4" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" />
-        <circle cx="17" cy="15" r="1.5" fill="#ffffff" />
-      </svg>
-    ),
+    render: (color, sizePx = 54) => {
+      const iconSize = Math.round(sizePx * 0.52);
+      return (
+        <svg width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="none">
+          <rect width="24" height="24" rx="8" fill={color} />
+          <path d="M7 8h10M7 12h7m-7 4h4" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" />
+          <circle cx="17" cy="15" r="1.5" fill="#ffffff" />
+        </svg>
+      );
+    },
   },
   {
     id: "badge-verified",
     name: "Official Badge",
-    render: (color, sizeScale = 1) => (
-      <svg width={28 * sizeScale} height={28 * sizeScale} viewBox="0 0 24 24" fill="none">
-        <circle cx="12" cy="12" r="10" fill={color} />
-        <path d="M8.5 12.5l2.5 2.5 5-5" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    ),
+    render: (color, sizePx = 54) => {
+      const iconSize = Math.round(sizePx * 0.52);
+      return (
+        <svg width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" fill={color} />
+          <path d="M8.5 12.5l2.5 2.5 5-5" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      );
+    },
   },
   {
     id: "wave-message",
     name: "Direct Wave",
-    render: (color, sizeScale = 1) => (
-      <svg width={28 * sizeScale} height={28 * sizeScale} viewBox="0 0 24 24" fill="none">
-        <circle cx="12" cy="12" r="10" fill={color} />
-        <path d="M7 12a2 2 0 012-2h6a2 2 0 012 2v3a2 2 0 01-2 2h-2l-3 2v-2H9a2 2 0 01-2-2v-3z" fill="#ffffff" />
-      </svg>
-    ),
+    render: (color, sizePx = 54) => {
+      const iconSize = Math.round(sizePx * 0.52);
+      return (
+        <svg width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" fill={color} />
+          <path d="M7 12a2 2 0 012-2h6a2 2 0 012 2v3a2 2 0 01-2 2h-2l-3 2v-2H9a2 2 0 01-2-2v-3z" fill="#ffffff" />
+        </svg>
+      );
+    },
   },
 ];
 
@@ -108,7 +127,7 @@ export const loader = async ({ request }) => {
       widgetColor: "#25D366",
       selectedIcon: "whatsapp-classic",
       position: "bottom-right",
-      widgetSize: "medium", // small, medium, large
+      widgetSizePx: 56, // Numeric value for slider (range 35px - 90px)
       greetingHeader: "Chat with us on WhatsApp",
       greetingSubtext: "We typically reply in a few minutes.",
       isEnabled: "true",
@@ -126,7 +145,7 @@ export const loader = async ({ request }) => {
         widgetColor: "#25D366",
         selectedIcon: "whatsapp-classic",
         position: "bottom-right",
-        widgetSize: "medium",
+        widgetSizePx: 56,
         greetingHeader: "Chat with us on WhatsApp",
         greetingSubtext: "We typically reply in a few minutes.",
         isEnabled: "true",
@@ -145,7 +164,7 @@ export const action = async ({ request }) => {
     widgetColor: formData.get("widgetColor") || "#25D366",
     selectedIcon: formData.get("selectedIcon") || "whatsapp-classic",
     position: formData.get("position") || "bottom-right",
-    widgetSize: formData.get("widgetSize") || "medium",
+    widgetSizePx: Number(formData.get("widgetSizePx")) || 56,
     greetingHeader: formData.get("greetingHeader") || "Chat with us on WhatsApp",
     greetingSubtext: formData.get("greetingSubtext") || "We typically reply in a few minutes.",
     isEnabled: "true",
@@ -223,13 +242,11 @@ export default function Index() {
   const [widgetColor, setWidgetColor] = useState(loadedSettings.widgetColor);
   const [selectedIcon, setSelectedIcon] = useState(loadedSettings.selectedIcon || "whatsapp-classic");
   const [position, setPosition] = useState(loadedSettings.position);
-  const [widgetSize, setWidgetSize] = useState(loadedSettings.widgetSize || "medium");
+  const [widgetSizePx, setWidgetSizePx] = useState(Number(loadedSettings.widgetSizePx) || 56);
   const [greetingHeader, setGreetingHeader] = useState(loadedSettings.greetingHeader);
   const [greetingSubtext, setGreetingSubtext] = useState(loadedSettings.greetingSubtext);
 
-  // Device view toggle state (desktop | mobile)
   const [previewDevice, setPreviewDevice] = useState("desktop");
-
   const [savedSuccess, setSavedSuccess] = useState(false);
 
   useEffect(() => {
@@ -239,7 +256,7 @@ export default function Index() {
       setWidgetColor(actionData.settings.widgetColor);
       setSelectedIcon(actionData.settings.selectedIcon);
       setPosition(actionData.settings.position);
-      setWidgetSize(actionData.settings.widgetSize);
+      setWidgetSizePx(Number(actionData.settings.widgetSizePx) || 56);
       setGreetingHeader(actionData.settings.greetingHeader);
       setGreetingSubtext(actionData.settings.greetingSubtext);
 
@@ -258,7 +275,7 @@ export default function Index() {
     formData.append("widgetColor", widgetColor);
     formData.append("selectedIcon", selectedIcon);
     formData.append("position", position);
-    formData.append("widgetSize", widgetSize);
+    formData.append("widgetSizePx", widgetSizePx.toString());
     formData.append("greetingHeader", greetingHeader);
     formData.append("greetingSubtext", greetingSubtext);
 
@@ -267,23 +284,9 @@ export default function Index() {
 
   const activeIconObj = UNIQUE_ICONS.find((item) => item.id === selectedIcon) || UNIQUE_ICONS[0];
 
-  // Dynamic Pixel dimensions based on size selection
-  const getSizeConfig = () => {
-    switch (widgetSize) {
-      case "small":
-        return { btnSize: 46, iconScale: 0.8, popupWidth: 260 };
-      case "large":
-        return { btnSize: 64, iconScale: 1.2, popupWidth: 320 };
-      default: // medium
-        return { btnSize: 54, iconScale: 1, popupWidth: 285 };
-    }
-  };
-
-  const sizeCfg = getSizeConfig();
-
   return (
     <Page
-      title="WhatsApp Widget Pro Settings"
+      title="WhatsApp Widget Settings"
       primaryAction={
         <Button primary loading={isSaving} onClick={handleSave}>
           Save Settings
@@ -327,9 +330,9 @@ export default function Index() {
                     Widget Style & Sizing
                   </Text>
 
-                  {/* 6 Icons Selection */}
+                  {/* Icon Selector Grid */}
                   <Text as="p" variant="bodySm" fontWeight="medium">
-                    Select Unique Icon Style:
+                    Select Icon Style:
                   </Text>
                   <Grid>
                     {UNIQUE_ICONS.map((icon) => (
@@ -347,7 +350,7 @@ export default function Index() {
                           }}
                         >
                           <div style={{ display: "flex", justifyContent: "center", marginBottom: "4px" }}>
-                            {icon.render(widgetColor)}
+                            {icon.render(widgetColor, 40)}
                           </div>
                           <Text variant="bodyXs" as="span" alignment="center">
                             {icon.name}
@@ -357,21 +360,20 @@ export default function Index() {
                     ))}
                   </Grid>
 
-                  {/* Size & Color Inputs Row */}
-                  <Grid>
-                    <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6 }}>
-                      <Select
-                        label="Widget Size"
-                        options={[
-                          { label: "Small (46px)", value: "small" },
-                          { label: "Medium Default (54px)", value: "medium" },
-                          { label: "Large (64px)", value: "large" },
-                        ]}
-                        value={widgetSize}
-                        onChange={setWidgetSize}
-                      />
-                    </Grid.Cell>
+                  {/* Size Slider Bar */}
+                  <Box style={{ padding: "8px 0" }}>
+                    <RangeSlider
+                      label={`Widget Size: ${widgetSizePx}px`}
+                      value={widgetSizePx}
+                      onChange={setWidgetSizePx}
+                      min={35}
+                      max={90}
+                      step={1}
+                      output
+                    />
+                  </Box>
 
+                  <Grid>
                     <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6 }}>
                       <Select
                         label="Screen Position"
@@ -383,22 +385,24 @@ export default function Index() {
                         onChange={setPosition}
                       />
                     </Grid.Cell>
-                  </Grid>
 
-                  <InlineStack gap="300" align="start" blockAlign="end">
-                    <Box style={{ width: "110px" }}>
-                      <TextField
-                        label="Accent Color"
-                        type="color"
-                        value={widgetColor}
-                        onChange={setWidgetColor}
-                        autoComplete="off"
-                      />
-                    </Box>
-                    <Box style={{ paddingBottom: "8px" }}>
-                      <Badge tone="info">{widgetColor.toUpperCase()}</Badge>
-                    </Box>
-                  </InlineStack>
+                    <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6 }}>
+                      <InlineStack gap="300" align="start" blockAlign="end">
+                        <Box style={{ width: "110px" }}>
+                          <TextField
+                            label="Accent Color"
+                            type="color"
+                            value={widgetColor}
+                            onChange={setWidgetColor}
+                            autoComplete="off"
+                          />
+                        </Box>
+                        <Box style={{ paddingBottom: "8px" }}>
+                          <Badge tone="info">{widgetColor.toUpperCase()}</Badge>
+                        </Box>
+                      </InlineStack>
+                    </Grid.Cell>
+                  </Grid>
                 </BlockStack>
               </Card>
 
@@ -425,7 +429,7 @@ export default function Index() {
             </BlockStack>
           </Layout.Section>
 
-          {/* Right Column: Interactive Device Live Preview */}
+          {/* Right Column: Live Interactive Device Preview */}
           <Layout.Section variant="oneThird">
             <Card>
               <BlockStack gap="400">
@@ -433,7 +437,6 @@ export default function Index() {
                   <Text as="h2" variant="headingMd">
                     Live Preview
                   </Text>
-                  {/* Desktop / Mobile Switcher */}
                   <ButtonGroup segmented>
                     <Button
                       pressed={previewDevice === "desktop"}
@@ -452,7 +455,7 @@ export default function Index() {
                   </ButtonGroup>
                 </InlineStack>
 
-                {/* Device Frame */}
+                {/* Device Frame View */}
                 <div
                   style={{
                     width: "100%",
@@ -470,7 +473,6 @@ export default function Index() {
                     boxSizing: "border-box",
                   }}
                 >
-                  {/* Outer Screen Simulation (Mobile mockup wrapper if mobile selected) */}
                   <div
                     style={{
                       width: previewDevice === "mobile" ? "240px" : "100%",
@@ -480,7 +482,7 @@ export default function Index() {
                       border: previewDevice === "mobile" ? "8px solid #1a1a1a" : "1px solid #dfe3e8",
                       position: "relative",
                       overflow: "hidden",
-                      transition: "all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)",
+                      transition: "all 0.3s ease",
                       boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
                       display: "flex",
                       flexDirection: "column",
@@ -489,10 +491,9 @@ export default function Index() {
                       boxSizing: "border-box",
                     }}
                   >
-                    {/* Simulated Header */}
                     <div style={{ height: "12px", backgroundColor: "#f0f2f5", borderRadius: "4px", width: "40%" }} />
 
-                    {/* WhatsApp Chat Popup Window */}
+                    {/* Chat Popup */}
                     <div
                       style={{
                         backgroundColor: "#ffffff",
@@ -500,7 +501,7 @@ export default function Index() {
                         boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
                         border: "1px solid #e1e3e5",
                         overflow: "hidden",
-                        width: previewDevice === "mobile" ? "100%" : `${sizeCfg.popupWidth - 20}px`,
+                        width: previewDevice === "mobile" ? "100%" : "260px",
                         alignSelf: position === "bottom-left" ? "flex-start" : "flex-end",
                       }}
                     >
@@ -546,25 +547,25 @@ export default function Index() {
                       </div>
                     </div>
 
-                    {/* Dynamic Floating Button */}
+                    {/* Dynamic Slider-Scaled Floating Button */}
                     <div
                       style={{
                         position: "absolute",
                         bottom: "10px",
                         left: position === "bottom-left" ? "10px" : "auto",
                         right: position === "bottom-right" ? "10px" : "auto",
-                        width: `${sizeCfg.btnSize}px`,
-                        height: `${sizeCfg.btnSize}px`,
+                        width: `${widgetSizePx}px`,
+                        height: `${widgetSizePx}px`,
                         borderRadius: "50%",
                         backgroundColor: widgetColor,
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
                         boxShadow: "0 4px 12px rgba(0,0,0,0.25)",
-                        transition: "all 0.2s ease",
+                        transition: "width 0.15s ease, height 0.15s ease",
                       }}
                     >
-                      {activeIconObj.render(widgetColor, sizeCfg.iconScale)}
+                      {activeIconObj.render(widgetColor, widgetSizePx)}
                     </div>
                   </div>
                 </div>
