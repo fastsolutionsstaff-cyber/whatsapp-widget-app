@@ -20,31 +20,44 @@ import { authenticate } from "../shopify.server";
 export const loader = async ({ request }) => {
   const { admin } = await authenticate.admin(request);
 
-  const response = await admin.graphql(`
-    #graphql
-    query getAppMetafields {
-      currentAppInstallation {
-        metafield(namespace: "whatsapp_widget", key: "settings") {
-          value
+  try {
+    const response = await admin.graphql(`
+      #graphql
+      query getAppMetafields {
+        currentAppInstallation {
+          metafield(namespace: "whatsapp_widget", key: "settings") {
+            value
+          }
         }
       }
-    }
-  `);
+    `);
 
-  const data = await response.json();
-  const rawMetafield = data.data?.currentAppInstallation?.metafield?.value;
+    const data = await response.json();
+    const rawMetafield = data.data?.currentAppInstallation?.metafield?.value;
 
-  const defaultSettings = {
-    phoneNumber: "",
-    defaultMessage: "Hello! I have a question about your store.",
-    widgetColor: "#25D366",
-    position: "bottom-right",
-    isEnabled: "true",
-  };
+    const defaultSettings = {
+      phoneNumber: "",
+      defaultMessage: "Hello! I have a question about your store.",
+      widgetColor: "#25D366",
+      position: "bottom-right",
+      isEnabled: "true",
+    };
 
-  return json({
-    settings: rawMetafield ? JSON.parse(rawMetafield) : defaultSettings,
-  });
+    return json({
+      settings: rawMetafield ? JSON.parse(rawMetafield) : defaultSettings,
+    });
+  } catch (error) {
+    console.error("Loader error:", error);
+    return json({
+      settings: {
+        phoneNumber: "",
+        defaultMessage: "Hello! I have a question about your store.",
+        widgetColor: "#25D366",
+        position: "bottom-right",
+        isEnabled: "true",
+      },
+    });
+  }
 };
 
 // 2. Action: Save settings to App Metafields via GraphQL
@@ -60,54 +73,63 @@ export const action = async ({ request }) => {
     isEnabled: formData.get("isEnabled") || "true",
   };
 
-  // Get current App Installation ID
-  const appInstallResponse = await admin.graphql(`
-    #graphql
-    query {
-      currentAppInstallation {
-        id
-      }
-    }
-  `);
-  const appInstallData = await appInstallResponse.json();
-  const ownerId = appInstallData.data.currentAppInstallation.id;
-
-  // Set App Metafield
-  const mutationResponse = await admin.graphql(
-    `
-    #graphql
-    mutation setMetafield($metafields: [MetafieldsSetInput!]!) {
-      metafieldsSet(metafields: $metafields) {
-        userErrors {
-          field
-          message
+  try {
+    // Get current App Installation ID
+    const appInstallResponse = await admin.graphql(`
+      #graphql
+      query {
+        currentAppInstallation {
+          id
         }
       }
-    }
-  `,
-    {
-      variables: {
-        metafields: [
-          {
-            ownerId,
-            namespace: "whatsapp_widget",
-            key: "settings",
-            type: "json",
-            value: JSON.stringify(settingsPayload),
-          },
-        ],
-      },
-    }
-  );
+    `);
+    const appInstallData = await appInstallResponse.json();
+    const ownerId = appInstallData.data?.currentAppInstallation?.id;
 
-  const result = await mutationResponse.json();
-  const errors = result.data?.metafieldsSet?.userErrors;
+    if (!ownerId) {
+      return json({ status: "error", message: "Could not find app installation ID." });
+    }
 
-  if (errors && errors.length > 0) {
-    return json({ status: "error", message: errors[0].message });
+    // Set App Metafield
+    const mutationResponse = await admin.graphql(
+      `
+      #graphql
+      mutation setMetafield($metafields: [MetafieldsSetInput!]!) {
+        metafieldsSet(metafields: $metafields) {
+          userErrors {
+            field
+            message
+          }
+        }
+      }
+    `,
+      {
+        variables: {
+          metafields: [
+            {
+              ownerId,
+              namespace: "whatsapp_widget",
+              key: "settings",
+              type: "json",
+              value: JSON.stringify(settingsPayload),
+            },
+          ],
+        },
+      }
+    );
+
+    const result = await mutationResponse.json();
+    const errors = result.data?.metafieldsSet?.userErrors;
+
+    if (errors && errors.length > 0) {
+      return json({ status: "error", message: errors[0].message });
+    }
+
+    return json({ status: "success", message: "Settings saved successfully!" });
+  } catch (error) {
+    console.error("Action error:", error);
+    return json({ status: "error", message: "An unexpected error occurred while saving." });
   }
-
-  return json({ status: "success", message: "Settings saved successfully!" });
 };
 
 // 3. UI Component
