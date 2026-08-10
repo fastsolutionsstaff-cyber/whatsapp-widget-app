@@ -24,11 +24,6 @@
   {% assign greeting_subtext = "We typically reply in a few minutes." %}
 {% endif %}
 
-{% assign position = app_settings.position %}
-{% if position == blank or position == null %}
-  {% assign position = "bottom-right" %}
-{% endif %}
-
 {% assign button_color = app_settings.widgetColor %}
 {% if button_color == blank or button_color == null %}
   {% assign button_color = "#25D366" %}
@@ -39,9 +34,15 @@
   {% assign selected_icon = "whatsapp-classic" %}
 {% endif %}
 
-{% comment %} Read Pixel Size with fallback {% endcomment %}
-{% assign widget_size_px = app_settings.widgetSizePx | default: 56 %}
-{% assign icon_size_px = widget_size_px | times: 0.52 | round %}
+{% comment %} DESKTOP VALUES {% endcomment %}
+{% assign desktop_position = app_settings.position | default: "bottom-right" %}
+{% assign desktop_size_px = app_settings.widgetSizePx | default: 56 %}
+{% assign desktop_icon_size_px = desktop_size_px | times: 0.52 | round %}
+
+{% comment %} MOBILE VALUES {% endcomment %}
+{% assign mobile_position = app_settings.mobilePosition | default: desktop_position %}
+{% assign mobile_size_px = app_settings.mobileWidgetSizePx | default: 48 %}
+{% assign mobile_icon_size_px = mobile_size_px | times: 0.52 | round %}
 
 {% capture dynamic_message %}
   {% if template contains 'product' %}
@@ -57,7 +58,7 @@
 {% assign whatsapp_url = "https://wa.me/" | append: target_phone | append: "?text=" | append: encoded_msg %}
 
 <!-- Floating WhatsApp Widget Container -->
-<div id="wa-floating-widget" class="wa-position-{{ position }}">
+<div id="wa-floating-widget" class="wa-desktop-pos-{{ desktop_position }} wa-mobile-pos-{{ mobile_position }}">
 
   <!-- WhatsApp Chat Popup Modal -->
   <div id="wa-chat-popup" class="wa-popup-hidden" role="dialog" aria-modal="true">
@@ -86,31 +87,46 @@
     </div>
   </div>
 
-  <!-- Dynamic Toggle Button Icon with Direct Pixel Styling -->
+  <!-- Dynamic Toggle Button -->
   <button 
     id="wa-toggle-btn" 
     type="button" 
     aria-label="Chat on WhatsApp" 
-    style="
-      background-color: {{ button_color }};
-      width: {{ widget_size_px }}px;
-      height: {{ widget_size_px }}px;
-    "
+    style="background-color: {{ button_color }};"
   >
-    {% case selected_icon %}
-      {% when 'agent-headset' %}
-        <svg viewBox="0 0 24 24" width="{{ icon_size_px }}" height="{{ icon_size_px }}" fill="none"><path d="M12 6a6 6 0 00-6 6v3.5A2.5 2.5 0 008.5 18H9v-5H7.5v-1a4.5 4.5 0 119 0v1H15v5h.5a2.5 2.5 0 002.5-2.5V12a6 6 0 00-6-6z" fill="#ffffff" /></svg>
-      {% when 'paper-plane' %}
-        <svg viewBox="0 0 24 24" width="{{ icon_size_px }}" height="{{ icon_size_px }}" fill="none"><path d="M8 12l8-4-3 9-2-3-3-2z" fill="#ffffff" stroke="#ffffff" stroke-width="1.5" stroke-linejoin="round" /></svg>
-      {% when 'sparkle-chat' %}
-        <svg viewBox="0 0 24 24" width="{{ icon_size_px }}" height="{{ icon_size_px }}" fill="none"><path d="M7 8h10M7 12h7m-7 4h4" stroke="#ffffff" stroke-width="2" stroke-linecap="round" /><circle cx="17" cy="15" r="1.5" fill="#ffffff" /></svg>
-      {% when 'badge-verified' %}
-        <svg viewBox="0 0 24 24" width="{{ icon_size_px }}" height="{{ icon_size_px }}" fill="none"><path d="M8.5 12.5l2.5 2.5 5-5" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" /></svg>
-      {% when 'wave-message' %}
-        <svg viewBox="0 0 24 24" width="{{ icon_size_px }}" height="{{ icon_size_px }}" fill="none"><path d="M7 12a2 2 0 012-2h6a2 2 0 012 2v3a2 2 0 01-2 2h-2l-3 2v-2H9a2 2 0 01-2-2v-3z" fill="#ffffff" /></svg>
-      {% else %}
-        <svg viewBox="0 0 24 24" width="{{ icon_size_px }}" height="{{ icon_size_px }}" fill="none"><path d="M17.5 14.3c-.3-.1-1.7-.8-1.9-.9-.3-.1-.5-.1-.7.1s-.8 1-.9 1.2c-.1.2-.3.2-.6.1s-1.3-.5-2.4-1.5c-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.2-.5s0-.4-.1-.5c-.1-.1-.7-1.7-.9-2.3-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4s-1.2 1.2-1.2 2.9 1.2 3.4 1.4 3.6c.2.2 2.4 3.7 5.9 5.2.8.4 1.5.6 2 .8.8.3 1.6.2 2.2.1.7-.1 2.2-.9 2.5-1.8.3-.9.3-1.6.2-1.8-.1-.1-.3-.2-.6-.3z" fill="#ffffff" /></svg>
-    {% endcase %}
+    <div class="wa-desktop-icon">
+      {% case selected_icon %}
+        {% when 'agent-headset' %}
+          <svg viewBox="0 0 24 24" width="{{ desktop_icon_size_px }}" height="{{ desktop_icon_size_px }}" fill="none"><path d="M12 6a6 6 0 00-6 6v3.5A2.5 2.5 0 008.5 18H9v-5H7.5v-1a4.5 4.5 0 119 0v1H15v5h.5a2.5 2.5 0 002.5-2.5V12a6 6 0 00-6-6z" fill="#ffffff" /></svg>
+        {% when 'paper-plane' %}
+          <svg viewBox="0 0 24 24" width="{{ desktop_icon_size_px }}" height="{{ desktop_icon_size_px }}" fill="none"><path d="M8 12l8-4-3 9-2-3-3-2z" fill="#ffffff" stroke="#ffffff" stroke-width="1.5" stroke-linejoin="round" /></svg>
+        {% when 'sparkle-chat' %}
+          <svg viewBox="0 0 24 24" width="{{ desktop_icon_size_px }}" height="{{ desktop_icon_size_px }}" fill="none"><path d="M7 8h10M7 12h7m-7 4h4" stroke="#ffffff" stroke-width="2" stroke-linecap="round" /><circle cx="17" cy="15" r="1.5" fill="#ffffff" /></svg>
+        {% when 'badge-verified' %}
+          <svg viewBox="0 0 24 24" width="{{ desktop_icon_size_px }}" height="{{ desktop_icon_size_px }}" fill="none"><path d="M8.5 12.5l2.5 2.5 5-5" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" /></svg>
+        {% when 'wave-message' %}
+          <svg viewBox="0 0 24 24" width="{{ desktop_icon_size_px }}" height="{{ desktop_icon_size_px }}" fill="none"><path d="M7 12a2 2 0 012-2h6a2 2 0 012 2v3a2 2 0 01-2 2h-2l-3 2v-2H9a2 2 0 01-2-2v-3z" fill="#ffffff" /></svg>
+        {% else %}
+          <svg viewBox="0 0 24 24" width="{{ desktop_icon_size_px }}" height="{{ desktop_icon_size_px }}" fill="none"><path d="M17.5 14.3c-.3-.1-1.7-.8-1.9-.9-.3-.1-.5-.1-.7.1s-.8 1-.9 1.2c-.1.2-.3.2-.6.1s-1.3-.5-2.4-1.5c-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.2-.5s0-.4-.1-.5c-.1-.1-.7-1.7-.9-2.3-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4s-1.2 1.2-1.2 2.9 1.2 3.4 1.4 3.6c.2.2 2.4 3.7 5.9 5.2.8.4 1.5.6 2 .8.8.3 1.6.2 2.2.1.7-.1 2.2-.9 2.5-1.8.3-.9.3-1.6.2-1.8-.1-.1-.3-.2-.6-.3z" fill="#ffffff" /></svg>
+      {% endcase %}
+    </div>
+
+    <div class="wa-mobile-icon">
+      {% case selected_icon %}
+        {% when 'agent-headset' %}
+          <svg viewBox="0 0 24 24" width="{{ mobile_icon_size_px }}" height="{{ mobile_icon_size_px }}" fill="none"><path d="M12 6a6 6 0 00-6 6v3.5A2.5 2.5 0 008.5 18H9v-5H7.5v-1a4.5 4.5 0 119 0v1H15v5h.5a2.5 2.5 0 002.5-2.5V12a6 6 0 00-6-6z" fill="#ffffff" /></svg>
+        {% when 'paper-plane' %}
+          <svg viewBox="0 0 24 24" width="{{ mobile_icon_size_px }}" height="{{ mobile_icon_size_px }}" fill="none"><path d="M8 12l8-4-3 9-2-3-3-2z" fill="#ffffff" stroke="#ffffff" stroke-width="1.5" stroke-linejoin="round" /></svg>
+        {% when 'sparkle-chat' %}
+          <svg viewBox="0 0 24 24" width="{{ mobile_icon_size_px }}" height="{{ mobile_icon_size_px }}" fill="none"><path d="M7 8h10M7 12h7m-7 4h4" stroke="#ffffff" stroke-width="2" stroke-linecap="round" /><circle cx="17" cy="15" r="1.5" fill="#ffffff" /></svg>
+        {% when 'badge-verified' %}
+          <svg viewBox="0 0 24 24" width="{{ mobile_icon_size_px }}" height="{{ mobile_icon_size_px }}" fill="none"><path d="M8.5 12.5l2.5 2.5 5-5" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" /></svg>
+        {% when 'wave-message' %}
+          <svg viewBox="0 0 24 24" width="{{ mobile_icon_size_px }}" height="{{ mobile_icon_size_px }}" fill="none"><path d="M7 12a2 2 0 012-2h6a2 2 0 012 2v3a2 2 0 01-2 2h-2l-3 2v-2H9a2 2 0 01-2-2v-3z" fill="#ffffff" /></svg>
+        {% else %}
+          <svg viewBox="0 0 24 24" width="{{ mobile_icon_size_px }}" height="{{ mobile_icon_size_px }}" fill="none"><path d="M17.5 14.3c-.3-.1-1.7-.8-1.9-.9-.3-.1-.5-.1-.7.1s-.8 1-.9 1.2c-.1.2-.3.2-.6.1s-1.3-.5-2.4-1.5c-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.2-.5s0-.4-.1-.5c-.1-.1-.7-1.7-.9-2.3-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4s-1.2 1.2-1.2 2.9 1.2 3.4 1.4 3.6c.2.2 2.4 3.7 5.9 5.2.8.4 1.5.6 2 .8.8.3 1.6.2 2.2.1.7-.1 2.2-.9 2.5-1.8.3-.9.3-1.6.2-1.8-.1-.1-.3-.2-.6-.3z" fill="#ffffff" /></svg>
+      {% endcase %}
+    </div>
   </button>
 </div>
 
@@ -121,9 +137,38 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
   
-  /* Desktop Offsets */
-  #wa-floating-widget.wa-position-bottom-right { bottom: 24px; right: 24px; }
-  #wa-floating-widget.wa-position-bottom-left { bottom: 24px; left: 24px; }
+  /* DESKTOP STYLES (Min Width > 600px) */
+  @media only screen and (min-width: 601px) {
+    #wa-floating-widget.wa-desktop-pos-bottom-right { bottom: 24px; right: 24px; left: auto; }
+    #wa-floating-widget.wa-desktop-pos-bottom-left { bottom: 24px; left: 24px; right: auto; }
+
+    #wa-toggle-btn {
+      width: {{ desktop_size_px }}px;
+      height: {{ desktop_size_px }}px;
+    }
+    .wa-desktop-icon { display: flex; align-items: center; justify-content: center; }
+    .wa-mobile-icon { display: none; }
+
+    .wa-desktop-pos-bottom-right #wa-chat-popup { right: 0; left: auto; }
+    .wa-desktop-pos-bottom-left #wa-chat-popup { left: 0; right: auto; }
+  }
+
+  /* MOBILE STYLES (Max Width <= 600px) */
+  @media only screen and (max-width: 600px) {
+    #wa-floating-widget.wa-mobile-pos-bottom-right { bottom: 16px; right: 16px; left: auto; }
+    #wa-floating-widget.wa-mobile-pos-bottom-left { bottom: 16px; left: 16px; right: auto; }
+
+    #wa-toggle-btn {
+      width: {{ mobile_size_px }}px;
+      height: {{ mobile_size_px }}px;
+    }
+    .wa-desktop-icon { display: none; }
+    .wa-mobile-icon { display: flex; align-items: center; justify-content: center; }
+
+    #wa-chat-popup { width: 270px; }
+    .wa-mobile-pos-bottom-right #wa-chat-popup { right: 0; left: auto; }
+    .wa-mobile-pos-bottom-left #wa-chat-popup { left: 0; right: auto; }
+  }
 
   #wa-toggle-btn {
     border-radius: 50%;
@@ -147,8 +192,6 @@
     overflow: hidden;
     transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
   }
-  .wa-position-bottom-right #wa-chat-popup { right: 0; }
-  .wa-position-bottom-left #wa-chat-popup { left: 0; }
 
   .wa-popup-hidden {
     opacity: 0;
@@ -165,13 +208,6 @@
   .wa-chat-bubble { background: #ffffff; padding: 10px 12px; border-radius: 8px; font-size: 13px; color: #333333; }
   .wa-popup-footer { padding: 12px; background: #ffffff; }
   .wa-start-chat-btn { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; border-radius: 20px; color: #ffffff !important; text-decoration: none !important; font-weight: 600; font-size: 14px; }
-
-  /* Mobile responsiveness adjustment */
-  @media only screen and (max-width: 600px) {
-    #wa-floating-widget.wa-position-bottom-right { bottom: 16px; right: 16px; }
-    #wa-floating-widget.wa-position-bottom-left { bottom: 16px; left: 16px; }
-    #wa-chat-popup { width: 270px; }
-  }
 </style>
 
 <script>

@@ -17,6 +17,7 @@ import {
   Grid,
   ButtonGroup,
   RangeSlider,
+  Divider,
 } from "@shopify/polaris";
 import { authenticate } from "../shopify.server";
 
@@ -128,6 +129,8 @@ export const loader = async ({ request }) => {
       selectedIcon: "whatsapp-classic",
       position: "bottom-right",
       widgetSizePx: 56,
+      mobilePosition: "bottom-right",
+      mobileWidgetSizePx: 48,
       greetingHeader: "Chat with us on WhatsApp",
       greetingSubtext: "We typically reply in a few minutes.",
       isEnabled: "true",
@@ -146,6 +149,8 @@ export const loader = async ({ request }) => {
         selectedIcon: "whatsapp-classic",
         position: "bottom-right",
         widgetSizePx: 56,
+        mobilePosition: "bottom-right",
+        mobileWidgetSizePx: 48,
         greetingHeader: "Chat with us on WhatsApp",
         greetingSubtext: "We typically reply in a few minutes.",
         isEnabled: "true",
@@ -165,6 +170,8 @@ export const action = async ({ request }) => {
     selectedIcon: formData.get("selectedIcon") || "whatsapp-classic",
     position: formData.get("position") || "bottom-right",
     widgetSizePx: Number(formData.get("widgetSizePx")) || 56,
+    mobilePosition: formData.get("mobilePosition") || "bottom-right",
+    mobileWidgetSizePx: Number(formData.get("mobileWidgetSizePx")) || 48,
     greetingHeader: formData.get("greetingHeader") || "Chat with us on WhatsApp",
     greetingSubtext: formData.get("greetingSubtext") || "We typically reply in a few minutes.",
     isEnabled: "true",
@@ -241,8 +248,15 @@ export default function Index() {
   const [defaultMessage, setDefaultMessage] = useState(loadedSettings.defaultMessage);
   const [widgetColor, setWidgetColor] = useState(loadedSettings.widgetColor);
   const [selectedIcon, setSelectedIcon] = useState(loadedSettings.selectedIcon || "whatsapp-classic");
+
+  // Desktop Sizing & Position
   const [position, setPosition] = useState(loadedSettings.position);
   const [widgetSizePx, setWidgetSizePx] = useState(Number(loadedSettings.widgetSizePx) || 56);
+
+  // Mobile Sizing & Position
+  const [mobilePosition, setMobilePosition] = useState(loadedSettings.mobilePosition || loadedSettings.position);
+  const [mobileWidgetSizePx, setMobileWidgetSizePx] = useState(Number(loadedSettings.mobileWidgetSizePx) || 48);
+
   const [greetingHeader, setGreetingHeader] = useState(loadedSettings.greetingHeader);
   const [greetingSubtext, setGreetingSubtext] = useState(loadedSettings.greetingSubtext);
 
@@ -257,6 +271,8 @@ export default function Index() {
       setSelectedIcon(actionData.settings.selectedIcon);
       setPosition(actionData.settings.position);
       setWidgetSizePx(Number(actionData.settings.widgetSizePx) || 56);
+      setMobilePosition(actionData.settings.mobilePosition || "bottom-right");
+      setMobileWidgetSizePx(Number(actionData.settings.mobileWidgetSizePx) || 48);
       setGreetingHeader(actionData.settings.greetingHeader);
       setGreetingSubtext(actionData.settings.greetingSubtext);
 
@@ -276,6 +292,8 @@ export default function Index() {
     formData.append("selectedIcon", selectedIcon);
     formData.append("position", position);
     formData.append("widgetSizePx", widgetSizePx.toString());
+    formData.append("mobilePosition", mobilePosition);
+    formData.append("mobileWidgetSizePx", mobileWidgetSizePx.toString());
     formData.append("greetingHeader", greetingHeader);
     formData.append("greetingSubtext", greetingSubtext);
 
@@ -283,6 +301,10 @@ export default function Index() {
   };
 
   const activeIconObj = UNIQUE_ICONS.find((item) => item.id === selectedIcon) || UNIQUE_ICONS[0];
+
+  // Active view values for live preview
+  const activeSizePx = previewDevice === "mobile" ? mobileWidgetSizePx : widgetSizePx;
+  const activePos = previewDevice === "mobile" ? mobilePosition : position;
 
   return (
     <Page
@@ -360,33 +382,6 @@ export default function Index() {
                     ))}
                   </Grid>
 
-                  {/* SWIPE / SLIDER BAR FOR SIZE */}
-                  <Grid>
-                    <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6 }}>
-                      <RangeSlider
-                        label={`Widget Size: ${widgetSizePx}px`}
-                        value={widgetSizePx}
-                        onChange={(val) => setWidgetSizePx(Number(val))}
-                        min={30}
-                        max={100}
-                        step={1}
-                        output
-                      />
-                    </Grid.Cell>
-
-                    <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6 }}>
-                      <Select
-                        label="Screen Position"
-                        options={[
-                          { label: "Bottom Right", value: "bottom-right" },
-                          { label: "Bottom Left", value: "bottom-left" },
-                        ]}
-                        value={position}
-                        onChange={setPosition}
-                      />
-                    </Grid.Cell>
-                  </Grid>
-
                   <InlineStack gap="300" align="start" blockAlign="end">
                     <Box style={{ width: "110px" }}>
                       <TextField
@@ -401,6 +396,68 @@ export default function Index() {
                       <Badge tone="info">{widgetColor.toUpperCase()}</Badge>
                     </Box>
                   </InlineStack>
+
+                  <Divider />
+
+                  {/* DESKTOP SETTINGS */}
+                  <Text as="h3" variant="headingSm" tone="subdued">
+                    💻 Desktop Settings
+                  </Text>
+                  <Grid>
+                    <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6 }}>
+                      <RangeSlider
+                        label={`Desktop Widget Size: ${widgetSizePx}px`}
+                        value={widgetSizePx}
+                        onChange={(val) => setWidgetSizePx(Number(val))}
+                        min={30}
+                        max={100}
+                        step={1}
+                        output
+                      />
+                    </Grid.Cell>
+                    <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6 }}>
+                      <Select
+                        label="Desktop Position"
+                        options={[
+                          { label: "Bottom Right", value: "bottom-right" },
+                          { label: "Bottom Left", value: "bottom-left" },
+                        ]}
+                        value={position}
+                        onChange={setPosition}
+                      />
+                    </Grid.Cell>
+                  </Grid>
+
+                  <Divider />
+
+                  {/* MOBILE SETTINGS */}
+                  <Text as="h3" variant="headingSm" tone="subdued">
+                    📱 Mobile Settings
+                  </Text>
+                  <Grid>
+                    <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6 }}>
+                      <RangeSlider
+                        label={`Mobile Widget Size: ${mobileWidgetSizePx}px`}
+                        value={mobileWidgetSizePx}
+                        onChange={(val) => setMobileWidgetSizePx(Number(val))}
+                        min={30}
+                        max={90}
+                        step={1}
+                        output
+                      />
+                    </Grid.Cell>
+                    <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 6, lg: 6 }}>
+                      <Select
+                        label="Mobile Position"
+                        options={[
+                          { label: "Bottom Right", value: "bottom-right" },
+                          { label: "Bottom Left", value: "bottom-left" },
+                        ]}
+                        value={mobilePosition}
+                        onChange={setMobilePosition}
+                      />
+                    </Grid.Cell>
+                  </Grid>
                 </BlockStack>
               </Card>
 
@@ -500,8 +557,8 @@ export default function Index() {
                         border: "1px solid #e1e3e5",
                         overflow: "hidden",
                         width: previewDevice === "mobile" ? "100%" : "260px",
-                        alignSelf: position === "bottom-left" ? "flex-start" : "flex-end",
-                        marginBottom: `${Math.max(10, widgetSizePx * 0.7)}px`,
+                        alignSelf: activePos === "bottom-left" ? "flex-start" : "flex-end",
+                        marginBottom: `${Math.max(10, activeSizePx * 0.7)}px`,
                       }}
                     >
                       <div style={{ backgroundColor: widgetColor, padding: "8px 10px", color: "#ffffff" }}>
@@ -551,10 +608,10 @@ export default function Index() {
                       style={{
                         position: "absolute",
                         bottom: "10px",
-                        left: position === "bottom-left" ? "10px" : "auto",
-                        right: position === "bottom-right" ? "10px" : "auto",
-                        width: `${widgetSizePx}px`,
-                        height: `${widgetSizePx}px`,
+                        left: activePos === "bottom-left" ? "10px" : "auto",
+                        right: activePos === "bottom-right" ? "10px" : "auto",
+                        width: `${activeSizePx}px`,
+                        height: `${activeSizePx}px`,
                         borderRadius: "50%",
                         backgroundColor: widgetColor,
                         display: "flex",
@@ -564,7 +621,7 @@ export default function Index() {
                         transition: "width 0.1s ease, height 0.1s ease",
                       }}
                     >
-                      {activeIconObj.render(widgetColor, widgetSizePx)}
+                      {activeIconObj.render(widgetColor, activeSizePx)}
                     </div>
                   </div>
                 </div>
