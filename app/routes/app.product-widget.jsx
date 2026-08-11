@@ -13,7 +13,7 @@ import {
   Banner,
   Badge,
 } from "@shopify/polaris";
-import { ExternalIcon, CheckCircleIcon, CodeIcon } from "@shopify/polaris-icons";
+import { ExternalIcon, CheckCircleIcon } from "@shopify/polaris-icons";
 import { authenticate } from "../shopify.server";
 
 export const loader = async ({ request }) => {
@@ -41,7 +41,6 @@ export const loader = async ({ request }) => {
 export default function ProductWidgetGuidePage() {
   const { shopDomain } = useLoaderData();
 
-  // Robust Theme Editor URL generation
   const cleanDomain = shopDomain ? shopDomain.replace(".myshopify.com", "") : "";
   const themeEditorUrl = cleanDomain 
     ? `https://admin.shopify.com/store/${cleanDomain}/themes/current/editor?template=product` 
@@ -74,7 +73,6 @@ export default function ProductWidgetGuidePage() {
           {/* Left Main Section */}
           <Layout.Section>
             <BlockStack gap="500">
-              {/* Step-by-Step Professional Guide */}
               <Card>
                 <BlockStack gap="400">
                   <InlineStack align="space-between" blockAlign="center">
@@ -89,18 +87,26 @@ export default function ProductWidgetGuidePage() {
                   <BlockStack gap="400">
                     {/* Step 1 */}
                     <InlineStack gap="400" align="start" blockAlign="start">
-                      <Box
-                        background="bg-surface-active"
-                        padding="300"
-                        borderRadius="200"
-                        style={{ minWidth: "36px", textAlign: "center" }}
+                      <div
+                        style={{
+                          backgroundColor: "#e4e5e7",
+                          color: "#202223",
+                          fontWeight: "bold",
+                          borderRadius: "8px",
+                          width: "36px",
+                          height: "36px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          flexShrink: 0,
+                        }}
                       >
-                        <Text variant="headingSm" as="span">1</Text>
-                      </Box>
+                        1
+                      </div>
                       <BlockStack gap="100">
                         <Text as="h3" variant="headingSm">Open the Theme Customizer</Text>
                         <Text as="p" variant="bodySm" tone="subdued">
-                          Click the <strong>"Open Theme Editor"</strong> button above or in the sidebar. This will instantly launch your live Shopify theme editor on a product page view.
+                          Click the <strong>"Open Theme Editor"</strong> button at the top right. This will instantly launch your live Shopify theme editor on a product page view.
                         </Text>
                       </BlockStack>
                     </InlineStack>
@@ -109,14 +115,22 @@ export default function ProductWidgetGuidePage() {
 
                     {/* Step 2 */}
                     <InlineStack gap="400" align="start" blockAlign="start">
-                      <Box
-                        background="bg-surface-active"
-                        padding="300"
-                        borderRadius="200"
-                        style={{ minWidth: "36px", textAlign: "center" }}
+                      <div
+                        style={{
+                          backgroundColor: "#e4e5e7",
+                          color: "#202223",
+                          fontWeight: "bold",
+                          borderRadius: "8px",
+                          width: "36px",
+                          height: "36px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          flexShrink: 0,
+                        }}
                       >
-                        <Text variant="headingSm" as="span">2</Text>
-                      </Box>
+                        2
+                      </div>
                       <BlockStack gap="100">
                         <Text as="h3" variant="headingSm">Add the App Block</Text>
                         <Text as="p" variant="bodySm" tone="subdued">
@@ -129,14 +143,22 @@ export default function ProductWidgetGuidePage() {
 
                     {/* Step 3 */}
                     <InlineStack gap="400" align="start" blockAlign="start">
-                      <Box
-                        background="bg-surface-active"
-                        padding="300"
-                        borderRadius="200"
-                        style={{ minWidth: "36px", textAlign: "center" }}
+                      <div
+                        style={{
+                          backgroundColor: "#e4e5e7",
+                          color: "#202223",
+                          fontWeight: "bold",
+                          borderRadius: "8px",
+                          width: "36px",
+                          height: "36px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          flexShrink: 0,
+                        }}
                       >
-                        <Text variant="headingSm" as="span">3</Text>
-                      </Box>
+                        3
+                      </div>
                       <BlockStack gap="100">
                         <Text as="h3" variant="headingSm">Position & Save Changes</Text>
                         <Text as="p" variant="bodySm" tone="subdued">
@@ -153,28 +175,6 @@ export default function ProductWidgetGuidePage() {
           {/* Right Sidebar Section */}
           <Layout.Section variant="oneThird">
             <BlockStack gap="400">
-              <Card>
-                <BlockStack gap="300">
-                  <Text as="h2" variant="headingMd">
-                    🚀 Quick Actions
-                  </Text>
-                  <Text as="p" variant="bodySm" tone="subdued">
-                    Jump straight into your store's theme editor to place the widget now.
-                  </Text>
-                  <Box paddingBlockStart="200">
-                    <Button
-                      variant="primary"
-                      icon={ExternalIcon}
-                      url={themeEditorUrl}
-                      external
-                      fullWidth
-                    >
-                      Open Product Template
-                    </Button>
-                  </Box>
-                </BlockStack>
-              </Card>
-
               <Card>
                 <BlockStack gap="300">
                   <Text as="h2" variant="headingMd">
