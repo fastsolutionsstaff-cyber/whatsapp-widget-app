@@ -306,7 +306,7 @@ export default function Help() {
               <BlockStack gap="300">
                 <BlockStack gap="100">
                   <Text as="h3" variant="headingSm">Email Support</Text>
-                  <Text as="p" tone="subdued">Send us an email anytime at:</Text>
+                  <Text as="p" tone="subdued">Click below to send us an email directly:</Text>
                   <Button url="mailto:info@fastsolutionsdeveloper.com" plain>
                     info@fastsolutionsdeveloper.com
                   </Button>
@@ -325,7 +325,7 @@ export default function Help() {
             </Card>
 
             <Text as="p" tone="subdued" variant="bodySm">
-              Working Hours: Monday – Saturday. We typically respond within 24 hours.
+              Working Hours: Monday – Saturday (9:00 AM – 6:00 PM PKT). We typically respond within 24 hours.
             </Text>
           </BlockStack>
         </Modal.Section>
