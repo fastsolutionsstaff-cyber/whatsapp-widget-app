@@ -12,12 +12,12 @@ automatically_update_urls_on_dev = true
 api_version = "2026-10"
 
   [[webhooks.subscriptions]]
-  uri = "/webhooks/app/scopes_update"
-  topics = [ "app/scopes_update" ]
-
-  [[webhooks.subscriptions]]
   uri = "/webhooks/app/uninstalled"
   topics = [ "app/uninstalled" ]
+
+  [[webhooks.subscriptions]]
+  uri = "/webhooks/app/scopes_update"
+  topics = [ "app/scopes_update" ]
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
@@ -25,23 +25,3 @@ scopes = ""
 
 [auth]
 redirect_urls = [ "https://whatsapp-widget-app.vercel.app/api/auth/callback" ]
-
-[app_navigation]
-name = "Dashboard"
-url = "/app"
-
-  [[app_navigation.subnav]]
-  name = "Additional page"
-  url = "/app/additional"
-
-  [[app_navigation.subnav]]
-  name = "Widget Analytics"
-  url = "/app/analytics"
-
-  [[app_navigation.subnav]]
-  name = "Custom Styling"
-  url = "/app/styling"
-
-  [[app_navigation.subnav]]
-  name = "FAQ & Help"
-  url = "/app/help"
