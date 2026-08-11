@@ -31,6 +31,10 @@ name = "Dashboard"
 url = "/app"
 
   [[app_navigation.subnav]]
+  name = "Additional page"
+  url = "/app/additional"
+
+  [[app_navigation.subnav]]
   name = "Widget Analytics"
   url = "/app/analytics"
 
