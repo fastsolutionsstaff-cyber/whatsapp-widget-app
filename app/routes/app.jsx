@@ -23,37 +23,27 @@ export default function App() {
   return (
     <AppProvider isEmbeddedApp apiKey={apiKey}>
       <NavMenu>
-        {/* Yeh home link ab Dashboard ban jayega */}
         <Link to="/app/dashboard" rel="home">
           Dashboard
         </Link>
-
-        {/* Customize ab alag link hoga */}
         <Link to="/app">
           Customize Widget
         </Link>
-
-        {/* Naya Product Widget Guide Link */}
         <Link to="/app/product-widget">
           Product Widget Guide
         </Link>
-
         <Link to="/app/setup">
           Setup Guide
         </Link>
-
         <Link to="/app/analytics">
           Analytics
         </Link>
-
         <Link to="/app/help">
           Help & Support
         </Link>
-
         <Link to="/app/about">
           About
         </Link>
-
         <Link to="/app/additional">
           Additional
         </Link>
