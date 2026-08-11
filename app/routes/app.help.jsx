@@ -20,6 +20,14 @@ export default function Help() {
 
   const toggleSupportModal = () => setSupportModalOpen(!supportModalOpen);
 
+  const handleEmailClick = () => {
+    window.open("mailto:info@fastsolutionsdeveloper.com?subject=WhatsApp%20Widget%20Support", "_blank");
+  };
+
+  const handleWhatsAppClick = () => {
+    window.open("https://wa.me/923225981014", "_blank");
+  };
+
   return (
     <Page
       title="Help & Support"
@@ -306,9 +314,9 @@ export default function Help() {
               <BlockStack gap="300">
                 <BlockStack gap="100">
                   <Text as="h3" variant="headingSm">Email Support</Text>
-                  <Text as="p" tone="subdued">Click the button below to open your mail app and send us a direct message:</Text>
-                  <Button url="mailto:info@fastsolutionsdeveloper.com?subject=WhatsApp%20Widget%20Support" external>
-                    Send Email (info@fastsolutionsdeveloper.com)
+                  <Text as="p" tone="subdued">Click below to open your mail app and send us a direct message:</Text>
+                  <Button onClick={handleEmailClick} plain>
+                    info@fastsolutionsdeveloper.com
                   </Button>
                 </BlockStack>
 
@@ -317,8 +325,8 @@ export default function Help() {
                 <BlockStack gap="100">
                   <Text as="h3" variant="headingSm">Phone / WhatsApp Support</Text>
                   <Text as="p" tone="subdued">Call or message us directly on WhatsApp:</Text>
-                  <Button url="https://wa.me/923225981014" external>
-                    Chat on WhatsApp (+92 322 5981014)
+                  <Button onClick={handleWhatsAppClick} plain>
+                    +92 322 5981014
                   </Button>
                 </BlockStack>
               </BlockStack>
