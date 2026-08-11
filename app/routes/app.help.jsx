@@ -10,11 +10,15 @@ import {
   TextField,
   Banner,
   Box,
+  Modal,
 } from "@shopify/polaris";
 import { useState } from "react";
 
 export default function Help() {
   const [search, setSearch] = useState("");
+  const [supportModalOpen, setSupportModalOpen] = useState(false);
+
+  const toggleSupportModal = () => setSupportModalOpen(!supportModalOpen);
 
   return (
     <Page
@@ -206,7 +210,16 @@ export default function Help() {
                     support team can help you troubleshoot your setup.
                   </Text>
 
-                  <Button variant="primary">
+                  {/* Direct details visible on page */}
+                  <Box background="bg-surface-secondary" padding="300" borderRadius="200">
+                    <BlockStack gap="100">
+                      <Text as="p" fontWeight="semibold">Direct Support:</Text>
+                      <Text as="p" tone="subdued">📧 info@fastsolutionsdeveloper.com</Text>
+                      <Text as="p" tone="subdued">📞 +92 322 5981014</Text>
+                    </BlockStack>
+                  </Box>
+
+                  <Button variant="primary" onClick={toggleSupportModal}>
                     Contact Support
                   </Button>
                 </BlockStack>
@@ -272,6 +285,52 @@ export default function Help() {
         </Card>
 
       </BlockStack>
+
+      {/* Professional Contact Support Modal */}
+      <Modal
+        open={supportModalOpen}
+        onClose={toggleSupportModal}
+        title="Contact Fast Solutions Support"
+        primaryAction={{
+          content: 'Close',
+          onAction: toggleSupportModal,
+        }}
+      >
+        <Modal.Section>
+          <BlockStack gap="400">
+            <Text as="p">
+              Our expert support team is ready to help you with any issues regarding your WhatsApp Widget setup, theme embedding, or configuration.
+            </Text>
+            
+            <Card>
+              <BlockStack gap="300">
+                <BlockStack gap="100">
+                  <Text as="h3" variant="headingSm">Email Support</Text>
+                  <Text as="p" tone="subdued">Send us an email anytime at:</Text>
+                  <Button url="mailto:info@fastsolutionsdeveloper.com" plain>
+                    info@fastsolutionsdeveloper.com
+                  </Button>
+                </BlockStack>
+
+                <Divider />
+
+                <BlockStack gap="100">
+                  <Text as="h3" variant="headingSm">Phone / WhatsApp Support</Text>
+                  <Text as="p" tone="subdued">Call or message us directly:</Text>
+                  <Button url="https://wa.me/923225981014" external plain>
+                    +92 322 5981014
+                  </Button>
+                </BlockStack>
+              </BlockStack>
+            </Card>
+
+            <Text as="p" tone="subdued" variant="bodySm">
+              Working Hours: Monday – Saturday. We typically respond within 24 hours.
+            </Text>
+          </BlockStack>
+        </Modal.Section>
+      </Modal>
+
     </Page>
   );
 }

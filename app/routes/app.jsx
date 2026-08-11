@@ -23,12 +23,18 @@ export default function App() {
   return (
     <AppProvider isEmbeddedApp apiKey={apiKey}>
       <NavMenu>
-        <Link to="/app/setup">
-          Setup Guide
+        {/* Yeh home link ab Dashboard ban jayega */}
+        <Link to="/app/dashboard" rel="home">
+          Dashboard
         </Link>
 
-        <Link to="/app" rel="home">
-          Customize
+        {/* Customize ab alag link hoga */}
+        <Link to="/app">
+          Customize Widget
+        </Link>
+
+        <Link to="/app/setup">
+          Setup Guide
         </Link>
 
         <Link to="/app/analytics">
@@ -52,11 +58,3 @@ export default function App() {
     </AppProvider>
   );
 }
-
-export function ErrorBoundary() {
-  return boundary.error(useRouteError());
-}
-
-export const headers = (headersArgs) => {
-  return boundary.headers(headersArgs);
-};
