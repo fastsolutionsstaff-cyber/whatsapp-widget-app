@@ -21,7 +21,7 @@ export default function Help() {
   const toggleSupportModal = () => setSupportModalOpen(!supportModalOpen);
 
   const handleEmailClick = () => {
-    window.open("mailto:info@fastsolutionsdeveloper.com?subject=WhatsApp%20Widget%20Support", "_blank");
+    window.location.href = "mailto:info@fastsolutionsdeveloper.com?subject=WhatsApp%20Widget%20Support";
   };
 
   const handleWhatsAppClick = () => {
