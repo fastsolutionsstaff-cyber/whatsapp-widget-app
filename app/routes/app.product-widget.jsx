@@ -11,8 +11,9 @@ import {
   Box,
   Divider,
   Banner,
+  Badge,
 } from "@shopify/polaris";
-import { ExternalIcon, InfoIcon } from "@shopify/polaris-icons";
+import { ExternalIcon, CheckCircleIcon, CodeIcon } from "@shopify/polaris-icons";
 import { authenticate } from "../shopify.server";
 
 export const loader = async ({ request }) => {
@@ -40,103 +41,159 @@ export const loader = async ({ request }) => {
 export default function ProductWidgetGuidePage() {
   const { shopDomain } = useLoaderData();
 
-  const themeEditorUrl = shopDomain 
-    ? `https://admin.shopify.com/store/${shopDomain.split('.')[0]}/themes/current/editor?template=product` 
+  // Robust Theme Editor URL generation
+  const cleanDomain = shopDomain ? shopDomain.replace(".myshopify.com", "") : "";
+  const themeEditorUrl = cleanDomain 
+    ? `https://admin.shopify.com/store/${cleanDomain}/themes/current/editor?template=product` 
     : "https://admin.shopify.com";
 
   return (
     <Page
       title="Product Page Widget Integration"
-      subtitle="Learn how to display and manage the WhatsApp widget right below the Add to Cart button on your product pages."
+      subtitle="Embed the WhatsApp button directly below your Buy Buttons to skyrocket customer inquiries."
+      primaryAction={
+        <Button
+          variant="primary"
+          icon={ExternalIcon}
+          url={themeEditorUrl}
+          external
+          size="large"
+        >
+          Open Theme Editor
+        </Button>
+      }
     >
       <BlockStack gap="500">
-        <Banner title="Native Theme Block Integration" tone="info" icon={InfoIcon}>
+        <Banner tone="success" title="Ready to Boost Conversions?">
           <p>
-            Our app uses Shopify’s modern Theme Blocks architecture. This ensures blazing-fast speed, zero layout shift, and seamless alignment right below your Add to Cart button.
+            Adding the WhatsApp chat button directly on product pages helps resolve buyer hesitation instantly, leading to higher conversion rates.
           </p>
         </Banner>
 
         <Layout>
+          {/* Left Main Section */}
           <Layout.Section>
-            <BlockStack gap="400">
-              {/* Quick Action Card */}
+            <BlockStack gap="500">
+              {/* Step-by-Step Professional Guide */}
               <Card>
                 <BlockStack gap="400">
-                  <Text as="h2" variant="headingMd">
-                    🚀 Quick Setup in Theme Editor
-                  </Text>
-                  <Text as="p" tone="subdued">
-                    Click the button below to open your store's product template directly in the Shopify Theme Customizer.
-                  </Text>
-                  <Box>
-                    <Button
-                      variant="primary"
-                      size="large"
-                      icon={ExternalIcon}
-                      url={themeEditorUrl}
-                      external
-                    >
-                      Open Product Template in Theme Editor
-                    </Button>
-                  </Box>
-                </BlockStack>
-              </Card>
+                  <InlineStack align="space-between" blockAlign="center">
+                    <Text as="h2" variant="headingMd">
+                      📋 Step-by-Step Integration Guide
+                    </Text>
+                    <Badge tone="info">Takes less than 1 min</Badge>
+                  </InlineStack>
 
-              {/* Step-by-Step Instructions */}
-              <Card>
-                <BlockStack gap="400">
-                  <Text as="h2" variant="headingMd">
-                    Step-by-Step Instructions
-                  </Text>
+                  <Divider />
 
-                  <BlockStack gap="300">
-                    <Box padding="300" background="bg-surface-secondary" borderRadius="200">
+                  <BlockStack gap="400">
+                    {/* Step 1 */}
+                    <InlineStack gap="400" align="start" blockAlign="start">
+                      <Box
+                        background="bg-surface-active"
+                        padding="300"
+                        borderRadius="200"
+                        style={{ minWidth: "36px", textAlign: "center" }}
+                      >
+                        <Text variant="headingSm" as="span">1</Text>
+                      </Box>
                       <BlockStack gap="100">
-                        <Text as="h3" variant="headingSm">1. Navigate to Product Information</Text>
+                        <Text as="h3" variant="headingSm">Open the Theme Customizer</Text>
                         <Text as="p" variant="bodySm" tone="subdued">
-                          In the theme editor sidebar, look for the **Product Information** section under your Product template.
+                          Click the <strong>"Open Theme Editor"</strong> button above or in the sidebar. This will instantly launch your live Shopify theme editor on a product page view.
                         </Text>
                       </BlockStack>
-                    </Box>
+                    </InlineStack>
 
-                    <Box padding="300" background="bg-surface-secondary" borderRadius="200">
+                    <Divider />
+
+                    {/* Step 2 */}
+                    <InlineStack gap="400" align="start" blockAlign="start">
+                      <Box
+                        background="bg-surface-active"
+                        padding="300"
+                        borderRadius="200"
+                        style={{ minWidth: "36px", textAlign: "center" }}
+                      >
+                        <Text variant="headingSm" as="span">2</Text>
+                      </Box>
                       <BlockStack gap="100">
-                        <Text as="h3" variant="headingSm">2. Add App Block</Text>
+                        <Text as="h3" variant="headingSm">Add the App Block</Text>
                         <Text as="p" variant="bodySm" tone="subdued">
-                          Click on **Add block** inside the Product Information section and select our WhatsApp Add-to-Cart widget block.
+                          In the left sidebar of your theme editor, look under the <strong>Product Information</strong> section. Click <strong>Add block</strong> and select our WhatsApp widget.
                         </Text>
                       </BlockStack>
-                    </Box>
+                    </InlineStack>
 
-                    <Box padding="300" background="bg-surface-secondary" borderRadius="200">
+                    <Divider />
+
+                    {/* Step 3 */}
+                    <InlineStack gap="400" align="start" blockAlign="start">
+                      <Box
+                        background="bg-surface-active"
+                        padding="300"
+                        borderRadius="200"
+                        style={{ minWidth: "36px", textAlign: "center" }}
+                      >
+                        <Text variant="headingSm" as="span">3</Text>
+                      </Box>
                       <BlockStack gap="100">
-                        <Text as="h3" variant="headingSm">3. Position & Save</Text>
+                        <Text as="h3" variant="headingSm">Position & Save Changes</Text>
                         <Text as="p" variant="bodySm" tone="subdued">
-                          Drag and drop the block right below your **Buy buttons** (Add to Cart) element, customize its text or color, and click **Save**.
+                          Drag and drop the block right underneath your <strong>Buy buttons (Add to Cart)</strong> element, configure text if needed, and hit <strong>Save</strong> in the top right corner.
                         </Text>
                       </BlockStack>
-                    </Box>
+                    </InlineStack>
                   </BlockStack>
                 </BlockStack>
               </Card>
             </BlockStack>
           </Layout.Section>
 
-          {/* Sidebar / Tips */}
+          {/* Right Sidebar Section */}
           <Layout.Section variant="oneThird">
             <BlockStack gap="400">
               <Card>
                 <BlockStack gap="300">
                   <Text as="h2" variant="headingMd">
-                    💡 Why Theme Blocks?
+                    🚀 Quick Actions
                   </Text>
                   <Text as="p" variant="bodySm" tone="subdued">
-                    Placing widgets directly through Shopify blocks ensures it dynamically detects the current product's name, image, and link, allowing customers to chat with you about a specific item instantly!
+                    Jump straight into your store's theme editor to place the widget now.
                   </Text>
-                  <Divider />
-                  <Button url={themeEditorUrl} external plain>
-                    Go to Editor →
-                  </Button>
+                  <Box paddingBlockStart="200">
+                    <Button
+                      variant="primary"
+                      icon={ExternalIcon}
+                      url={themeEditorUrl}
+                      external
+                      fullWidth
+                    >
+                      Open Product Template
+                    </Button>
+                  </Box>
+                </BlockStack>
+              </Card>
+
+              <Card>
+                <BlockStack gap="300">
+                  <Text as="h2" variant="headingMd">
+                    💡 Pro Benefits
+                  </Text>
+                  <BlockStack gap="200">
+                    <InlineStack gap="200" align="start">
+                      <CheckCircleIcon width={20} fill="green" />
+                      <Text as="p" variant="bodySm">Auto-detects current product name and link.</Text>
+                    </InlineStack>
+                    <InlineStack gap="200" align="start">
+                      <CheckCircleIcon width={20} fill="green" />
+                      <Text as="p" variant="bodySm">Zero impact on store loading speed.</Text>
+                    </InlineStack>
+                    <InlineStack gap="200" align="start">
+                      <CheckCircleIcon width={20} fill="green" />
+                      <Text as="p" variant="bodySm">Fully responsive across mobile & desktop.</Text>
+                    </InlineStack>
+                  </BlockStack>
                 </BlockStack>
               </Card>
             </BlockStack>

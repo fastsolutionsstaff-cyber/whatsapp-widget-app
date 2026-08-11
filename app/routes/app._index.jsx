@@ -18,7 +18,6 @@ import {
   ButtonGroup,
   RangeSlider,
   Divider,
-  Checkbox,
 } from "@shopify/polaris";
 import { authenticate } from "../shopify.server";
 
@@ -138,11 +137,6 @@ export const loader = async ({ request }) => {
       mobileWidgetSizePx: 48,
       greetingHeader: "Chat with us on WhatsApp",
       greetingSubtext: "We typically reply in a few minutes.",
-      isEnabled: "true",
-      // Add to Cart Widget Settings
-      enableAddToCartButton: "true",
-      addToCartButtonText: "Ask about this product",
-      addToCartButtonColor: "#25D366",
     };
 
     return json(
@@ -163,10 +157,6 @@ export const loader = async ({ request }) => {
         mobileWidgetSizePx: 48,
         greetingHeader: "Chat with us on WhatsApp",
         greetingSubtext: "We typically reply in a few minutes.",
-        isEnabled: "true",
-        enableAddToCartButton: "true",
-        addToCartButtonText: "Ask about this product",
-        addToCartButtonColor: "#25D366",
       },
     });
   }
@@ -177,8 +167,8 @@ export const action = async ({ request }) => {
   const formData = await request.formData();
 
   const settingsPayload = {
-    phoneNumber: formData.get("phoneNumber") || "",
-    defaultMessage: formData.get("defaultMessage") || "",
+    phoneNumber: formData.get("phoneNumber") || "923424593231",
+    defaultMessage: formData.get("defaultMessage") || "Hello! I have a question about your store.",
     widgetColor: formData.get("widgetColor") || "#25D366",
     selectedIcon: formData.get("selectedIcon") || "whatsapp-classic",
     customIconUrl: formData.get("customIconUrl") || "",
@@ -188,11 +178,6 @@ export const action = async ({ request }) => {
     mobileWidgetSizePx: Number(formData.get("mobileWidgetSizePx")) || 48,
     greetingHeader: formData.get("greetingHeader") || "Chat with us on WhatsApp",
     greetingSubtext: formData.get("greetingSubtext") || "We typically reply in a few minutes.",
-    isEnabled: "true",
-    // Add to Cart fields
-    enableAddToCartButton: formData.get("enableAddToCartButton") || "false",
-    addToCartButtonText: formData.get("addToCartButtonText") || "Ask about this product",
-    addToCartButtonColor: formData.get("addToCartButtonColor") || "#25D366",
   };
 
   try {
@@ -268,21 +253,14 @@ export default function Index() {
   const [selectedIcon, setSelectedIcon] = useState(loadedSettings.selectedIcon || "whatsapp-classic");
   const [customIconUrl, setCustomIconUrl] = useState(loadedSettings.customIconUrl || "");
 
-  // Desktop Sizing & Position
   const [position, setPosition] = useState(loadedSettings.position);
   const [widgetSizePx, setWidgetSizePx] = useState(Number(loadedSettings.widgetSizePx) || 56);
 
-  // Mobile Sizing & Position
   const [mobilePosition, setMobilePosition] = useState(loadedSettings.mobilePosition || loadedSettings.position);
   const [mobileWidgetSizePx, setMobileWidgetSizePx] = useState(Number(loadedSettings.mobileWidgetSizePx) || 48);
 
   const [greetingHeader, setGreetingHeader] = useState(loadedSettings.greetingHeader);
   const [greetingSubtext, setGreetingSubtext] = useState(loadedSettings.greetingSubtext);
-
-  // Add to Cart Widget States
-  const [enableAddToCartButton, setEnableAddToCartButton] = useState(loadedSettings.enableAddToCartButton === "true");
-  const [addToCartButtonText, setAddToCartButtonText] = useState(loadedSettings.addToCartButtonText || "Ask about this product");
-  const [addToCartButtonColor, setAddToCartButtonColor] = useState(loadedSettings.addToCartButtonColor || "#25D366");
 
   const [previewDevice, setPreviewDevice] = useState("desktop");
   const [savedSuccess, setSavedSuccess] = useState(false);
@@ -300,9 +278,6 @@ export default function Index() {
       setMobileWidgetSizePx(Number(actionData.settings.mobileWidgetSizePx) || 48);
       setGreetingHeader(actionData.settings.greetingHeader);
       setGreetingSubtext(actionData.settings.greetingSubtext);
-      setEnableAddToCartButton(actionData.settings.enableAddToCartButton === "true");
-      setAddToCartButtonText(actionData.settings.addToCartButtonText);
-      setAddToCartButtonColor(actionData.settings.addToCartButtonColor);
 
       setSavedSuccess(true);
       const timer = setTimeout(() => setSavedSuccess(false), 4000);
@@ -325,9 +300,6 @@ export default function Index() {
     formData.append("mobileWidgetSizePx", mobileWidgetSizePx.toString());
     formData.append("greetingHeader", greetingHeader);
     formData.append("greetingSubtext", greetingSubtext);
-    formData.append("enableAddToCartButton", enableAddToCartButton ? "true" : "false");
-    formData.append("addToCartButtonText", addToCartButtonText);
-    formData.append("addToCartButtonColor", addToCartButtonColor);
 
     submit(formData, { method: "post" });
   };
@@ -352,7 +324,7 @@ export default function Index() {
         <Layout>
           <Layout.Section>
             <BlockStack gap="400">
-              {/* Merchant Setup */}
+              {/* Merchant Setup Card (KEPT INTACT) */}
               <Card>
                 <BlockStack gap="400">
                   <Text as="h2" variant="headingMd">
@@ -360,14 +332,15 @@ export default function Index() {
                   </Text>
                   <TextField
                     label="WhatsApp Phone Number"
-                    type="text"
+                    placeholder="923424593231"
                     value={phoneNumber}
                     onChange={setPhoneNumber}
+                    helpText="Include country code without '+' sign (e.g. 923424593231)"
                     autoComplete="off"
                   />
                   <TextField
                     label="Default Message Prefix"
-                    type="text"
+                    placeholder="Hello! I have a question about your store."
                     value={defaultMessage}
                     onChange={setDefaultMessage}
                     autoComplete="off"
@@ -375,7 +348,7 @@ export default function Index() {
                 </BlockStack>
               </Card>
 
-              {/* Style & Size Customization */}
+              {/* Style & Size Customization (KEPT INTACT) */}
               <Card>
                 <BlockStack gap="400">
                   <Text as="h2" variant="headingMd">
@@ -505,51 +478,7 @@ export default function Index() {
                 </BlockStack>
               </Card>
 
-              {/* Add to Cart Button Settings */}
-              <Card>
-                <BlockStack gap="400">
-                  <Text as="h2" variant="headingMd">
-                    Product Page (Add to Cart) Button
-                  </Text>
-                  <Text as="p" tone="subdued">
-                    Configure the WhatsApp button that appears below the Add to Cart button on product pages.
-                  </Text>
-
-                  <Checkbox
-                    label="Enable Add to Cart WhatsApp Button"
-                    checked={enableAddToCartButton}
-                    onChange={setEnableAddToCartButton}
-                  />
-
-                  {enableAddToCartButton && (
-                    <BlockStack gap="300">
-                      <TextField
-                        label="Button Text"
-                        value={addToCartButtonText}
-                        onChange={setAddToCartButtonText}
-                        autoComplete="off"
-                      />
-
-                      <InlineStack gap="300" align="start" blockAlign="end">
-                        <Box style={{ width: "110px" }}>
-                          <TextField
-                            label="Button Color"
-                            type="color"
-                            value={addToCartButtonColor}
-                            onChange={setAddToCartButtonColor}
-                            autoComplete="off"
-                          />
-                        </Box>
-                        <Box style={{ paddingBottom: "8px" }}>
-                          <Badge tone="info">{addToCartButtonColor.toUpperCase()}</Badge>
-                        </Box>
-                      </InlineStack>
-                    </BlockStack>
-                  )}
-                </BlockStack>
-              </Card>
-
-              {/* Popup Customization */}
+              {/* Popup Customization Card (KEPT INTACT) */}
               <Card>
                 <BlockStack gap="400">
                   <Text as="h2" variant="headingMd">
