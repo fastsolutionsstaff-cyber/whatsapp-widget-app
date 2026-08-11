@@ -18,6 +18,7 @@ import {
   ButtonGroup,
   RangeSlider,
   Divider,
+  Checkbox,
 } from "@shopify/polaris";
 import { authenticate } from "../shopify.server";
 
@@ -138,6 +139,10 @@ export const loader = async ({ request }) => {
       greetingHeader: "Chat with us on WhatsApp",
       greetingSubtext: "We typically reply in a few minutes.",
       isEnabled: "true",
+      // Add to Cart Widget Settings
+      enableAddToCartButton: "true",
+      addToCartButtonText: "Ask about this product",
+      addToCartButtonColor: "#25D366",
     };
 
     return json(
@@ -159,6 +164,9 @@ export const loader = async ({ request }) => {
         greetingHeader: "Chat with us on WhatsApp",
         greetingSubtext: "We typically reply in a few minutes.",
         isEnabled: "true",
+        enableAddToCartButton: "true",
+        addToCartButtonText: "Ask about this product",
+        addToCartButtonColor: "#25D366",
       },
     });
   }
@@ -181,6 +189,10 @@ export const action = async ({ request }) => {
     greetingHeader: formData.get("greetingHeader") || "Chat with us on WhatsApp",
     greetingSubtext: formData.get("greetingSubtext") || "We typically reply in a few minutes.",
     isEnabled: "true",
+    // Add to Cart fields
+    enableAddToCartButton: formData.get("enableAddToCartButton") || "false",
+    addToCartButtonText: formData.get("addToCartButtonText") || "Ask about this product",
+    addToCartButtonColor: formData.get("addToCartButtonColor") || "#25D366",
   };
 
   try {
@@ -267,6 +279,11 @@ export default function Index() {
   const [greetingHeader, setGreetingHeader] = useState(loadedSettings.greetingHeader);
   const [greetingSubtext, setGreetingSubtext] = useState(loadedSettings.greetingSubtext);
 
+  // Add to Cart Widget States
+  const [enableAddToCartButton, setEnableAddToCartButton] = useState(loadedSettings.enableAddToCartButton === "true");
+  const [addToCartButtonText, setAddToCartButtonText] = useState(loadedSettings.addToCartButtonText || "Ask about this product");
+  const [addToCartButtonColor, setAddToCartButtonColor] = useState(loadedSettings.addToCartButtonColor || "#25D366");
+
   const [previewDevice, setPreviewDevice] = useState("desktop");
   const [savedSuccess, setSavedSuccess] = useState(false);
 
@@ -283,6 +300,9 @@ export default function Index() {
       setMobileWidgetSizePx(Number(actionData.settings.mobileWidgetSizePx) || 48);
       setGreetingHeader(actionData.settings.greetingHeader);
       setGreetingSubtext(actionData.settings.greetingSubtext);
+      setEnableAddToCartButton(actionData.settings.enableAddToCartButton === "true");
+      setAddToCartButtonText(actionData.settings.addToCartButtonText);
+      setAddToCartButtonColor(actionData.settings.addToCartButtonColor);
 
       setSavedSuccess(true);
       const timer = setTimeout(() => setSavedSuccess(false), 4000);
@@ -305,6 +325,9 @@ export default function Index() {
     formData.append("mobileWidgetSizePx", mobileWidgetSizePx.toString());
     formData.append("greetingHeader", greetingHeader);
     formData.append("greetingSubtext", greetingSubtext);
+    formData.append("enableAddToCartButton", enableAddToCartButton ? "true" : "false");
+    formData.append("addToCartButtonText", addToCartButtonText);
+    formData.append("addToCartButtonColor", addToCartButtonColor);
 
     submit(formData, { method: "post" });
   };
@@ -479,6 +502,50 @@ export default function Index() {
                       />
                     </Grid.Cell>
                   </Grid>
+                </BlockStack>
+              </Card>
+
+              {/* Add to Cart Button Settings */}
+              <Card>
+                <BlockStack gap="400">
+                  <Text as="h2" variant="headingMd">
+                    Product Page (Add to Cart) Button
+                  </Text>
+                  <Text as="p" tone="subdued">
+                    Configure the WhatsApp button that appears below the Add to Cart button on product pages.
+                  </Text>
+
+                  <Checkbox
+                    label="Enable Add to Cart WhatsApp Button"
+                    checked={enableAddToCartButton}
+                    onChange={setEnableAddToCartButton}
+                  />
+
+                  {enableAddToCartButton && (
+                    <BlockStack gap="300">
+                      <TextField
+                        label="Button Text"
+                        value={addToCartButtonText}
+                        onChange={setAddToCartButtonText}
+                        autoComplete="off"
+                      />
+
+                      <InlineStack gap="300" align="start" blockAlign="end">
+                        <Box style={{ width: "110px" }}>
+                          <TextField
+                            label="Button Color"
+                            type="color"
+                            value={addToCartButtonColor}
+                            onChange={setAddToCartButtonColor}
+                            autoComplete="off"
+                          />
+                        </Box>
+                        <Box style={{ paddingBottom: "8px" }}>
+                          <Badge tone="info">{addToCartButtonColor.toUpperCase()}</Badge>
+                        </Box>
+                      </InlineStack>
+                    </BlockStack>
+                  )}
                 </BlockStack>
               </Card>
 
