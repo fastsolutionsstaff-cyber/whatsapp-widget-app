@@ -18,10 +18,17 @@ export default function Help() {
   const [search, setSearch] = useState("");
   const [supportModalOpen, setSupportModalOpen] = useState(false);
 
-  const toggleSupportModal = () => setSupportModalOpen(!supportModalOpen);
+  const toggleSupportModal = () => {
+    setSupportModalOpen((open) => !open);
+  };
 
   const handleEmailClick = () => {
-    window.location.href = "mailto:info@fastsolutionsdeveloper.com?subject=WhatsApp%20Widget%20Support";
+    const subject = encodeURIComponent("WhatsApp Widget Support");
+    const body = encodeURIComponent(
+      "Hello Fast Solutions Support,\n\nI need help with my WhatsApp Widget.\n\nStore URL:\nIssue:\n\nThank you."
+    );
+
+    window.location.href = `mailto:info@fastsolutionsdeveloper.com?subject=${subject}&body=${body}`;
   };
 
   const handleWhatsAppClick = () => {
@@ -60,11 +67,12 @@ export default function Help() {
           </BlockStack>
         </Card>
 
-        {/* Getting Started */}
+        {/* Main Content */}
         <Layout>
           <Layout.Section>
             <BlockStack gap="400">
 
+              {/* Getting Started */}
               <Card>
                 <BlockStack gap="300">
                   <Text as="h2" variant="headingMd">
@@ -147,6 +155,7 @@ export default function Help() {
                   <Divider />
 
                   <BlockStack gap="400">
+
                     <BlockStack gap="100">
                       <Text as="h3" variant="headingSm">
                         Why isn't my widget appearing?
@@ -196,6 +205,7 @@ export default function Help() {
                         position and popup greeting.
                       </Text>
                     </BlockStack>
+
                   </BlockStack>
                 </BlockStack>
               </Card>
@@ -207,8 +217,10 @@ export default function Help() {
           <Layout.Section variant="oneThird">
             <BlockStack gap="400">
 
+              {/* Support Card */}
               <Card>
                 <BlockStack gap="300">
+
                   <Text as="h2" variant="headingMd">
                     Need more help?
                   </Text>
@@ -218,23 +230,40 @@ export default function Help() {
                     support team can help you troubleshoot your setup.
                   </Text>
 
-                  {/* Direct details visible on page */}
-                  <Box background="bg-surface-secondary" padding="300" borderRadius="200">
+                  <Box
+                    background="bg-surface-secondary"
+                    padding="300"
+                    borderRadius="200"
+                  >
                     <BlockStack gap="100">
-                      <Text as="p" fontWeight="semibold">Direct Support:</Text>
-                      <Text as="p" tone="subdued">📧 info@fastsolutionsdeveloper.com</Text>
-                      <Text as="p" tone="subdued">📞 +92 322 5981014</Text>
+                      <Text as="p" fontWeight="semibold">
+                        Direct Support:
+                      </Text>
+
+                      <Text as="p" tone="subdued">
+                        📧 info@fastsolutionsdeveloper.com
+                      </Text>
+
+                      <Text as="p" tone="subdued">
+                        📞 +92 322 5981014
+                      </Text>
                     </BlockStack>
                   </Box>
 
-                  <Button variant="primary" onClick={toggleSupportModal}>
+                  <Button
+                    variant="primary"
+                    onClick={toggleSupportModal}
+                  >
                     Contact Support
                   </Button>
+
                 </BlockStack>
               </Card>
 
+              {/* Quick Links */}
               <Card>
                 <BlockStack gap="300">
+
                   <Text as="h2" variant="headingMd">
                     Quick Links
                   </Text>
@@ -252,6 +281,7 @@ export default function Help() {
                   <Button url="/app/dashboard">
                     Dashboard
                   </Button>
+
                 </BlockStack>
               </Card>
 
@@ -294,47 +324,69 @@ export default function Help() {
 
       </BlockStack>
 
-      {/* Professional Contact Support Modal */}
+      {/* Contact Support Modal */}
       <Modal
         open={supportModalOpen}
         onClose={toggleSupportModal}
         title="Contact Fast Solutions Support"
         primaryAction={{
-          content: 'Close',
+          content: "Close",
           onAction: toggleSupportModal,
         }}
       >
         <Modal.Section>
           <BlockStack gap="400">
+
             <Text as="p">
-              Our expert support team is ready to help you with any issues regarding your WhatsApp Widget setup, theme embedding, or configuration.
+              Our expert support team is ready to help you with any issues
+              regarding your WhatsApp Widget setup, theme embedding, or
+              configuration.
             </Text>
-            
+
             <Card>
               <BlockStack gap="300">
+
+                {/* Email Support */}
                 <BlockStack gap="100">
-                  <Text as="h3" variant="headingSm">Email Support</Text>
-                  <Text as="p" tone="subdued">Click below to open your mail app and send us a direct message:</Text>
-                  <Button onClick={handleEmailClick} plain>
+                  <Text as="h3" variant="headingSm">
+                    Email Support
+                  </Text>
+
+                  <Text as="p" tone="subdued">
+                    Click below to open your mail app and send us a direct
+                    support message.
+                  </Text>
+
+                  <Button onClick={handleEmailClick}>
                     info@fastsolutionsdeveloper.com
                   </Button>
                 </BlockStack>
 
                 <Divider />
 
+                {/* WhatsApp Support */}
                 <BlockStack gap="100">
-                  <Text as="h3" variant="headingSm">Phone / WhatsApp Support</Text>
-                  <Text as="p" tone="subdued">Call or message us directly on WhatsApp:</Text>
-                  <Button onClick={handleWhatsAppClick} plain>
+                  <Text as="h3" variant="headingSm">
+                    Phone / WhatsApp Support
+                  </Text>
+
+                  <Text as="p" tone="subdued">
+                    Call or message us directly on WhatsApp.
+                  </Text>
+
+                  <Button onClick={handleWhatsAppClick}>
                     +92 322 5981014
                   </Button>
                 </BlockStack>
+
               </BlockStack>
             </Card>
 
             <Text as="p" tone="subdued" variant="bodySm">
-              Working Hours: Monday – Saturday (9:00 AM – 6:00 PM PKT). We typically respond within 24 hours.
+              Working Hours: Monday – Saturday (9:00 AM – 6:00 PM PKT).
+              We typically respond within 24 hours.
             </Text>
+
           </BlockStack>
         </Modal.Section>
       </Modal>
