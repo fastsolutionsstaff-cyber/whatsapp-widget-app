@@ -306,9 +306,9 @@ export default function Help() {
               <BlockStack gap="300">
                 <BlockStack gap="100">
                   <Text as="h3" variant="headingSm">Email Support</Text>
-                  <Text as="p" tone="subdued">Click below to send us an email directly:</Text>
-                  <Button url="mailto:info@fastsolutionsdeveloper.com" plain>
-                    info@fastsolutionsdeveloper.com
+                  <Text as="p" tone="subdued">Click the button below to open your mail app and send us a direct message:</Text>
+                  <Button url="mailto:info@fastsolutionsdeveloper.com?subject=WhatsApp%20Widget%20Support" external>
+                    Send Email (info@fastsolutionsdeveloper.com)
                   </Button>
                 </BlockStack>
 
@@ -316,9 +316,9 @@ export default function Help() {
 
                 <BlockStack gap="100">
                   <Text as="h3" variant="headingSm">Phone / WhatsApp Support</Text>
-                  <Text as="p" tone="subdued">Call or message us directly:</Text>
-                  <Button url="https://wa.me/923225981014" external plain>
-                    +92 322 5981014
+                  <Text as="p" tone="subdued">Call or message us directly on WhatsApp:</Text>
+                  <Button url="https://wa.me/923225981014" external>
+                    Chat on WhatsApp (+92 322 5981014)
                   </Button>
                 </BlockStack>
               </BlockStack>
