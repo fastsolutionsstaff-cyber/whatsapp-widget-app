@@ -33,6 +33,11 @@ export default function App() {
           Customize Widget
         </Link>
 
+        {/* Naya Product Widget Guide Link */}
+        <Link to="/app/product-widget">
+          Product Widget Guide
+        </Link>
+
         <Link to="/app/setup">
           Setup Guide
         </Link>
@@ -58,3 +63,11 @@ export default function App() {
     </AppProvider>
   );
 }
+
+export function ErrorBoundary() {
+  return boundary.error(useRouteError());
+}
+
+export const headers = (headersArgs) => {
+  return boundary.headers(headersArgs);
+};
