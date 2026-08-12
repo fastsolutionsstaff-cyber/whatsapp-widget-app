@@ -1,3 +1,4 @@
+{% unless template contains 'product' %}
 {% comment %} Read metafields saved from Admin Dashboard {% endcomment %}
 {% assign app_settings = app.metafields.whatsapp_widget.settings.value %}
 {% assign phone_number = app_settings.phoneNumber %}
@@ -260,6 +261,7 @@
     }
   })();
 </script>
+{% endunless %}
 
 {% schema %}
 {
