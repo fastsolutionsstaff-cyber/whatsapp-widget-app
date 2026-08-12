@@ -22,15 +22,6 @@ export default function Help() {
     setSupportModalOpen((open) => !open);
   };
 
-  const handleEmailClick = () => {
-    const subject = encodeURIComponent("WhatsApp Widget Support");
-    const body = encodeURIComponent(
-      "Hello Fast Solutions Support,\n\nI need help with my WhatsApp Widget.\n\nStore URL:\nIssue:\n\nThank you."
-    );
-
-    window.location.href = `mailto:info@fastsolutionsdeveloper.com?subject=${subject}&body=${body}`;
-  };
-
   const handleWhatsAppClick = () => {
     window.open("https://wa.me/923225981014", "_blank");
   };
@@ -357,7 +348,9 @@ export default function Help() {
                     support message.
                   </Text>
 
-                  <Button onClick={handleEmailClick}>
+                  <Button 
+                    url="mailto:info@fastsolutionsdeveloper.com?subject=WhatsApp%20Widget%20Support&body=Hello%20Fast%20Solutions%20Support,%0D%0A%0D%0AI%20need%20help%20with%20my%20WhatsApp%20Widget.%0D%0A%0D%0AStore%20URL:%0D%0AIssue:%0D%0A%0D%0AThank%20you."
+                  >
                     info@fastsolutionsdeveloper.com
                   </Button>
                 </BlockStack>

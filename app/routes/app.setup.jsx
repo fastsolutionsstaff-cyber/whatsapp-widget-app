@@ -1,6 +1,21 @@
 import { Page, Layout, Card, Text, BlockStack, InlineStack, Button, Badge, Banner, Divider } from "@shopify/polaris";
+import { json } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
+import { authenticate } from "../shopify.server";
+
+export async function loader({ request }) {
+  const { session } = await authenticate.admin(request);
+  return json({ shop: session.shop });
+}
 
 export default function Setup() {
+  const { shop } = useLoaderData();
+
+  // Extract shop name safely for theme editor URL
+  const shopifyDomain = shop ? shop.replace(".myshopify.com", "") : "";
+  const themeEditorUrl = `https://admin.shopify.com/store/${shopifyDomain}/themes/current/editor`;
+  const storefrontUrl = `https://${shop}`;
+
   return (
     <Page
       title="Setup Guide"
@@ -90,7 +105,7 @@ export default function Setup() {
                     Widget app block to your storefront.
                   </Text>
 
-                  <Button>
+                  <Button url={themeEditorUrl} external>
                     Open Theme Editor
                   </Button>
                 </BlockStack>
@@ -115,7 +130,7 @@ export default function Setup() {
                     make sure everything is working correctly.
                   </Text>
 
-                  <Button>
+                  <Button url={storefrontUrl} external>
                     Test Widget
                   </Button>
                 </BlockStack>
