@@ -25,8 +25,7 @@ export async function action({ request }) {
       });
     }
 
-    // 2. Check karein agar plan Starter hai aur 100 clicks ho chuke hain
-    // (Pro plan walon ke liye yeh check bypass ho jayega)
+    // 2. Starter plan ke liye 100 clicks ki limit check karein
     if (storeSetting.plan === "starter-plan" && storeSetting.clickCount >= 100) {
       return json({ 
         success: false, 
@@ -35,14 +34,14 @@ export async function action({ request }) {
       });
     }
 
-    // 3. Click count increment karein (Chahe Starter ho (100 se kam) ya Pro plan ho)
+    // 3. Click count barha dein
     const updatedSetting = await prisma.storeSetting.update({
       where: { shop },
       data: { clickCount: { increment: 1 } },
     });
 
     return json({ 
-      success: true, 
+      success: false, // (Agar aap chahte hain ke pehle WhatsApp khule, to isko apne frontend ke hisab se set rakhein)
       clickCount: updatedSetting.clickCount,
       plan: updatedSetting.plan 
     });
