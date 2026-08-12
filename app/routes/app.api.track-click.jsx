@@ -26,6 +26,7 @@ export async function action({ request }) {
     }
 
     // 2. Check karein agar plan Starter hai aur 100 clicks ho chuke hain
+    // (Pro plan walon ke liye yeh check bypass ho jayega)
     if (storeSetting.plan === "starter-plan" && storeSetting.clickCount >= 100) {
       return json({ 
         success: false, 
@@ -34,7 +35,7 @@ export async function action({ request }) {
       });
     }
 
-    // 3. Click count increment karein
+    // 3. Click count increment karein (Chahe Starter ho (100 se kam) ya Pro plan ho)
     const updatedSetting = await prisma.storeSetting.update({
       where: { shop },
       data: { clickCount: { increment: 1 } },

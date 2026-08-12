@@ -61,7 +61,7 @@
 {% assign whatsapp_url = "https://wa.me/" | append: target_phone | append: "?text=" | append: encoded_msg %}
 
 <!-- Floating WhatsApp Widget Container -->
-<div id="wa-floating-widget" class="wa-desktop-pos-{{ desktop_position }} wa-mobile-pos-{{ mobile_position }}">
+<div id="wa-floating-widget" class="wa-desktop-pos-{{ desktop_position }} wa-mobile-pos-{{ mobile_position }}" data-shop="{{ shop.permanent_domain }}" data-wa-url="{{ whatsapp_url }}">
 
   <!-- WhatsApp Chat Popup Modal -->
   <div id="wa-chat-popup" class="wa-popup-hidden" role="dialog" aria-modal="true">
@@ -83,11 +83,19 @@
     </div>
 
     <div class="wa-popup-footer">
-      <a href="{{ whatsapp_url }}" target="_blank" rel="noopener noreferrer" class="wa-start-chat-btn" style="background-color: {{ button_color }};">
+      <a href="#" id="wa-track-link" class="wa-start-chat-btn" style="background-color: {{ button_color }};">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="#ffffff"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
         Start Chat
       </a>
     </div>
+  </div>
+
+  <!-- Upgrade Paywall Overlay Modal -->
+  <div id="wa-paywall-modal" class="wa-popup-hidden" style="position: absolute; bottom: calc(100% + 12px); width: 290px; background: #ffffff; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); padding: 20px; text-align: center; z-index: 1000000;">
+    <div style="font-size: 32px; margin-bottom: 8px;">🔒</div>
+    <h4 style="margin: 0 0 8px 0; color: #333; font-size: 16px;">Free Limit Reached</h4>
+    <p style="margin: 0 0 16px 0; color: #666; font-size: 12px; line-height: 1.4;">You have exhausted your 100 free WhatsApp clicks. Please upgrade to Pro Plan ($4.99/mo) to keep chatting.</p>
+    <a href="/apps/whatsapp-widget/upgrade" style="display: block; background: #25D366; color: #fff; padding: 10px; border-radius: 20px; text-decoration: none; font-weight: 600; font-size: 13px;">Upgrade to Pro ($4.99/mo)</a>
   </div>
 
   <!-- Dynamic Toggle Button -->
@@ -154,7 +162,6 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
   
-  /* DESKTOP STYLES (Min Width > 600px) */
   @media only screen and (min-width: 601px) {
     #wa-floating-widget.wa-desktop-pos-bottom-right { bottom: 24px; right: 24px; left: auto; }
     #wa-floating-widget.wa-desktop-pos-bottom-left { bottom: 24px; left: 24px; right: auto; }
@@ -166,11 +173,10 @@
     .wa-desktop-icon { display: flex; align-items: center; justify-content: center; }
     .wa-mobile-icon { display: none; }
 
-    .wa-desktop-pos-bottom-right #wa-chat-popup { right: 0; left: auto; }
-    .wa-desktop-pos-bottom-left #wa-chat-popup { left: 0; right: auto; }
+    .wa-desktop-pos-bottom-right #wa-chat-popup, .wa-desktop-pos-bottom-right #wa-paywall-modal { right: 0; left: auto; }
+    .wa-desktop-pos-bottom-left #wa-chat-popup, .wa-desktop-pos-bottom-left #wa-paywall-modal { left: 0; right: auto; }
   }
 
-  /* MOBILE STYLES (Max Width <= 600px) */
   @media only screen and (max-width: 600px) {
     #wa-floating-widget.wa-mobile-pos-bottom-right { bottom: 16px; right: 16px; left: auto; }
     #wa-floating-widget.wa-mobile-pos-bottom-left { bottom: 16px; left: 16px; right: auto; }
@@ -182,9 +188,9 @@
     .wa-desktop-icon { display: none; }
     .wa-mobile-icon { display: flex; align-items: center; justify-content: center; }
 
-    #wa-chat-popup { width: 270px; }
-    .wa-mobile-pos-bottom-right #wa-chat-popup { right: 0; left: auto; }
-    .wa-mobile-pos-bottom-left #wa-chat-popup { left: 0; right: auto; }
+    #wa-chat-popup, #wa-paywall-modal { width: 270px; }
+    .wa-mobile-pos-bottom-right #wa-chat-popup, .wa-mobile-pos-bottom-right #wa-paywall-modal { right: 0; left: auto; }
+    .wa-mobile-pos-bottom-left #wa-chat-popup, .wa-mobile-pos-bottom-left #wa-paywall-modal { left: 0; right: auto; }
   }
 
   #wa-toggle-btn {
@@ -233,12 +239,15 @@
       const widgetContainer = document.getElementById("wa-floating-widget");
       const toggleBtn = document.getElementById("wa-toggle-btn");
       const popup = document.getElementById("wa-chat-popup");
+      const paywallModal = document.getElementById("wa-paywall-modal");
       const closeBtn = document.getElementById("wa-popup-close");
+      const trackLink = document.getElementById("wa-track-link");
 
-      if (!toggleBtn || !popup || !closeBtn) return;
+      if (!toggleBtn || !popup || !closeBtn || !trackLink) return;
 
       toggleBtn.addEventListener("click", function(e) {
         e.preventDefault(); e.stopPropagation();
+        if (paywallModal) paywallModal.classList.add("wa-popup-hidden");
         popup.classList.toggle("wa-popup-hidden");
       });
 
@@ -247,9 +256,34 @@
         popup.classList.add("wa-popup-hidden");
       });
 
+      trackLink.addEventListener("click", function(e) {
+        e.preventDefault();
+        const shop = widgetContainer.getAttribute("data-shop");
+        const waUrl = widgetContainer.getAttribute("data-wa-url");
+
+        fetch('/apps/whatsapp-widget/track-click?shop=' + encodeURIComponent(shop), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.allowed) {
+            window.open(waUrl, '_blank');
+            popup.classList.add("wa-popup-hidden");
+          } else {
+            popup.classList.add("wa-popup-hidden");
+            if (paywallModal) paywallModal.classList.remove("wa-popup-hidden");
+          }
+        })
+        .catch(err => {
+          window.open(waUrl, '_blank');
+        });
+      });
+
       document.addEventListener("click", function(e) {
         if (widgetContainer && !widgetContainer.contains(e.target)) {
           popup.classList.add("wa-popup-hidden");
+          if (paywallModal) paywallModal.classList.add("wa-popup-hidden");
         }
       });
     }
