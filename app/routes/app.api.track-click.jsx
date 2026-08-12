@@ -7,8 +7,15 @@ export async function action({ request }) {
   }
 
   try {
-    const body = await request.json();
-    const { shop } = body;
+    const url = new URL(request.url);
+    let shop = url.searchParams.get("shop");
+
+    if (!shop) {
+      try {
+        const body = await request.json();
+        shop = body.shop;
+      } catch (e) {}
+    }
 
     if (!shop) {
       return json({ error: "Shop parameter missing" }, { status: 400 });
@@ -25,8 +32,8 @@ export async function action({ request }) {
       });
     }
 
-    // 2. Starter plan ke liye 100 clicks ki limit check karein
-    if (storeSetting.plan === "starter-plan" && storeSetting.clickCount >= 100) {
+    // 2. Testing ke liye limit 1 kar di hai (Pehle click par hi paywall aa jayega)
+    if (storeSetting.plan === "starter-plan" && storeSetting.clickCount >= 1) {
       return json({ 
         success: false, 
         limitReached: true, 
@@ -41,7 +48,8 @@ export async function action({ request }) {
     });
 
     return json({ 
-      success: false, // (Agar aap chahte hain ke pehle WhatsApp khule, to isko apne frontend ke hisab se set rakhein)
+      success: true, 
+      limitReached: false,
       clickCount: updatedSetting.clickCount,
       plan: updatedSetting.plan 
     });

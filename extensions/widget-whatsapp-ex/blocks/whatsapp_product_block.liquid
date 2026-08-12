@@ -285,7 +285,7 @@
         })
         .then(response => response.json())
         .then(data => {
-          if (data.allowed) {
+          if (!data.limitReached) {
             window.open(waUrl, '_blank');
             popupModal.classList.add("wa-inline-popup-hidden");
           } else {
