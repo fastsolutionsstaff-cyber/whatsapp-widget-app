@@ -1,9 +1,7 @@
 {% unless template contains 'product' %}
-{% comment %} Read metafields saved from Admin Dashboard {% endcomment %}
 {% assign app_settings = app.metafields.whatsapp_widget.settings.value %}
 {% assign phone_number = app_settings.phoneNumber %}
 
-{% comment %} Fallbacks {% endcomment %}
 {% if phone_number == blank or phone_number == null %}
   {% assign target_phone = "14155552671" %}
 {% else %}
@@ -37,43 +35,45 @@
 
 {% assign custom_icon_url = app_settings.customIconUrl %}
 
-{% comment %} DESKTOP VALUES {% endcomment %}
 {% assign desktop_position = app_settings.position | default: "bottom-right" %}
 {% assign desktop_size_px = app_settings.widgetSizePx | default: 56 %}
 {% assign desktop_icon_size_px = desktop_size_px | times: 0.52 | round %}
 
-{% comment %} MOBILE VALUES {% endcomment %}
 {% assign mobile_position = app_settings.mobilePosition | default: desktop_position %}
 {% assign mobile_size_px = app_settings.mobileWidgetSizePx | default: 48 %}
 {% assign mobile_icon_size_px = mobile_size_px | times: 0.52 | round %}
 
 {% capture dynamic_message %}
-  {% if template contains 'product' %}
-    {{ default_msg }} I am looking at "{{ product.title }}" ({{ shop.url }}{{ product.url }})
-  {% elsif template contains 'index' %}
-    {{ default_msg }} I am inquiring from your Homepage ({{ shop.url }})
-  {% else %}
-    {{ default_msg }} I am inquiring from {{ page_title }} ({{ canonical_url }})
-  {% endif %}
+  {{ default_msg }} I am inquiring from your Homepage ({{ shop.url }})
 {% endcapture %}
 
 {% assign encoded_msg = dynamic_message | strip | url_encode %}
 {% assign whatsapp_url = "https://wa.me/" | append: target_phone | append: "?text=" | append: encoded_msg %}
 
-<!-- Floating WhatsApp Widget Container -->
-<div id="wa-floating-widget" class="wa-desktop-pos-{{ desktop_position }} wa-mobile-pos-{{ mobile_position }}" data-shop="{{ shop.permanent_domain }}" data-wa-url="{{ whatsapp_url }}">
+<div
+  id="wa-floating-widget"
+  class="wa-desktop-pos-{{ desktop_position }} wa-mobile-pos-{{ mobile_position }}"
+  data-shop="{{ shop.permanent_domain }}"
+  data-wa-url="{{ whatsapp_url }}"
+>
 
-  <!-- WhatsApp Chat Popup Modal -->
   <div id="wa-chat-popup" class="wa-popup-hidden" role="dialog" aria-modal="true">
+
     <div class="wa-popup-header" style="background-color: {{ button_color }};">
       <div class="wa-avatar">
-        <svg viewBox="0 0 24 24" width="22" height="22" fill="#ffffff"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="#ffffff">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+        </svg>
       </div>
+
       <div class="wa-header-info">
         <h4>{{ greeting_header }}</h4>
         <p>{{ greeting_subtext }}</p>
       </div>
-      <button id="wa-popup-close" type="button" aria-label="Close Popup">&times;</button>
+
+      <button id="wa-popup-close" type="button" aria-label="Close Popup">
+        &times;
+      </button>
     </div>
 
     <div class="wa-popup-body">
@@ -83,73 +83,314 @@
     </div>
 
     <div class="wa-popup-footer">
-      <a href="#" id="wa-track-link" class="wa-start-chat-btn" style="background-color: {{ button_color }};">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="#ffffff"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+      <a
+        href="#"
+        id="wa-track-link"
+        class="wa-start-chat-btn"
+        style="background-color: {{ button_color }};"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="#ffffff">
+          <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981 3.742-.981z"/>
+        </svg>
         Start Chat
       </a>
     </div>
   </div>
 
-  <!-- Upgrade Paywall Overlay Modal -->
-  <div id="wa-paywall-modal" class="wa-popup-hidden" style="position: absolute; bottom: calc(100% + 12px); width: 290px; background: #ffffff; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); padding: 20px; text-align: center; z-index: 1000000;">
-    <div style="font-size: 32px; margin-bottom: 8px;">🔒</div>
-    <h4 style="margin: 0 0 8px 0; color: #333; font-size: 16px;">Free Limit Reached</h4>
-    <p style="margin: 0 0 16px 0; color: #666; font-size: 12px; line-height: 1.4;">You have exhausted your 100 free WhatsApp clicks. Please upgrade to Pro Plan ($4.99/mo) to keep chatting.</p>
-    <a href="/apps/whatsapp-widget/upgrade" style="display: block; background: #25D366; color: #fff; padding: 10px; border-radius: 20px; text-decoration: none; font-weight: 600; font-size: 13px;">Upgrade to Pro ($4.99/mo)</a>
+  <div
+    id="wa-paywall-modal"
+    class="wa-popup-hidden"
+    style="
+      position: absolute;
+      bottom: calc(100% + 12px);
+      width: 290px;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      padding: 20px;
+      text-align: center;
+      z-index: 1000000;
+      box-sizing: border-box;
+    "
+  >
+    <div style="font-size: 32px; margin-bottom: 8px;">
+      🔒
+    </div>
+
+    <h4 style="margin: 0 0 8px 0; color: #333; font-size: 16px;">
+      Free Limit Reached
+    </h4>
+
+    <p style="margin: 0 0 16px 0; color: #666; font-size: 12px; line-height: 1.4;">
+      You have used your 100 free WhatsApp clicks this month.
+      Please upgrade to Pro Plan to continue chatting.
+    </p>
+
+    <a
+      href="/apps/whatsapp-widget/upgrade"
+      style="
+        display: block;
+        background: #25D366;
+        color: #fff;
+        padding: 10px;
+        border-radius: 20px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 13px;
+      "
+    >
+      Upgrade to Pro ($4.99/mo)
+    </a>
   </div>
 
-  <!-- Dynamic Toggle Button -->
-  <button 
-    id="wa-toggle-btn" 
-    type="button" 
-    aria-label="Chat on WhatsApp" 
+  <button
+    id="wa-toggle-btn"
+    type="button"
+    aria-label="Chat on WhatsApp"
     style="background-color: {{ button_color }};"
   >
-    <!-- Desktop Icon Render -->
+
     <div class="wa-desktop-icon">
       {% case selected_icon %}
+
         {% when 'custom-upload' %}
           {% if custom_icon_url != blank %}
-            <img src="{{ custom_icon_url }}" alt="WhatsApp Icon" width="{{ desktop_icon_size_px }}" height="{{ desktop_icon_size_px }}" style="width: {{ desktop_icon_size_px }}px; height: {{ desktop_icon_size_px }}px; object-fit: contain;" />
+            <img
+              src="{{ custom_icon_url }}"
+              alt="WhatsApp Icon"
+              width="{{ desktop_icon_size_px }}"
+              height="{{ desktop_icon_size_px }}"
+              style="
+                width: {{ desktop_icon_size_px }}px;
+                height: {{ desktop_icon_size_px }}px;
+                object-fit: contain;
+              "
+            />
           {% else %}
-            <svg viewBox="0 0 24 24" width="{{ desktop_icon_size_px }}" height="{{ desktop_icon_size_px }}" fill="none"><path d="M12 8v8m-4-4h8" stroke="#ffffff" stroke-width="2" stroke-linecap="round" /></svg>
+            <svg
+              viewBox="0 0 24 24"
+              width="{{ desktop_icon_size_px }}"
+              height="{{ desktop_icon_size_px }}"
+              fill="none"
+            >
+              <path
+                d="M12 8v8m-4-4h8"
+                stroke="#ffffff"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+            </svg>
           {% endif %}
+
         {% when 'agent-headset' %}
-          <svg viewBox="0 0 24 24" width="{{ desktop_icon_size_px }}" height="{{ desktop_icon_size_px }}" fill="none"><path d="M12 6a6 6 0 00-6 6v3.5A2.5 2.5 0 008.5 18H9v-5H7.5v-1a4.5 4.5 0 119 0v1H15v5h.5a2.5 2.5 0 002.5-2.5V12a6 6 0 00-6-6z" fill="#ffffff" /></svg>
+          <svg
+            viewBox="0 0 24 24"
+            width="{{ desktop_icon_size_px }}"
+            height="{{ desktop_icon_size_px }}"
+            fill="none"
+          >
+            <path
+              d="M12 6a6 6 0 00-6 6v3.5A2.5 2.5 0 008.5 18H9v-5H7.5v-1a4.5 4.5 0 119 0v1H15v5h.5a2.5 2.5 0 002.5-2.5V12a6 6 0 00-6-6z"
+              fill="#ffffff"
+            />
+          </svg>
+
         {% when 'paper-plane' %}
-          <svg viewBox="0 0 24 24" width="{{ desktop_icon_size_px }}" height="{{ desktop_icon_size_px }}" fill="none"><path d="M8 12l8-4-3 9-2-3-3-2z" fill="#ffffff" stroke="#ffffff" stroke-width="1.5" stroke-linejoin="round" /></svg>
+          <svg
+            viewBox="0 0 24 24"
+            width="{{ desktop_icon_size_px }}"
+            height="{{ desktop_icon_size_px }}"
+            fill="none"
+          >
+            <path
+              d="M8 12l8-4-3 9-2-3-3-2z"
+              fill="#ffffff"
+              stroke="#ffffff"
+              stroke-width="1.5"
+              stroke-linejoin="round"
+            />
+          </svg>
+
         {% when 'sparkle-chat' %}
-          <svg viewBox="0 0 24 24" width="{{ desktop_icon_size_px }}" height="{{ desktop_icon_size_px }}" fill="none"><path d="M7 8h10M7 12h7m-7 4h4" stroke="#ffffff" stroke-width="2" stroke-linecap="round" /><circle cx="17" cy="15" r="1.5" fill="#ffffff" /></svg>
+          <svg
+            viewBox="0 0 24 24"
+            width="{{ desktop_icon_size_px }}"
+            height="{{ desktop_icon_size_px }}"
+            fill="none"
+          >
+            <path
+              d="M7 8h10M7 12h7m-7 4h4"
+              stroke="#ffffff"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+            <circle cx="17" cy="15" r="1.5" fill="#ffffff"/>
+          </svg>
+
         {% when 'badge-verified' %}
-          <svg viewBox="0 0 24 24" width="{{ desktop_icon_size_px }}" height="{{ desktop_icon_size_px }}" fill="none"><path d="M8.5 12.5l2.5 2.5 5-5" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" /></svg>
+          <svg
+            viewBox="0 0 24 24"
+            width="{{ desktop_icon_size_px }}"
+            height="{{ desktop_icon_size_px }}"
+            fill="none"
+          >
+            <path
+              d="M8.5 12.5l2.5 2.5 5-5"
+              stroke="#ffffff"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+
         {% when 'wave-message' %}
-          <svg viewBox="0 0 24 24" width="{{ desktop_icon_size_px }}" height="{{ desktop_icon_size_px }}" fill="none"><path d="M7 12a2 2 0 012-2h6a2 2 0 012 2v3a2 2 0 01-2 2h-2l-3 2v-2H9a2 2 0 01-2-2v-3z" fill="#ffffff" /></svg>
+          <svg
+            viewBox="0 0 24 24"
+            width="{{ desktop_icon_size_px }}"
+            height="{{ desktop_icon_size_px }}"
+            fill="none"
+          >
+            <path
+              d="M7 12a2 2 0 012-2h6a2 2 0 012 2v3a2 2 0 01-2 2h-2l-3 2v-2H9a2 2 0 01-2-2v-3z"
+              fill="#ffffff"
+            />
+          </svg>
+
         {% else %}
-          <svg viewBox="0 0 24 24" width="{{ desktop_icon_size_px }}" height="{{ desktop_icon_size_px }}" fill="none"><path d="M17.5 14.3c-.3-.1-1.7-.8-1.9-.9-.3-.1-.5-.1-.7.1s-.8 1-.9 1.2c-.1.2-.3.2-.6.1s-1.3-.5-2.4-1.5c-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.2-.5s0-.4-.1-.5c-.1-.1-.7-1.7-.9-2.3-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4s-1.2 1.2-1.2 2.9 1.2 3.4 1.4 3.6c.2.2 2.4 3.7 5.9 5.2.8.4 1.5.6 2 .8.8.3 1.6.2 2.2.1.7-.1 2.2-.9 2.5-1.8.3-.9.3-1.6.2-1.8-.1-.1-.3-.2-.6-.3z" fill="#ffffff" /></svg>
+          <svg
+            viewBox="0 0 24 24"
+            width="{{ desktop_icon_size_px }}"
+            height="{{ desktop_icon_size_px }}"
+            fill="none"
+          >
+            <path
+              d="M17.5 14.3c-.3-.1-1.7-.8-1.9-.9-.3-.1-.5-.1-.7.1s-.8 1-.9 1.2c-.1.2-.3.2-.6.1s-1.3-.5-2.4-1.5c-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.2-.5s0-.4-.1-.5c-.1-.1-.7-1.7-.9-2.3-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4s-1.2 1.2-1.2 2.9 1.2 3.4 1.4 3.6c.2.2 2.4 3.7 5.9 5.2.8.4 1.5.6 2 .8.7-.1 2.2-.9 2.5-1.8.3-.9.3-1.6.2-1.8-.1-.1-.3-.2-.6-.3z"
+              fill="#ffffff"
+            />
+          </svg>
+
       {% endcase %}
     </div>
 
-    <!-- Mobile Icon Render -->
     <div class="wa-mobile-icon">
       {% case selected_icon %}
+
         {% when 'custom-upload' %}
           {% if custom_icon_url != blank %}
-            <img src="{{ custom_icon_url }}" alt="WhatsApp Icon" width="{{ mobile_icon_size_px }}" height="{{ mobile_icon_size_px }}" style="width: {{ mobile_icon_size_px }}px; height: {{ mobile_icon_size_px }}px; object-fit: contain;" />
+            <img
+              src="{{ custom_icon_url }}"
+              alt="WhatsApp Icon"
+              width="{{ mobile_icon_size_px }}"
+              height="{{ mobile_icon_size_px }}"
+              style="
+                width: {{ mobile_icon_size_px }}px;
+                height: {{ mobile_icon_size_px }}px;
+                object-fit: contain;
+              "
+            />
           {% else %}
-            <svg viewBox="0 0 24 24" width="{{ mobile_icon_size_px }}" height="{{ mobile_icon_size_px }}" fill="none"><path d="M12 8v8m-4-4h8" stroke="#ffffff" stroke-width="2" stroke-linecap="round" /></svg>
+            <svg
+              viewBox="0 0 24 24"
+              width="{{ mobile_icon_size_px }}"
+              height="{{ mobile_icon_size_px }}"
+              fill="none"
+            >
+              <path
+                d="M12 8v8m-4-4h8"
+                stroke="#ffffff"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+            </svg>
           {% endif %}
+
         {% when 'agent-headset' %}
-          <svg viewBox="0 0 24 24" width="{{ mobile_icon_size_px }}" height="{{ mobile_icon_size_px }}" fill="none"><path d="M12 6a6 6 0 00-6 6v3.5A2.5 2.5 0 008.5 18H9v-5H7.5v-1a4.5 4.5 0 119 0v1H15v5h.5a2.5 2.5 0 002.5-2.5V12a6 6 0 00-6-6z" fill="#ffffff" /></svg>
+          <svg
+            viewBox="0 0 24 24"
+            width="{{ mobile_icon_size_px }}"
+            height="{{ mobile_icon_size_px }}"
+            fill="none"
+          >
+            <path
+              d="M12 6a6 6 0 00-6 6v3.5A2.5 2.5 0 008.5 18H9v-5H7.5v-1a4.5 4.5 0 119 0v1H15v5h.5a2.5 2.5 0 002.5-2.5V12a6 6 0 00-6-6z"
+              fill="#ffffff"
+            />
+          </svg>
+
         {% when 'paper-plane' %}
-          <svg viewBox="0 0 24 24" width="{{ mobile_icon_size_px }}" height="{{ mobile_icon_size_px }}" fill="none"><path d="M8 12l8-4-3 9-2-3-3-2z" fill="#ffffff" stroke="#ffffff" stroke-width="1.5" stroke-linejoin="round" /></svg>
+          <svg
+            viewBox="0 0 24 24"
+            width="{{ mobile_icon_size_px }}"
+            height="{{ mobile_icon_size_px }}"
+            fill="none"
+          >
+            <path
+              d="M8 12l8-4-3 9-2-3-3-2z"
+              fill="#ffffff"
+              stroke="#ffffff"
+              stroke-width="1.5"
+              stroke-linejoin="round"
+            />
+          </svg>
+
         {% when 'sparkle-chat' %}
-          <svg viewBox="0 0 24 24" width="{{ mobile_icon_size_px }}" height="{{ mobile_icon_size_px }}" fill="none"><path d="M7 8h10M7 12h7m-7 4h4" stroke="#ffffff" stroke-width="2" stroke-linecap="round" /><circle cx="17" cy="15" r="1.5" fill="#ffffff" /></svg>
+          <svg
+            viewBox="0 0 24 24"
+            width="{{ mobile_icon_size_px }}"
+            height="{{ mobile_icon_size_px }}"
+            fill="none"
+          >
+            <path
+              d="M7 8h10M7 12h7m-7 4h4"
+              stroke="#ffffff"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+            <circle cx="17" cy="15" r="1.5" fill="#ffffff"/>
+          </svg>
+
         {% when 'badge-verified' %}
-          <svg viewBox="0 0 24 24" width="{{ mobile_icon_size_px }}" height="{{ mobile_icon_size_px }}" fill="none"><path d="M8.5 12.5l2.5 2.5 5-5" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" /></svg>
+          <svg
+            viewBox="0 0 24 24"
+            width="{{ mobile_icon_size_px }}"
+            height="{{ mobile_icon_size_px }}"
+            fill="none"
+          >
+            <path
+              d="M8.5 12.5l2.5 2.5 5-5"
+              stroke="#ffffff"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+
         {% when 'wave-message' %}
-          <svg viewBox="0 0 24 24" width="{{ mobile_icon_size_px }}" height="{{ mobile_icon_size_px }}" fill="none"><path d="M7 12a2 2 0 012-2h6a2 2 0 012 2v3a2 2 0 01-2 2h-2l-3 2v-2H9a2 2 0 01-2-2v-3z" fill="#ffffff" /></svg>
+          <svg
+            viewBox="0 0 24 24"
+            width="{{ mobile_icon_size_px }}"
+            height="{{ mobile_icon_size_px }}"
+            fill="none"
+          >
+            <path
+              d="M7 12a2 2 0 012-2h6a2 2 0 012 2v3a2 2 0 01-2 2h-2l-3 2v-2H9a2 2 0 01-2-2v-3z"
+              fill="#ffffff"
+            />
+          </svg>
+
         {% else %}
-          <svg viewBox="0 0 24 24" width="{{ mobile_icon_size_px }}" height="{{ mobile_icon_size_px }}" fill="none"><path d="M17.5 14.3c-.3-.1-1.7-.8-1.9-.9-.3-.1-.5-.1-.7.1s-.8 1-.9 1.2c-.1.2-.3.2-.6.1s-1.3-.5-2.4-1.5c-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.2-.5s0-.4-.1-.5c-.1-.1-.7-1.7-.9-2.3-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4s-1.2 1.2-1.2 2.9 1.2 3.4 1.4 3.6c.2.2 2.4 3.7 5.9 5.2.8.4 1.5.6 2 .8.8.3 1.6.2 2.2.1.7-.1 2.2-.9 2.5-1.8.3-.9.3-1.6.2-1.8-.1-.1-.3-.2-.6-.3z" fill="#ffffff" /></svg>
+          <svg
+            viewBox="0 0 24 24"
+            width="{{ mobile_icon_size_px }}"
+            height="{{ mobile_icon_size_px }}"
+            fill="none"
+          >
+            <path
+              d="M17.5 14.3c-.3-.1-1.7-.8-1.9-.9-.3-.1-.5-.1-.7.1s-.8 1-.9 1.2c-.1.2-.3.2-.6.1s-1.3-.5-2.4-1.5c-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.2-.5s0-.4-.1-.5c-.1-.1-.7-1.7-.9-2.3-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4s-1.2 1.2-1.2 2.9 1.2 3.4 1.4 3.6c.2.2 2.4 3.7 5.9 5.2.8.4 1.5.6 2 .8.7-.1 2.2-.9 2.5-1.8.3-.9.3-1.6.2-1.8-.1-.1-.3-.2-.6-.3z"
+              fill="#ffffff"
+            />
+          </svg>
+
       {% endcase %}
     </div>
   </button>
@@ -161,36 +402,92 @@
     z-index: 999999;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
-  
+
   @media only screen and (min-width: 601px) {
-    #wa-floating-widget.wa-desktop-pos-bottom-right { bottom: 24px; right: 24px; left: auto; }
-    #wa-floating-widget.wa-desktop-pos-bottom-left { bottom: 24px; left: 24px; right: auto; }
+    #wa-floating-widget.wa-desktop-pos-bottom-right {
+      bottom: 24px;
+      right: 24px;
+      left: auto;
+    }
+
+    #wa-floating-widget.wa-desktop-pos-bottom-left {
+      bottom: 24px;
+      left: 24px;
+      right: auto;
+    }
 
     #wa-toggle-btn {
       width: {{ desktop_size_px }}px;
       height: {{ desktop_size_px }}px;
     }
-    .wa-desktop-icon { display: flex; align-items: center; justify-content: center; }
-    .wa-mobile-icon { display: none; }
 
-    .wa-desktop-pos-bottom-right #wa-chat-popup, .wa-desktop-pos-bottom-right #wa-paywall-modal { right: 0; left: auto; }
-    .wa-desktop-pos-bottom-left #wa-chat-popup, .wa-desktop-pos-bottom-left #wa-paywall-modal { left: 0; right: auto; }
+    .wa-desktop-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .wa-mobile-icon {
+      display: none;
+    }
+
+    .wa-desktop-pos-bottom-right #wa-chat-popup,
+    .wa-desktop-pos-bottom-right #wa-paywall-modal {
+      right: 0;
+      left: auto;
+    }
+
+    .wa-desktop-pos-bottom-left #wa-chat-popup,
+    .wa-desktop-pos-bottom-left #wa-paywall-modal {
+      left: 0;
+      right: auto;
+    }
   }
 
   @media only screen and (max-width: 600px) {
-    #wa-floating-widget.wa-mobile-pos-bottom-right { bottom: 16px; right: 16px; left: auto; }
-    #wa-floating-widget.wa-mobile-pos-bottom-left { bottom: 16px; left: 16px; right: auto; }
+    #wa-floating-widget.wa-mobile-pos-bottom-right {
+      bottom: 16px;
+      right: 16px;
+      left: auto;
+    }
+
+    #wa-floating-widget.wa-mobile-pos-bottom-left {
+      bottom: 16px;
+      left: 16px;
+      right: auto;
+    }
 
     #wa-toggle-btn {
       width: {{ mobile_size_px }}px;
       height: {{ mobile_size_px }}px;
     }
-    .wa-desktop-icon { display: none; }
-    .wa-mobile-icon { display: flex; align-items: center; justify-content: center; }
 
-    #wa-chat-popup, #wa-paywall-modal { width: 270px; }
-    .wa-mobile-pos-bottom-right #wa-chat-popup, .wa-mobile-pos-bottom-right #wa-paywall-modal { right: 0; left: auto; }
-    .wa-mobile-pos-bottom-left #wa-chat-popup, .wa-mobile-pos-bottom-left #wa-paywall-modal { left: 0; right: auto; }
+    .wa-desktop-icon {
+      display: none;
+    }
+
+    .wa-mobile-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #wa-chat-popup,
+    #wa-paywall-modal {
+      width: 270px;
+    }
+
+    .wa-mobile-pos-bottom-right #wa-chat-popup,
+    .wa-mobile-pos-bottom-right #wa-paywall-modal {
+      right: 0;
+      left: auto;
+    }
+
+    .wa-mobile-pos-bottom-left #wa-chat-popup,
+    .wa-mobile-pos-bottom-left #wa-paywall-modal {
+      left: 0;
+      right: auto;
+    }
   }
 
   #wa-toggle-btn {
@@ -203,7 +500,10 @@
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.22);
     transition: transform 0.25s ease, box-shadow 0.25s ease, width 0.2s ease, height 0.2s ease;
   }
-  #wa-toggle-btn:hover { transform: scale(1.08); }
+
+  #wa-toggle-btn:hover {
+    transform: scale(1.08);
+  }
 
   #wa-chat-popup {
     position: absolute;
@@ -222,15 +522,81 @@
     transform: translateY(15px);
     pointer-events: none;
   }
-  .wa-popup-header { padding: 12px 14px; color: #ffffff; display: flex; align-items: center; gap: 10px; position: relative; }
-  .wa-avatar { width: 34px; height: 34px; background: rgba(255, 255, 255, 0.25); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-  .wa-header-info h4 { margin: 0; font-size: 14px; color: #ffffff; }
-  .wa-header-info p { margin: 2px 0 0 0; font-size: 11px; color: #ffffff; opacity: 0.9; }
-  #wa-popup-close { position: absolute; top: 8px; right: 12px; background: none; border: none; color: #ffffff; font-size: 20px; cursor: pointer; }
-  .wa-popup-body { padding: 16px; background: #e5ddd5; min-height: 70px; }
-  .wa-chat-bubble { background: #ffffff; padding: 10px 12px; border-radius: 8px; font-size: 13px; color: #333333; }
-  .wa-popup-footer { padding: 12px; background: #ffffff; }
-  .wa-start-chat-btn { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; border-radius: 20px; color: #ffffff !important; text-decoration: none !important; font-weight: 600; font-size: 14px; }
+
+  .wa-popup-header {
+    padding: 12px 14px;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+  }
+
+  .wa-avatar {
+    width: 34px;
+    height: 34px;
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .wa-header-info h4 {
+    margin: 0;
+    font-size: 14px;
+    color: #ffffff;
+  }
+
+  .wa-header-info p {
+    margin: 2px 0 0 0;
+    font-size: 11px;
+    color: #ffffff;
+    opacity: 0.9;
+  }
+
+  #wa-popup-close {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 20px;
+    cursor: pointer;
+  }
+
+  .wa-popup-body {
+    padding: 16px;
+    background: #e5ddd5;
+    min-height: 70px;
+  }
+
+  .wa-chat-bubble {
+    background: #ffffff;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #333333;
+  }
+
+  .wa-popup-footer {
+    padding: 12px;
+    background: #ffffff;
+  }
+
+  .wa-start-chat-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px;
+    border-radius: 20px;
+    color: #ffffff !important;
+    text-decoration: none !important;
+    font-weight: 600;
+    font-size: 14px;
+  }
 </style>
 
 <script>
@@ -243,47 +609,107 @@
       const closeBtn = document.getElementById("wa-popup-close");
       const trackLink = document.getElementById("wa-track-link");
 
-      if (!toggleBtn || !popup || !closeBtn || !trackLink) return;
+      if (
+        !widgetContainer ||
+        !toggleBtn ||
+        !popup ||
+        !closeBtn ||
+        !trackLink
+      ) {
+        return;
+      }
+
+      if (toggleBtn.dataset.waInitialized === "true") {
+        return;
+      }
+
+      toggleBtn.dataset.waInitialized = "true";
 
       toggleBtn.addEventListener("click", function(e) {
-        e.preventDefault(); e.stopPropagation();
-        if (paywallModal) paywallModal.classList.add("wa-popup-hidden");
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (paywallModal) {
+          paywallModal.classList.add("wa-popup-hidden");
+        }
+
         popup.classList.toggle("wa-popup-hidden");
       });
 
       closeBtn.addEventListener("click", function(e) {
-        e.preventDefault(); e.stopPropagation();
+        e.preventDefault();
+        e.stopPropagation();
+
         popup.classList.add("wa-popup-hidden");
       });
 
-      trackLink.addEventListener("click", function(e) {
+      trackLink.addEventListener("click", async function(e) {
         e.preventDefault();
+        e.stopPropagation();
+
         const shop = widgetContainer.getAttribute("data-shop");
         const waUrl = widgetContainer.getAttribute("data-wa-url");
 
-        fetch('/apps/whatsapp-widget/track-click?shop=' + encodeURIComponent(shop), {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' }
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (!data.limitReached) {
-            window.open(waUrl, '_blank');
-            popup.classList.add("wa-popup-hidden");
-          } else {
-            popup.classList.add("wa-popup-hidden");
-            if (paywallModal) paywallModal.classList.remove("wa-popup-hidden");
+        if (!shop || !waUrl) {
+          console.error("WhatsApp widget: missing shop or WhatsApp URL.");
+          return;
+        }
+
+        trackLink.style.pointerEvents = "none";
+        trackLink.style.opacity = "0.7";
+
+        try {
+          const response = await fetch(
+            "/apps/whatsapp-widget/track-click?shop=" +
+              encodeURIComponent(shop),
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              }
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error("Click tracking request failed.");
           }
-        })
-        .catch(err => {
-          window.open(waUrl, '_blank');
-        });
+
+          const data = await response.json();
+
+          if (data.success && !data.limitReached) {
+            popup.classList.add("wa-popup-hidden");
+            window.open(waUrl, "_blank");
+          } else if (data.limitReached) {
+            popup.classList.add("wa-popup-hidden");
+
+            if (paywallModal) {
+              paywallModal.classList.remove("wa-popup-hidden");
+            }
+          }
+        } catch (error) {
+          console.error("WhatsApp click tracking failed:", error);
+
+          popup.classList.add("wa-popup-hidden");
+
+          if (paywallModal) {
+            paywallModal.classList.remove("wa-popup-hidden");
+          }
+        } finally {
+          trackLink.style.pointerEvents = "";
+          trackLink.style.opacity = "";
+        }
       });
 
       document.addEventListener("click", function(e) {
-        if (widgetContainer && !widgetContainer.contains(e.target)) {
+        if (
+          widgetContainer &&
+          !widgetContainer.contains(e.target)
+        ) {
           popup.classList.add("wa-popup-hidden");
-          if (paywallModal) paywallModal.classList.add("wa-popup-hidden");
+
+          if (paywallModal) {
+            paywallModal.classList.add("wa-popup-hidden");
+          }
         }
       });
     }
@@ -295,6 +721,7 @@
     }
   })();
 </script>
+
 {% endunless %}
 
 {% schema %}

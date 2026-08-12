@@ -20,34 +20,60 @@
 {% assign encoded_msg = dynamic_message | strip | url_encode %}
 {% assign whatsapp_url = "https://wa.me/" | append: target_phone | append: "?text=" | append: encoded_msg %}
 
-<!-- Premium WA Block Wrapper -->
-<div class="wa-inline-block-card" style="margin-top: {{ block.settings.margin_top }}px; margin-bottom: {{ block.settings.margin_bottom }}px;" data-shop="{{ shop.permanent_domain }}" data-wa-url="{{ whatsapp_url }}">
-  
-  <!-- Status Bar -->
+<div
+  class="wa-inline-block-card"
+  style="margin-top: {{ block.settings.margin_top }}px; margin-bottom: {{ block.settings.margin_bottom }}px;"
+  data-shop="{{ shop.permanent_domain }}"
+  data-wa-url="{{ whatsapp_url }}"
+>
   <div class="wa-inline-status">
     <span class="wa-inline-pulse"></span>
-    <span class="wa-inline-status-text">{{ block.settings.status_text | escape }}</span>
+    <span class="wa-inline-status-text">
+      {{ block.settings.status_text | escape }}
+    </span>
   </div>
 
-  <!-- Trigger Button (Opens Popup) -->
-  <button type="button" id="wa-inline-trigger-btn" class="wa-inline-main-btn" style="background-color: {{ block.settings.btn_bg_color }}; color: {{ block.settings.btn_text_color }};">
+  <button
+    type="button"
+    id="wa-inline-trigger-btn"
+    class="wa-inline-main-btn"
+    style="background-color: {{ block.settings.btn_bg_color }}; color: {{ block.settings.btn_text_color }};"
+  >
     <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
       <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/>
     </svg>
+
     <span>{{ button_text | escape }}</span>
   </button>
 
-  <!-- Inline Professional Popup Modal (Hidden by default) -->
-  <div id="wa-inline-popup-modal" class="wa-inline-popup-hidden" role="dialog" aria-modal="true">
-    <div class="wa-inline-popup-header" style="background-color: {{ block.settings.btn_bg_color }};">
+  <div
+    id="wa-inline-popup-modal"
+    class="wa-inline-popup-hidden"
+    role="dialog"
+    aria-modal="true"
+  >
+    <div
+      class="wa-inline-popup-header"
+      style="background-color: {{ block.settings.btn_bg_color }};"
+    >
       <div class="wa-inline-avatar">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="#ffffff"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="#ffffff">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+        </svg>
       </div>
+
       <div class="wa-inline-header-info">
         <h4>{{ block.settings.popup_title | escape }}</h4>
         <p>{{ block.settings.popup_subtitle | escape }}</p>
       </div>
-      <button id="wa-inline-popup-close" type="button" aria-label="Close Chat">&times;</button>
+
+      <button
+        id="wa-inline-popup-close"
+        type="button"
+        aria-label="Close Chat"
+      >
+        &times;
+      </button>
     </div>
 
     <div class="wa-inline-popup-body">
@@ -57,24 +83,43 @@
     </div>
 
     <div class="wa-inline-popup-footer">
-      <a href="#" id="wa-inline-track-link" class="wa-inline-submit-btn" style="background-color: {{ block.settings.btn_bg_color }}; color: {{ block.settings.btn_text_color }};">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+      <a
+        href="#"
+        id="wa-inline-track-link"
+        class="wa-inline-submit-btn"
+        style="background-color: {{ block.settings.btn_bg_color }}; color: {{ block.settings.btn_text_color }};"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/>
+        </svg>
+
         <span>Start Chat Now</span>
       </a>
     </div>
   </div>
 
-  <!-- Upgrade Paywall Overlay Modal -->
-  <div id="wa-inline-paywall-modal" class="wa-inline-popup-hidden" style="margin-top: 12px; background: #ffffff; border: 1px solid #e1e1e1; border-radius: 8px; padding: 20px; text-align: center;">
-    <div style="font-size: 32px; margin-bottom: 8px;">🔒</div>
-    <h4 style="margin: 0 0 8px 0; color: #333; font-size: 16px;">Free Limit Reached</h4>
-    <p style="margin: 0 0 16px 0; color: #666; font-size: 12px; line-height: 1.4;">You have exhausted your 100 free WhatsApp clicks. Please upgrade to Pro Plan ($4.99/mo) to keep chatting.</p>
-    <a href="/apps/whatsapp-widget/upgrade" style="display: block; background: #25D366; color: #fff; padding: 10px; border-radius: 20px; text-decoration: none; font-weight: 600; font-size: 13px;">Upgrade to Pro ($4.99/mo)</a>
+  <div
+    id="wa-inline-paywall-modal"
+    class="wa-inline-popup-hidden"
+  >
+    <div class="wa-inline-paywall-icon">🔒</div>
+
+    <h4>Free Limit Reached</h4>
+
+    <p>
+      You have exhausted your 100 free WhatsApp clicks.
+      Please upgrade to Pro Plan ($4.99/mo) to keep chatting.
+    </p>
+
+    <a href="/apps/whatsapp-widget/upgrade">
+      Upgrade to Pro ($4.99/mo)
+    </a>
   </div>
 
-  <!-- Footer Subtext -->
   {% if block.settings.footer_text != blank %}
-    <p class="wa-inline-footer-subtext">{{ block.settings.footer_text | escape }}</p>
+    <p class="wa-inline-footer-subtext">
+      {{ block.settings.footer_text | escape }}
+    </p>
   {% endif %}
 </div>
 
@@ -99,20 +144,24 @@
     gap: 8px;
     margin-bottom: 12px;
   }
+
   .wa-inline-status-text {
     font-size: 13px;
     color: #555555;
     font-weight: 500;
   }
+
   .wa-inline-pulse {
     width: 8px;
     height: 8px;
     background-color: #25D366;
     border-radius: 50%;
     position: relative;
+    flex-shrink: 0;
   }
+
   .wa-inline-pulse::after {
-    content: '';
+    content: "";
     width: 100%;
     height: 100%;
     background-color: #25D366;
@@ -121,9 +170,17 @@
     animation: wa-inline-glow 2s infinite ease-in-out;
     opacity: 0.6;
   }
+
   @keyframes wa-inline-glow {
-    0% { transform: scale(1); opacity: 0.6; }
-    100% { transform: scale(2.5); opacity: 0; }
+    0% {
+      transform: scale(1);
+      opacity: 0.6;
+    }
+
+    100% {
+      transform: scale(2.5);
+      opacity: 0;
+    }
   }
 
   .wa-inline-main-btn {
@@ -141,25 +198,27 @@
     box-shadow: 0 2px 4px rgba(37, 211, 102, 0.15);
     transition: all 0.2s ease;
   }
+
   .wa-inline-main-btn:hover {
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
     filter: brightness(1.02);
   }
 
-  #wa-inline-popup-modal, #wa-inline-paywall-modal {
+  #wa-inline-popup-modal,
+  #wa-inline-paywall-modal {
     width: 100%;
+    box-sizing: border-box;
     background: #ffffff;
     border: 1px solid #e1e1e1;
     border-radius: 8px;
     margin-top: 12px;
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.06);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
   }
+
   .wa-inline-popup-hidden {
     display: none !important;
-    opacity: 0;
   }
 
   .wa-inline-popup-header {
@@ -170,6 +229,7 @@
     gap: 10px;
     position: relative;
   }
+
   .wa-inline-avatar {
     width: 32px;
     height: 32px;
@@ -179,18 +239,21 @@
     align-items: center;
     justify-content: center;
   }
+
   .wa-inline-header-info h4 {
     margin: 0;
     font-size: 14px;
     font-weight: 600;
     color: #ffffff !important;
   }
+
   .wa-inline-header-info p {
     margin: 2px 0 0 0;
     font-size: 11px;
     opacity: 0.9;
     color: #ffffff !important;
   }
+
   #wa-inline-popup-close {
     position: absolute;
     top: 8px;
@@ -203,12 +266,16 @@
     line-height: 1;
     opacity: 0.8;
   }
-  #wa-inline-popup-close:hover { opacity: 1; }
+
+  #wa-inline-popup-close:hover {
+    opacity: 1;
+  }
 
   .wa-inline-popup-body {
     padding: 16px;
     background: #f4f7f5;
   }
+
   .wa-inline-chat-bubble {
     background: #ffffff;
     padding: 12px;
@@ -216,7 +283,7 @@
     font-size: 13.5px;
     color: #333333;
     line-height: 1.4;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     border-left: 3px solid #25D366;
   }
 
@@ -224,6 +291,7 @@
     padding: 12px;
     background: #ffffff;
   }
+
   .wa-inline-submit-btn {
     display: flex;
     align-items: center;
@@ -236,7 +304,44 @@
     font-size: 14px;
     transition: opacity 0.2s ease;
   }
-  .wa-inline-submit-btn:hover { opacity: 0.9; }
+
+  .wa-inline-submit-btn:hover {
+    opacity: 0.9;
+  }
+
+  #wa-inline-paywall-modal {
+    padding: 20px;
+    text-align: center;
+  }
+
+  .wa-inline-paywall-icon {
+    font-size: 32px;
+    margin-bottom: 8px;
+  }
+
+  #wa-inline-paywall-modal h4 {
+    margin: 0 0 8px 0;
+    color: #333333;
+    font-size: 16px;
+  }
+
+  #wa-inline-paywall-modal p {
+    margin: 0 0 16px 0;
+    color: #666666;
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  #wa-inline-paywall-modal a {
+    display: block;
+    background: #25D366;
+    color: #ffffff;
+    padding: 10px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 13px;
+  }
 
   .wa-inline-footer-subtext {
     margin: 10px 0 0 0;
@@ -246,8 +351,14 @@
   }
 
   @media screen and (max-width: 749px) {
-    .wa-inline-main-btn { padding: 14px 20px; font-size: 15px; }
-    .wa-inline-block-card { padding: 12px; }
+    .wa-inline-main-btn {
+      padding: 14px 20px;
+      font-size: 15px;
+    }
+
+    .wa-inline-block-card {
+      padding: 12px;
+    }
   }
 </style>
 
@@ -261,11 +372,29 @@
       const closeBtn = document.getElementById("wa-inline-popup-close");
       const trackLink = document.getElementById("wa-inline-track-link");
 
-      if (!triggerBtn || !popupModal || !closeBtn || !trackLink) return;
+      if (
+        !cardWrapper ||
+        !triggerBtn ||
+        !popupModal ||
+        !closeBtn ||
+        !trackLink
+      ) {
+        return;
+      }
+
+      if (triggerBtn.dataset.waInitialized === "true") {
+        return;
+      }
+
+      triggerBtn.dataset.waInitialized = "true";
 
       triggerBtn.addEventListener("click", function(e) {
         e.preventDefault();
-        if (paywallModal) paywallModal.classList.add("wa-inline-popup-hidden");
+
+        if (paywallModal) {
+          paywallModal.classList.add("wa-inline-popup-hidden");
+        }
+
         popupModal.classList.toggle("wa-inline-popup-hidden");
       });
 
@@ -276,40 +405,85 @@
 
       trackLink.addEventListener("click", function(e) {
         e.preventDefault();
+
         const shop = cardWrapper.getAttribute("data-shop");
         const waUrl = cardWrapper.getAttribute("data-wa-url");
 
-        fetch('/apps/whatsapp-widget/track-click?shop=' + encodeURIComponent(shop), {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' }
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (!data.limitReached) {
-            window.open(waUrl, '_blank');
-            popupModal.classList.add("wa-inline-popup-hidden");
-          } else {
-            popupModal.classList.add("wa-inline-popup-hidden");
-            if (paywallModal) paywallModal.classList.remove("wa-inline-popup-hidden");
+        if (!shop || !waUrl) {
+          return;
+        }
+
+        fetch(
+          "/apps/whatsapp-widget/track-click?shop=" +
+          encodeURIComponent(shop),
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            }
           }
+        )
+        .then(function(response) {
+          return response.json();
         })
-        .catch(err => {
-          window.open(waUrl, '_blank');
+        .then(function(data) {
+          if (data.limitReached === true) {
+            popupModal.classList.add("wa-inline-popup-hidden");
+
+            if (paywallModal) {
+              paywallModal.classList.remove("wa-inline-popup-hidden");
+            }
+
+            return;
+          }
+
+          if (data.success === true) {
+            popupModal.classList.add("wa-inline-popup-hidden");
+            window.open(waUrl, "_blank");
+            return;
+          }
+
+          popupModal.classList.add("wa-inline-popup-hidden");
+          window.open(waUrl, "_blank");
+        })
+        .catch(function(error) {
+          console.error("WhatsApp click tracking error:", error);
+
+          /*
+           * Important:
+           * If the tracking API fails, do NOT bypass the paid/free limit.
+           * Keep the widget available but do not open WhatsApp.
+           */
+          popupModal.classList.add("wa-inline-popup-hidden");
+
+          if (paywallModal) {
+            paywallModal.classList.remove("wa-inline-popup-hidden");
+          }
         });
       });
     }
 
     if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", initInlineWAPopup);
+      document.addEventListener(
+        "DOMContentLoaded",
+        initInlineWAPopup
+      );
     } else {
       initInlineWAPopup();
     }
 
-    document.addEventListener("shopify:block:select", function(e) {
-      if (e.target.querySelector("#wa-inline-trigger-btn")) {
-        initInlineWAPopup();
+    document.addEventListener(
+      "shopify:block:select",
+      function(e) {
+        if (
+          e.target &&
+          e.target.querySelector &&
+          e.target.querySelector("#wa-inline-trigger-btn")
+        ) {
+          initInlineWAPopup();
+        }
       }
-    });
+    );
   })();
 </script>
 
