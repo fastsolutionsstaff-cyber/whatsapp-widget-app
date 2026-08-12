@@ -47,6 +47,9 @@ export default function App() {
         <Link to="/app/additional">
           Additional
         </Link>
+        <Link to="/app/privacy">
+          Privacy Policy
+        </Link>
       </NavMenu>
 
       <Outlet />
