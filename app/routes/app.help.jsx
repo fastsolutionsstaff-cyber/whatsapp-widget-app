@@ -26,12 +26,6 @@ export default function Help() {
     window.open("https://wa.me/923225981014", "_blank");
   };
 
-  // Fixed email click handler using window.open to prevent iframe blocking errors
-  const handleEmailClick = () => {
-    const emailUrl = "mailto:info@fastsolutionsdeveloper.com?subject=WhatsApp%20Widget%20Support&body=Hello%20Fast%20Solutions%20Support,%0D%0A%0D%0AI%20need%20help%20with%20my%20WhatsApp%20Widget.%0D%0A%0D%0AStore%20URL:%0D%0AIssue:%0D%0A%0D%0AThank%20you.";
-    window.open(emailUrl, "_blank");
-  };
-
   return (
     <Page
       title="Help & Support"
@@ -354,9 +348,26 @@ export default function Help() {
                     support message.
                   </Text>
 
-                  <Button onClick={handleEmailClick}>
-                    info@fastsolutionsdeveloper.com
-                  </Button>
+                  <Box>
+                    <a
+                      href="mailto:info@fastsolutionsdeveloper.com?subject=WhatsApp%20Widget%20Support&body=Hello%20Fast%20Solutions%20Support,%0D%0A%0D%0AI%20need%20help%20with%20my%20WhatsApp%20Widget.%0D%0A%0D%0AStore%20URL:%0D%0AIssue:%0D%0A%0D%0AThank%20you."
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        display: "inline-block",
+                        padding: "8px 16px",
+                        backgroundColor: "#f6f6f7",
+                        border: "1px solid #c4cdd5",
+                        borderRadius: "4px",
+                        color: "#202223",
+                        textDecoration: "none",
+                        fontWeight: "500",
+                        fontSize: "14px",
+                      }}
+                    >
+                      info@fastsolutionsdeveloper.com
+                    </a>
+                  </Box>
                 </BlockStack>
 
                 <Divider />
