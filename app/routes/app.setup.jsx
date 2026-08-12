@@ -105,7 +105,11 @@ export default function Setup() {
                     Widget app block to your storefront.
                   </Text>
 
-                  <Button url={themeEditorUrl} external>
+                  <Button 
+                    url={themeEditorUrl} 
+                    external 
+                    target="_blank"
+                  >
                     Open Theme Editor
                   </Button>
                 </BlockStack>
@@ -130,7 +134,11 @@ export default function Setup() {
                     make sure everything is working correctly.
                   </Text>
 
-                  <Button url={storefrontUrl} external>
+                  <Button 
+                    url={storefrontUrl} 
+                    external 
+                    target="_blank"
+                  >
                     Test Widget
                   </Button>
                 </BlockStack>
