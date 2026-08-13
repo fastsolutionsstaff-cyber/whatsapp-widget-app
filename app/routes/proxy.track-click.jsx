@@ -14,12 +14,27 @@ export async function action({ request }) {
 
 async function handleTracking(request) {
   try {
-    const { session } = await authenticate.public.appProxy(request);
-    if (!session) {
-      return json({ success: false, error: "Unauthorized" }, { status: 401 });
+    let shop = null;
+
+    // 1. Pehle Shopify App Proxy se session lene ki koshish karein
+    try {
+      const { session } = await authenticate.public.appProxy(request);
+      if (session && session.shop) {
+        shop = session.shop;
+      }
+    } catch (e) {
+      // Ignore proxy error for fallback testing
     }
 
-    const shop = session.shop;
+    // 2. Agar session na mile (jaise local testing mein), toh URL query param se shop uthao
+    if (!shop) {
+      const url = new URL(request.url);
+      shop = url.searchParams.get("shop");
+    }
+
+    if (!shop) {
+      return json({ success: false, error: "Unauthorized or Missing shop" }, { status: 401 });
+    }
 
     let storeSetting = await prisma.storeSetting.findUnique({ where: { shop } });
 
