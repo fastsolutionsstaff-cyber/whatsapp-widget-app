@@ -127,7 +127,7 @@
     </p>
 
     <a
-      href="/apps/whatsapp-widget/upgrade"
+      href="/apps/widget-whatsapp/upgrade"
       style="
         display: block;
         background: #25D366;
@@ -659,13 +659,12 @@
         trackLink.style.opacity = "0.7";
 
         try {
-          const response = await fetch(`/apps/whatsapp-widget/api/track-click?shop=${shop}`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json"
-              }
+          const response = await fetch("/apps/widget-whatsapp/track-click?shop=" + shop, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
             }
-          );
+          });
 
           if (!response.ok) {
             throw new Error("Click tracking request failed.");

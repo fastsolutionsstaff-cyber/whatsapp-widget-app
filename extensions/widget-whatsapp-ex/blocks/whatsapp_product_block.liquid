@@ -107,11 +107,11 @@
     <h4>Free Limit Reached</h4>
 
     <p>
-      You have exhausted your 100 free WhatsApp clicks.
-      Please upgrade to Pro Plan ($4.99/mo) to keep chatting.
+      You have used your 100 free WhatsApp clicks this month.
+      Please upgrade to Pro Plan to continue chatting.
     </p>
 
-    <a href="/apps/whatsapp-widget/upgrade">
+    <a href="/apps/widget-whatsapp/upgrade">
       Upgrade to Pro ($4.99/mo)
     </a>
   </div>
@@ -403,7 +403,7 @@
         popupModal.classList.add("wa-inline-popup-hidden");
       });
 
-      trackLink.addEventListener("click", function(e) {
+      trackLink.addEventListener("click", async function(e) {
         e.preventDefault();
 
         const waUrl = cardWrapper.getAttribute("data-wa-url");
@@ -413,69 +413,63 @@
           return;
         }
 
-        fetch(`/apps/whatsapp-widget/api/track-click?shop=${shop}`, {
+        trackLink.style.pointerEvents = "none";
+        trackLink.style.opacity = "0.7";
+
+        try {
+          const response = await fetch("/apps/widget-whatsapp/track-click?shop=" + shop, {
             method: "POST",
             headers: {
               "Content-Type": "application/json"
             }
+          });
+
+          if (!response.ok) {
+            throw new Error("Click tracking request failed.");
           }
-        )
-        .then(function(response) {
-          return response.json();
-        })
-        .then(function(data) {
-          if (data.limitReached === true) {
+
+          const data = await response.json();
+
+          if (data.success && !data.limitReached) {
+            popupModal.classList.add("wa-inline-popup-hidden");
+            window.open(waUrl, "_blank");
+          } else if (data.limitReached) {
             popupModal.classList.add("wa-inline-popup-hidden");
 
             if (paywallModal) {
               paywallModal.classList.remove("wa-inline-popup-hidden");
             }
-
-            return;
           }
-
-          if (data.success === true) {
-            popupModal.classList.add("wa-inline-popup-hidden");
-            window.open(waUrl, "_blank");
-            return;
-          }
-
-          popupModal.classList.add("wa-inline-popup-hidden");
-          window.open(waUrl, "_blank");
-        })
-        .catch(function(error) {
-          console.error("WhatsApp click tracking error:", error);
+        } catch (error) {
+          console.error("WhatsApp click tracking failed:", error);
 
           popupModal.classList.add("wa-inline-popup-hidden");
 
           if (paywallModal) {
             paywallModal.classList.remove("wa-inline-popup-hidden");
           }
-        });
+        } finally {
+          trackLink.style.pointerEvents = "";
+          trackLink.style.opacity = "";
+        }
       });
     }
 
     if (document.readyState === "loading") {
-      document.addEventListener(
-        "DOMContentLoaded",
-        initInlineWAPopup
-      );
+      document.addEventListener("DOMContentLoaded", initInlineWAPopup);
     } else {
       initInlineWAPopup();
     }
 
-    document.addEventListener(
-      "shopify:block:select",
-      function(e) {
-        if (
-          e.target &&
-          e.target.querySelector &&
-          e.target.querySelector("#wa-inline-trigger-btn")
-        ) {
-          initInlineWAPopup();
-        }
+    document.addEventListener("shopify:block:select", function(e) {
+      if (
+        e.target &&
+        e.target.querySelector &&
+        e.target.querySelector("#wa-inline-trigger-btn")
+      ) {
+        initInlineWAPopup();
       }
-    );
+    });
   })();
 </script>
 
