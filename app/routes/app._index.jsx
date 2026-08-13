@@ -20,6 +20,7 @@ import {
   Divider,
 } from "@shopify/polaris";
 import { authenticate } from "../shopify.server";
+import prisma from "../db.server";
 
 // Unique SVG Icons
 const UNIQUE_ICONS = [
@@ -108,7 +109,38 @@ const UNIQUE_ICONS = [
 ];
 
 export const loader = async ({ request }) => {
-  const { admin } = await authenticate.admin(request);
+  const { admin, session } = await authenticate.admin(request);
+
+  let planInfo = { plan: "starter-plan", clickCount: 0 };
+  try {
+    const subResponse = await admin.graphql(`
+      #graphql
+      query {
+        currentAppInstallation {
+          activeSubscriptions {
+            name
+            status
+          }
+        }
+      }
+    `);
+    const subData = await subResponse.json();
+    const activeSubs = subData.data?.currentAppInstallation?.activeSubscriptions || [];
+    const hasProSubscription = activeSubs.some(
+      (sub) => sub.status === "ACTIVE" && sub.name.toLowerCase().includes("pro")
+    );
+    const currentPlan = hasProSubscription ? "pro-plan" : "starter-plan";
+
+    const storeSetting = await prisma.storeSetting.upsert({
+      where: { shop: session.shop },
+      update: { plan: currentPlan },
+      create: { shop: session.shop, plan: currentPlan, clickCount: 0, monthStart: new Date() },
+    });
+
+    planInfo = { plan: storeSetting.plan, clickCount: storeSetting.clickCount };
+  } catch (planError) {
+    console.error("Error checking plan status:", planError);
+  }
 
   try {
     const response = await admin.graphql(`
@@ -140,7 +172,11 @@ export const loader = async ({ request }) => {
     };
 
     return json(
-      { settings: rawMetafield ? { ...defaultSettings, ...JSON.parse(rawMetafield) } : defaultSettings },
+      {
+        settings: rawMetafield ? { ...defaultSettings, ...JSON.parse(rawMetafield) } : defaultSettings,
+        plan: planInfo.plan,
+        clickCount: planInfo.clickCount,
+      },
       { headers: { "Cache-Control": "no-cache, no-store, must-revalidate" } }
     );
   } catch (error) {
@@ -158,6 +194,8 @@ export const loader = async ({ request }) => {
         greetingHeader: "Chat with us on WhatsApp",
         greetingSubtext: "We typically reply in a few minutes.",
       },
+      plan: planInfo.plan,
+      clickCount: planInfo.clickCount,
     });
   }
 };
@@ -242,7 +280,7 @@ export const action = async ({ request }) => {
 };
 
 export default function Index() {
-  const { settings: loadedSettings } = useLoaderData();
+  const { settings: loadedSettings, plan, clickCount } = useLoaderData();
   const actionData = useActionData();
   const submit = useSubmit();
   const navigation = useNavigation();
@@ -318,6 +356,19 @@ export default function Index() {
       }
     >
       <BlockStack gap="500">
+        {plan === "pro-plan" ? (
+          <Banner title="Pro Plan Active" tone="success">
+            <p>You have unlimited WhatsApp clicks.</p>
+          </Banner>
+        ) : (
+          <Banner
+            title={`Free Plan — ${clickCount}/100 clicks used`}
+            tone={clickCount >= 100 ? "critical" : "info"}
+            action={{ content: "Upgrade to Pro", url: "/app/upgrade" }}
+          >
+            <p>Upgrade to Pro for unlimited WhatsApp clicks.</p>
+          </Banner>
+        )}
         {savedSuccess && <Banner title="Settings saved successfully!" tone="success" />}
         {actionData?.status === "error" && <Banner title={actionData.message} tone="critical" />}
 
