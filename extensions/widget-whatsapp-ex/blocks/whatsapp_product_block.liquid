@@ -417,7 +417,7 @@
         trackLink.style.opacity = "0.7";
 
         try {
-          const response = await fetch("/apps/widget-whatsapp/track-click?shop=" + shop, {
+          const response = await fetch("/apps/whatsapp-widget/track-click", {
             method: "POST",
             headers: {
               "Content-Type": "application/json"
