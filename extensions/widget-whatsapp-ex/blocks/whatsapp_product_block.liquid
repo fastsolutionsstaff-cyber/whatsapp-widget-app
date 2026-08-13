@@ -406,17 +406,13 @@
       trackLink.addEventListener("click", function(e) {
         e.preventDefault();
 
-        const shop = cardWrapper.getAttribute("data-shop");
-        const waUrl = cardWrapper.getAttribute("data-wa-url");
+       const waUrl = cardWrapper.getAttribute("data-wa-url");
 
-        if (!shop || !waUrl) {
+        if (!waUrl) {
           return;
         }
 
-        fetch(
-          "/apps/whatsapp-widget/track-click?shop=" +
-          encodeURIComponent(shop),
-          {
+       fetch('/apps/whatsapp-widget/track-click', {
             method: "POST",
             headers: {
               "Content-Type": "application/json"

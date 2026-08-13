@@ -647,11 +647,10 @@
         e.preventDefault();
         e.stopPropagation();
 
-        const shop = widgetContainer.getAttribute("data-shop");
-        const waUrl = widgetContainer.getAttribute("data-wa-url");
+      const waUrl = widgetContainer.getAttribute("data-wa-url");
 
-        if (!shop || !waUrl) {
-          console.error("WhatsApp widget: missing shop or WhatsApp URL.");
+        if (!waUrl) {
+          console.error("WhatsApp widget: missing WhatsApp URL.");
           return;
         }
 
@@ -659,10 +658,7 @@
         trackLink.style.opacity = "0.7";
 
         try {
-          const response = await fetch(
-            "/apps/whatsapp-widget/track-click?shop=" +
-              encodeURIComponent(shop),
-            {
+          const response = await fetch('/apps/whatsapp-widget/track-click', {
               method: "POST",
               headers: {
                 "Content-Type": "application/json"
