@@ -406,13 +406,14 @@
       trackLink.addEventListener("click", function(e) {
         e.preventDefault();
 
-       const waUrl = cardWrapper.getAttribute("data-wa-url");
+        const waUrl = cardWrapper.getAttribute("data-wa-url");
+        const shop = cardWrapper.getAttribute("data-shop");
 
         if (!waUrl) {
           return;
         }
 
-       fetch('/apps/whatsapp-widget/track-click', {
+        fetch(`/apps/whatsapp-widget/api/track-click?shop=${shop}`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json"
@@ -445,11 +446,6 @@
         .catch(function(error) {
           console.error("WhatsApp click tracking error:", error);
 
-          /*
-           * Important:
-           * If the tracking API fails, do NOT bypass the paid/free limit.
-           * Keep the widget available but do not open WhatsApp.
-           */
           popupModal.classList.add("wa-inline-popup-hidden");
 
           if (paywallModal) {
