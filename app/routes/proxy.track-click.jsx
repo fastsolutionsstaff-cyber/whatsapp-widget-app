@@ -2,7 +2,7 @@ import { json } from "@remix-run/node";
 import { authenticate } from "../shopify.server";
 import prisma from "../db.server";
 
-const FREE_CLICK_LIMIT = 1;
+const FREE_CLICK_LIMIT = 2;
 
 export async function loader({ request }) {
   return handleTracking(request);
