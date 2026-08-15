@@ -1,9 +1,13 @@
 import { authenticate } from "../shopify.server";
 
 export async function loader({ request }) {
-  const { session, redirect } = await authenticate.admin(request);
+  const { session, redirect } =
+    await authenticate.admin(request);
 
-  const shopHandle = session.shop.replace(".myshopify.com", "");
+  const shopHandle = session.shop.replace(
+    ".myshopify.com",
+    ""
+  );
 
   const appHandle = "widget-whatsapp";
 
