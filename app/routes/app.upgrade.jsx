@@ -19,7 +19,7 @@ export async function loader({ request }) {
     const response = await billing.request({
       plan: "pro-plan",
       isTest: true,
-      returnUrl: `https://${session.shop}/admin/apps/${process.env.SHOPIFY_API_KEY}`,
+      returnUrl: `https://${session.shop}/admin/apps/widget-whatsapp`,
     });
 
     return json({ confirmationUrl: response.confirmationUrl, error: null });
