@@ -6,9 +6,11 @@ export async function loader({ request }) {
 
   const shop = session.shop.replace(".myshopify.com", "");
 
+  const appHandle = "widget-whatsapp-1";
+
   const pricingUrl =
     `https://admin.shopify.com/store/${shop}` +
-    `/charges/widget-whatsapp/pricing_plans`;
+    `/charges/${appHandle}/pricing_plans`;
 
   return redirect(pricingUrl, {
     target: "_top",
