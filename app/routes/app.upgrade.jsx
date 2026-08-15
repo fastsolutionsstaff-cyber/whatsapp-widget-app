@@ -5,14 +5,19 @@ export async function loader({ request }) {
   const { billing } = await authenticate.admin(request);
 
   try {
-    // Shopify ka official billing request jo $4.99/month ka Pro Plan trigger karega
+    // Shopify billing request with error fallback
     return await billing.request({
       plan: "pro-plan",
-      isTest: true, // Jab app live karni ho toh isay false kar dena
+      isTest: true,
       returnUrl: `https://${new URL(request.url).host}/app`,
     });
   } catch (error) {
-    if (error instanceof Response) throw error;
-    throw error;
+    // Agar redirect response hai toh usay throw hone dein
+    if (error instanceof Response) {
+      throw error;
+    }
+    console.error("Billing request error:", error);
+    // Error ki surat mein app dashboard par wapas bhej dein taake 500 error na aaye
+    return redirect("/app");
   }
 }
