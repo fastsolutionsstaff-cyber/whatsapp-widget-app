@@ -1,3 +1,5 @@
+import { json } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
 import { Page, Layout, Card, Text, BlockStack } from "@shopify/polaris";
 import { authenticate } from "../shopify.server";
 
@@ -10,23 +12,23 @@ export async function loader({ request }) {
       isTest: true,
       returnUrl: `https://${new URL(request.url).host}/app`,
     });
-    
-    // Agar direct URL string mil jaye ya object
-    const confirmationUrl = response?.confirmationUrl || response;
-    if (confirmationUrl && typeof confirmationUrl === "string") {
-      throw new Response(null, {
-        status: 302,
-        headers: { Location: confirmationUrl },
-      });
-    }
-    return response;
+
+    // Confirmation URL ko JSON mein pass kar dein
+    return json({ confirmationUrl: response.confirmationUrl });
   } catch (error) {
-    if (error instanceof Response) throw error;
-    throw error;
+    console.error("Billing error:", error);
+    return json({ confirmationUrl: null, error: error.message });
   }
 }
 
 export default function UpgradePage() {
+  const data = useLoaderData();
+
+  // Jaise hi server se confirmation URL aaye, parent window ko payment page par bhej do
+  if (data?.confirmationUrl && typeof window !== "undefined") {
+    window.top.location.href = data.confirmationUrl;
+  }
+
   return (
     <Page title="Upgrade to Pro">
       <Layout>
@@ -35,26 +37,10 @@ export default function UpgradePage() {
             <BlockStack gap="400">
               <Text variant="headingMd" as="h2">Unlock Pro Features — $4.99/mo</Text>
               <Text as="p">
-                Get unlimited WhatsApp clicks, remove free tier restrictions, and boost your conversions instantly.
+                {data?.error 
+                  ? `Error: ${data.error}` 
+                  : "Redirecting to secure Shopify payment gateway... Please wait."}
               </Text>
-              <div>
-                <a
-                  href="/app/upgrade"
-                  target="_top"
-                  style={{
-                    display: "inline-block",
-                    background: "#008060",
-                    color: "#fff",
-                    padding: "10px 20px",
-                    borderRadius: "4px",
-                    textDecoration: "none",
-                    fontWeight: "bold",
-                    fontSize: "14px",
-                  }}
-                >
-                  Proceed to Secure Payment
-                </a>
-              </div>
             </BlockStack>
           </Card>
         </Layout.Section>
