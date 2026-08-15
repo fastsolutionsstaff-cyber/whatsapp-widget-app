@@ -7,28 +7,25 @@ export async function loader({ request }) {
   const { billing, session } = await authenticate.admin(request);
 
   try {
-    // Check karein ke kya merchant ka already active pro plan hai
     const checkBilling = await billing.check({
       plans: ["pro-plan"],
       isTest: true,
     });
 
     if (checkBilling.hasActiveSubscriptions) {
-      // Agar pehle se subscribed hai toh app ke main dashboard par bhej dein
       return redirect("/app");
     }
 
-    // Agar active nahi hai, toh subscription request generate karein
     const response = await billing.request({
       plan: "pro-plan",
       isTest: true,
-      returnUrl: `https://${session.shop}/admin/apps/${process.env.SHOPIFY_API_KEY}/app`,
+      returnUrl: `https://${session.shop}/admin/apps/${process.env.SHOPIFY_API_KEY}`,
     });
 
-    return json({ confirmationUrl: response.confirmationUrl });
+    return json({ confirmationUrl: response.confirmationUrl, error: null });
   } catch (error) {
     console.error("Billing redirect error:", error);
-    return json({ confirmationUrl: null, error: error.message });
+    return json({ confirmationUrl: null, error: error.message || "Unknown billing error" });
   }
 }
 
@@ -36,7 +33,6 @@ export default function UpgradePage() {
   const data = useLoaderData();
   const submit = useSubmit();
 
-  // Agar confirmation URL mil jaye, toh Shopify payment page par redirect karein
   if (data?.confirmationUrl && typeof window !== "undefined") {
     window.top.location.href = data.confirmationUrl;
   }
@@ -56,7 +52,7 @@ export default function UpgradePage() {
                 Get unlimited WhatsApp clicks on both your home and product page widgets, remove free tier restrictions, and boost your store conversions instantly.
               </Text>
               {data?.error && (
-                <Text tone="critical">Error: {data.error}</Text>
+                <Text tone="critical">Billing Error Details: {data.error}</Text>
               )}
               <Button primary size="large" onClick={handleUpgradeClick}>
                 Proceed to Secure Payment
