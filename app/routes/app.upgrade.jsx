@@ -1,3 +1,4 @@
+import { redirect } from "@remix-run/node";
 import { authenticate } from "../shopify.server";
 
 export async function loader({ request }) {
@@ -6,32 +7,12 @@ export async function loader({ request }) {
   const shop = session.shop.replace(".myshopify.com", "");
 
   const pricingUrl =
-    `https://admin.shopify.com/store/${shop}/charges/widget-whatsapp/pricing_plans`;
+    `https://admin.shopify.com/store/${shop}` +
+    `/charges/widget-whatsapp/pricing_plans`;
 
-  return new Response(
-    `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>Upgrade to Pro</title>
-        </head>
-        <body>
-          <script>
-            window.top.location.href = ${JSON.stringify(pricingUrl)};
-          </script>
-
-          <p>
-            Redirecting to Shopify pricing...
-          </p>
-        </body>
-      </html>
-    `,
-    {
-      headers: {
-        "Content-Type": "text/html",
-      },
-    }
-  );
+  return redirect(pricingUrl, {
+    target: "_top",
+  });
 }
 
 export default function Upgrade() {
