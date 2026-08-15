@@ -1,21 +1,57 @@
 import { authenticate } from "../shopify.server";
 
 export async function loader({ request }) {
-  const { session, redirect } = await authenticate.admin(request);
+  const { admin, redirect } = await authenticate.admin(request);
 
-  const storeHandle = session.shop.replace(".myshopify.com", "");
+  const appUrl = new URL(request.url).origin;
 
-  const appHandle = "widget-whatsapp";
+  const response = await admin.graphql(
+    `#graphql
+    mutation AppSubscriptionCreate(
+      $name: String!
+      $lineItems: [AppSubscriptionLineItemInput!]!
+      $returnUrl: URL!
+      $test: Boolean
+    ) {
+      appSubscriptionCreate(
+        name: $name
+        lineItems: $lineItems
+        returnUrl: $returnUrl
+        test: $test
+      ) {
+        confirmationUrl
+        userErrors {
+          field
+          message
+        }
+      }
+    }`,
+    {
+      variables: {
+        name: "Pro Plan",
+        returnUrl: `${appUrl}/app`,
+        test: true, // set this to false once you're ready for real merchants to be charged for real
+        lineItems: [
+          {
+            plan: {
+              appRecurringPricingDetails: {
+                price: { amount: 4.99, currencyCode: "USD" },
+                interval: "EVERY_30_DAYS",
+              },
+            },
+          },
+        ],
+      },
+    }
+  );
 
-  const pricingUrl =
-    `https://admin.shopify.com/store/${storeHandle}` +
-    `/charges/${appHandle}/pricing_plans`;
+  const data = await response.json();
+  const result = data.data.appSubscriptionCreate;
 
-  return redirect(pricingUrl, {
-    target: "_top",
-  });
-}
+  if (result.userErrors.length > 0) {
+    console.error("Billing error:", result.userErrors);
+    throw new Response(result.userErrors[0].message, { status: 400 });
+  }
 
-export default function Upgrade() {
-  return null;
+  return redirect(result.confirmationUrl, { target: "_top" });
 }
