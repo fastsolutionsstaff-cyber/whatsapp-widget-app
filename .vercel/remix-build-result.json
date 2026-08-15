@@ -12,12 +12,17 @@
     "routeIdToServerBundleId": {
       "routes/webhooks.app.scopes_update": "nodejs-eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/webhooks.app.uninstalled": "nodejs-eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/proxy.track-click": "nodejs-eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/proxy.upgrade": "nodejs-eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/auth.login": "nodejs-eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/auth.$": "nodejs-eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/_index": "nodejs-eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/app.product-widget": "nodejs-eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/app.additional": "nodejs-eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/app.analytics": "nodejs-eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/app.dashboard": "nodejs-eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/app.privacy": "nodejs-eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/app.upgrade": "nodejs-eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/app._index": "nodejs-eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/app.about": "nodejs-eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/app.setup": "nodejs-eyJydW50aW1lIjoibm9kZWpzIn0",
@@ -45,6 +50,24 @@
         "parentId": "root",
         "file": "app/routes/webhooks.app.uninstalled.jsx",
         "path": "webhooks/app/uninstalled",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/proxy.track-click": {
+        "id": "routes/proxy.track-click",
+        "parentId": "root",
+        "file": "app/routes/proxy.track-click.jsx",
+        "path": "proxy/track-click",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/proxy.upgrade": {
+        "id": "routes/proxy.upgrade",
+        "parentId": "root",
+        "file": "app/routes/proxy.upgrade.jsx",
+        "path": "proxy/upgrade",
         "config": {
           "runtime": "nodejs"
         }
@@ -83,6 +106,15 @@
         "path": "app",
         "config": {}
       },
+      "routes/app.product-widget": {
+        "id": "routes/app.product-widget",
+        "parentId": "routes/app",
+        "file": "app/routes/app.product-widget.jsx",
+        "path": "product-widget",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
       "routes/app.additional": {
         "id": "routes/app.additional",
         "parentId": "routes/app",
@@ -106,6 +138,24 @@
         "parentId": "routes/app",
         "file": "app/routes/app.dashboard.jsx",
         "path": "dashboard",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/app.privacy": {
+        "id": "routes/app.privacy",
+        "parentId": "routes/app",
+        "file": "app/routes/app.privacy.jsx",
+        "path": "privacy",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/app.upgrade": {
+        "id": "routes/app.upgrade",
+        "parentId": "routes/app",
+        "file": "app/routes/app.upgrade.jsx",
+        "path": "upgrade",
         "config": {
           "runtime": "nodejs"
         }
@@ -190,6 +240,18 @@
         "file": "routes/webhooks.app.uninstalled.jsx",
         "path": "webhooks/app/uninstalled"
       },
+      "routes/proxy.track-click": {
+        "id": "routes/proxy.track-click",
+        "parentId": "root",
+        "file": "routes/proxy.track-click.jsx",
+        "path": "proxy/track-click"
+      },
+      "routes/proxy.upgrade": {
+        "id": "routes/proxy.upgrade",
+        "parentId": "root",
+        "file": "routes/proxy.upgrade.jsx",
+        "path": "proxy/upgrade"
+      },
       "routes/auth.login": {
         "id": "routes/auth.login",
         "parentId": "root",
@@ -214,6 +276,12 @@
         "file": "routes/app.jsx",
         "path": "app"
       },
+      "routes/app.product-widget": {
+        "id": "routes/app.product-widget",
+        "parentId": "routes/app",
+        "file": "routes/app.product-widget.jsx",
+        "path": "product-widget"
+      },
       "routes/app.additional": {
         "id": "routes/app.additional",
         "parentId": "routes/app",
@@ -231,6 +299,18 @@
         "parentId": "routes/app",
         "file": "routes/app.dashboard.jsx",
         "path": "dashboard"
+      },
+      "routes/app.privacy": {
+        "id": "routes/app.privacy",
+        "parentId": "routes/app",
+        "file": "routes/app.privacy.jsx",
+        "path": "privacy"
+      },
+      "routes/app.upgrade": {
+        "id": "routes/app.upgrade",
+        "parentId": "routes/app",
+        "file": "routes/app.upgrade.jsx",
+        "path": "upgrade"
       },
       "routes/app._index": {
         "id": "routes/app._index",
