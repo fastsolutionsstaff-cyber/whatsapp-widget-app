@@ -2,48 +2,46 @@ import { authenticate } from "../shopify.server";
 import db from "../db.server";
 
 export const action = async ({ request }) => {
-  const { payload, session, topic, shop, admin } = await authenticate.webhook(request);
+  const { topic, shop, session, admin, payload } = await authenticate.webhook(request);
 
-  console.log(`Received ${topic} webhook for ${shop}`);
-
-  // 1. Agar Scopes update ka webhook hai
-  if (topic === "APP_SCOPES_UPDATE" && session) {
-    const current = payload.current;
-    await db.session.update({
-      where: {
-        id: session.id,
-      },
-      data: {
-        scope: current.toString(),
-      },
-    });
+  if (!admin) {
+    // Admin session nahi hai toh error handle karein
+    return new Response();
   }
 
-  // 2. Agar Subscription update/payment ka webhook hai
-  if (topic === "APP_SUBSCRIPTIONS_UPDATE") {
-    // Check karein ke shop ka koi active pro subscription hai ya nahi
-    const response = await admin.graphql(
-      `#graphql
-      query {
-        currentAppInstallation {
-          activeSubscriptions {
-            name
-            status
+  switch (topic) {
+    case "APP_SUBSCRIPTIONS_UPDATE":
+      const response = await admin.graphql(
+        `#graphql
+        query {
+          currentAppInstallation {
+            activeSubscriptions {
+              name
+              status
+            }
           }
-        }
-      }`
-    );
+        }`
+      );
 
-    const data = await response.json();
-    const subscriptions = data.data?.currentAppInstallation?.activeSubscriptions || [];
-    
-    // Agar active pro subscription mojood hai toh pro-plan kar do, warna starter-plan
-    const hasActivePro = subscriptions.some(sub => sub.status === "ACTIVE");
+      const data = await response.json();
+      const subscriptions = data.data?.currentAppInstallation?.activeSubscriptions || [];
+      const hasActivePro = subscriptions.some(sub => sub.status === "ACTIVE");
 
-    await db.storeSetting.updateMany({
-      where: { shop: shop },
-      data: { plan: hasActivePro ? "pro-plan" : "starter-plan" },
-    });
+      // Database update
+      await db.storeSetting.updateMany({
+        where: { shop: shop },
+        data: { plan: hasActivePro ? "pro-plan" : "starter-plan" },
+      });
+      break;
+
+    case "APP_SCOPES_UPDATE":
+      if (session) {
+        await db.session.update({
+          where: { id: session.id },
+          data: { scope: payload.current.toString() },
+        });
+      }
+      break;
   }
 
   return new Response();
