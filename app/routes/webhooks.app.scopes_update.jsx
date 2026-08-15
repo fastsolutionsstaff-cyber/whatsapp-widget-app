@@ -5,12 +5,11 @@ export const action = async ({ request }) => {
   const { topic, shop, session, admin, payload } = await authenticate.webhook(request);
 
   if (!admin) {
-    // Admin session nahi hai toh error handle karein
-    return new Response();
+    return new Response("Unauthorized", { status: 401 });
   }
 
   switch (topic) {
-    case "APP_SUBSCRIPTIONS_UPDATE":
+    case "APP_SUBSCRIPTIONS_UPDATE": {
       const response = await admin.graphql(
         `#graphql
         query {
@@ -25,16 +24,19 @@ export const action = async ({ request }) => {
 
       const data = await response.json();
       const subscriptions = data.data?.currentAppInstallation?.activeSubscriptions || [];
-      const hasActivePro = subscriptions.some(sub => sub.status === "ACTIVE");
+      const hasActivePro = subscriptions.some(
+        (sub) => sub.status === "ACTIVE" && sub.name.toLowerCase().includes("pro")
+      );
 
-      // Database update
+      // Database mein store ka plan update karein
       await db.storeSetting.updateMany({
         where: { shop: shop },
         data: { plan: hasActivePro ? "pro-plan" : "starter-plan" },
       });
       break;
+    }
 
-    case "APP_SCOPES_UPDATE":
+    case "APP_SCOPES_UPDATE": {
       if (session) {
         await db.session.update({
           where: { id: session.id },
@@ -42,6 +44,7 @@ export const action = async ({ request }) => {
         });
       }
       break;
+    }
   }
 
   return new Response();

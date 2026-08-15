@@ -3,21 +3,14 @@ import { authenticate } from "../shopify.server";
 
 export async function loader({ request }) {
   try {
-    const { admin, session } =
-      await authenticate.public.appProxy(request);
+    const { admin, session } = await authenticate.public.appProxy(request);
 
     if (!admin || !session) {
-      return new Response(
-        "Shopify store authentication is required.",
-        {
-          status: 401,
-        }
-      );
+      return new Response("Shopify store authentication is required.", {
+        status: 401,
+      });
     }
 
-    /*
-     * Get the actual Shopify app handle.
-     */
     const response = await admin.graphql(`
       #graphql
       query GetAppHandle {
@@ -30,50 +23,26 @@ export async function loader({ request }) {
     `);
 
     const data = await response.json();
-
-    const appHandle =
-      data.data?.currentAppInstallation?.app?.handle;
+    const appHandle = data.data?.currentAppInstallation?.app?.handle;
 
     if (!appHandle) {
-      return new Response(
-        "Shopify app handle could not be found.",
-        {
-          status: 500,
-        }
-      );
+      return new Response("Shopify app handle could not be found.", {
+        status: 500,
+      });
     }
 
-    /*
-     * Convert:
-     * test-faizan-demo.myshopify.com
-     *
-     * into:
-     * test-faizan-demo
-     */
-    const storeHandle = session.shop.replace(
-      ".myshopify.com",
-      ""
-    );
+    const storeHandle = session.shop.resubplace
+      ? session.shop.replace(".myshopify.com", "")
+      : session.shop.replace(".myshopify.com", "");
 
-    /*
-     * Shopify App Pricing hosted page.
-     */
-    const pricingUrl =
-      `https://admin.shopify.com/store/${storeHandle}` +
-      `/charges/${appHandle}/pricing_plans`;
+    // Seedha app ke inside upgrade page par ya Shopify pricing flow par redirect karein
+    const embeddedUpgradeUrl = `https://admin.shopify.com/store/${storeHandle}/apps/${appHandle}/upgrade`;
 
-    return redirect(pricingUrl);
+    return redirect(embeddedUpgradeUrl);
   } catch (error) {
-    console.error(
-      "App Proxy Upgrade Error:",
-      error
-    );
-
-    return new Response(
-      "Unable to open the upgrade page.",
-      {
-        status: 500,
-      }
-    );
+    console.error("App Proxy Upgrade Error:", error);
+    return new Response("Unable to open the upgrade page.", {
+      status: 500,
+    });
   }
 }
