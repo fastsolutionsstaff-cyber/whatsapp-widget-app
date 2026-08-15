@@ -37,9 +37,11 @@ export default function UpgradePage() {
     window.top.location.href = data.confirmationUrl;
   }
 
-  const handleUpgradeClick = () => {
-    submit(null, { method: "get" });
-  };
+const handleUpgradeClick = () => {
+  const formData = new FormData();
+  formData.append("action", "upgrade");
+  submit(formData, { method: "post" });
+};
 
   return (
     <Page title="Upgrade to Pro">
