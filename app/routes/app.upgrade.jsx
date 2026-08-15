@@ -1,25 +1,37 @@
 import { json, redirect } from "@remix-run/node";
-import { useSubmit, Form } from "@remix-run/react";
+import { useLoaderData } from "@remix-run/react";
 import { Page, Layout, Card, Button, Text, BlockStack } from "@shopify/polaris";
 import { authenticate } from "../shopify.server";
 
-export async function action({ request }) {
+export async function loader({ request }) {
   const { billing } = await authenticate.admin(request);
 
   try {
-    return await billing.request({
+    // Direct billing request in loader
+    const response = await billing.request({
       plan: "pro-plan",
       isTest: true,
       returnUrl: `https://${new URL(request.url).host}/app`,
     });
+    return response;
   } catch (error) {
-    if (error instanceof Response) throw error;
-    return redirect("/app");
+    if (error instanceof Response) {
+      throw error;
+    }
+    console.error("Billing error:", error);
+    return json({ error: error.message });
   }
 }
 
 export default function UpgradePage() {
-  const submit = useSubmit();
+  const data = useLoaderData();
+
+  // Agar server side se confirmation URL mil jaye, toh window top ko wahan bhej dein
+  if (data?.confirmationUrl) {
+    if (typeof window !== "undefined") {
+      window.top.location.href = data.confirmationUrl;
+    }
+  }
 
   return (
     <Page title="Upgrade to Pro">
@@ -29,13 +41,8 @@ export default function UpgradePage() {
             <BlockStack gap="400">
               <Text variant="headingMd" as="h2">Unlock Pro Features — $4.99/mo</Text>
               <Text as="p">
-                Get unlimited WhatsApp clicks, remove free tier restrictions, and boost your customer conversions instantly.
+                Redirecting to secure Shopify checkout... If you are not redirected automatically, please refresh the page.
               </Text>
-              <Form method="post">
-                <Button submit variant="primary" tone="success" size="large">
-                  Proceed to Secure Payment
-                </Button>
-              </Form>
             </BlockStack>
           </Card>
         </Layout.Section>
