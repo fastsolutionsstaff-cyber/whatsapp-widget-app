@@ -370,8 +370,7 @@ export default function Index() {
               <Button
                 primary
                 onClick={() => {
-                  const host = new URLSearchParams(window.location.search).get("host");
-                  window.top.location.href = `/app/upgrade${host ? `?host=${host}` : ""}`;
+                  window.top.location.href = "/app/upgrade";
                 }}
               >
                 Upgrade to Pro Plan ($4.99/mo)
