@@ -9,10 +9,10 @@ export async function loader({ request }) {
       return redirect("/auth");
     }
     
-    // Shop domain remove .myshopify.com
+    // Shop domain se .myshopify.com hatayein
     const shop = session.shop.replace(".myshopify.com", "");
     
-    // Direct Shopify Admin billing page
+    // Direct Shopify Admin Billing Page
     const billingUrl = `https://admin.shopify.com/store/${shop}/admin/apps/widget-whatsapp/pricing`;
     
     return redirect(billingUrl);
@@ -25,4 +25,4 @@ export async function loader({ request }) {
 
 export default function UpgradePage() {
   return null;
-}
+}s
