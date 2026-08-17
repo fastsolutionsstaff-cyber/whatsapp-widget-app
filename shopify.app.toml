@@ -24,6 +24,10 @@ uri = "https://whatsapp-widget-app.vercel.app/webhooks/customers/redact"
 topic = "shop/redact"
 uri = "https://whatsapp-widget-app.vercel.app/webhooks/shop/redact"
 
+[[webhooks.subscriptions]]
+compliance_topics = [ "customers/data_request", "customers/redact", "shop/redact" ]
+uri = "/webhooks"
+
 [access_scopes]
 scopes = "write_products,read_products,write_metafields,read_metafields"
 optional_scopes = []
