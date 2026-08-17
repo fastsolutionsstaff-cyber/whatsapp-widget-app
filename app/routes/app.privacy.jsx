@@ -154,9 +154,9 @@ export default function PrivacyPolicy() {
                   WhatsApp integration app, please contact us:
                 </Text>
                 <BlockStack gap="100">
-                  <Text variant="bodyMd" as="p"><strong>Email:</strong> support@yourdomain.com</Text>
+                  <Text variant="bodyMd" as="p"><strong>Email:</strong> info@fastsolutionsdeveloper.com</Text>
                   <Text variant="bodyMd" as="p"><strong>Website:</strong> https://whatsapp-widget-app.vercel.app</Text>
-                  <Text variant="bodyMd" as="p"><strong>Data Protection Officer:</strong> dpo@yourdomain.com</Text>
+                  <Text variant="bodyMd" as="p"><strong>Data Protection Officer:</strong>  info@fastsolutionsdeveloper.com</Text>
                 </BlockStack>
               </BlockStack>
             </BlockStack>

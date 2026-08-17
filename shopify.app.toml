@@ -12,7 +12,7 @@ url = "https://whatsapp-widget-app.vercel.app/proxy"
 subpath = "whatsapp-widget"
 prefix = "apps"
 
-# Webhook Configuration (Shopify Official Standard)
+# Webhook Configuration
 [webhooks]
 api_version = "2025-01"
 
@@ -24,16 +24,17 @@ uri = "/webhooks/app/uninstalled"
 topics = ["app/scopes_update"]
 uri = "/webhooks/app/scopes_update"
 
+# Mandatory Shopify privacy compliance webhooks
 [[webhooks.subscriptions]]
-topics = ["customers/data_request"]
+compliance_topics = ["customers/data_request"]
 uri = "/webhooks/customers/data_request"
 
 [[webhooks.subscriptions]]
-topics = ["customers/redact"]
+compliance_topics = ["customers/redact"]
 uri = "/webhooks/customers/redact"
 
 [[webhooks.subscriptions]]
-topics = ["shop/redact"]
+compliance_topics = ["shop/redact"]
 uri = "/webhooks/shop/redact"
 
 # Access Scopes
