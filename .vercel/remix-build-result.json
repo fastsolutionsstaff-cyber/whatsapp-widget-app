@@ -10,8 +10,11 @@
       }
     },
     "routeIdToServerBundleId": {
+      "routes/webhooks.customers.data_request": "nodejs-eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/webhooks.app.scopes_update": "nodejs-eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/webhooks.customers.redact": "nodejs-eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/webhooks.app.uninstalled": "nodejs-eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/webhooks.shop.redact": "nodejs-eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/proxy.track-click": "nodejs-eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/proxy.upgrade": "nodejs-eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/auth.login": "nodejs-eyJydW50aW1lIjoibm9kZWpzIn0",
@@ -36,6 +39,15 @@
         "file": "app/root.jsx",
         "config": {}
       },
+      "routes/webhooks.customers.data_request": {
+        "id": "routes/webhooks.customers.data_request",
+        "parentId": "root",
+        "file": "app/routes/webhooks.customers.data_request.jsx",
+        "path": "webhooks/customers/data_request",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
       "routes/webhooks.app.scopes_update": {
         "id": "routes/webhooks.app.scopes_update",
         "parentId": "root",
@@ -45,11 +57,29 @@
           "runtime": "nodejs"
         }
       },
+      "routes/webhooks.customers.redact": {
+        "id": "routes/webhooks.customers.redact",
+        "parentId": "root",
+        "file": "app/routes/webhooks.customers.redact.jsx",
+        "path": "webhooks/customers/redact",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
       "routes/webhooks.app.uninstalled": {
         "id": "routes/webhooks.app.uninstalled",
         "parentId": "root",
         "file": "app/routes/webhooks.app.uninstalled.jsx",
         "path": "webhooks/app/uninstalled",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/webhooks.shop.redact": {
+        "id": "routes/webhooks.shop.redact",
+        "parentId": "root",
+        "file": "app/routes/webhooks.shop.redact.jsx",
+        "path": "webhooks/shop/redact",
         "config": {
           "runtime": "nodejs"
         }
@@ -228,17 +258,35 @@
         "id": "root",
         "file": "root.jsx"
       },
+      "routes/webhooks.customers.data_request": {
+        "id": "routes/webhooks.customers.data_request",
+        "parentId": "root",
+        "file": "routes/webhooks.customers.data_request.jsx",
+        "path": "webhooks/customers/data_request"
+      },
       "routes/webhooks.app.scopes_update": {
         "id": "routes/webhooks.app.scopes_update",
         "parentId": "root",
         "file": "routes/webhooks.app.scopes_update.jsx",
         "path": "webhooks/app/scopes_update"
       },
+      "routes/webhooks.customers.redact": {
+        "id": "routes/webhooks.customers.redact",
+        "parentId": "root",
+        "file": "routes/webhooks.customers.redact.jsx",
+        "path": "webhooks/customers/redact"
+      },
       "routes/webhooks.app.uninstalled": {
         "id": "routes/webhooks.app.uninstalled",
         "parentId": "root",
         "file": "routes/webhooks.app.uninstalled.jsx",
         "path": "webhooks/app/uninstalled"
+      },
+      "routes/webhooks.shop.redact": {
+        "id": "routes/webhooks.shop.redact",
+        "parentId": "root",
+        "file": "routes/webhooks.shop.redact.jsx",
+        "path": "webhooks/shop/redact"
       },
       "routes/proxy.track-click": {
         "id": "routes/proxy.track-click",
