@@ -5,36 +5,58 @@ import { authenticate } from "../shopify.server";
 
 export async function loader({ request }) {
   try {
-    const { billing, session } = await authenticate.admin(request);
+    const { admin, session } = await authenticate.admin(request);
     
-    // Check if already on Pro Plan
-    const checkBilling = await billing.check({
-      plans: ["Pro Plan"],  // ← YEH SAHI NAME HAI
-      isTest: true,
-    });
+    // Direct GraphQL mutation with your plan handle
+    const response = await admin.graphql(`
+      mutation {
+        appSubscriptionCreate(
+          name: "Pro Plan"
+          returnUrl: "https://${session.shop}/admin/apps/widget-whatsapp"
+          test: true
+          lineItems: [
+            {
+              plan: {
+                appRecurringPricingDetails: {
+                  price: { amount: 4.99, currencyCode: USD }
+                }
+              }
+            }
+          ]
+        ) {
+          appSubscription {
+            id
+            status
+          }
+          confirmationUrl
+          userErrors {
+            field
+            message
+          }
+        }
+      }
+    `);
 
-    // Agar already Pro Plan hai toh redirect
-    if (checkBilling.hasActiveSubscriptions) {
-      return redirect("/app");
+    const result = await response.json();
+    console.log("Response:", JSON.stringify(result, null, 2));
+    
+    const data = result.data?.appSubscriptionCreate;
+    
+    if (data?.userErrors?.length > 0) {
+      return json({ 
+        error: data.userErrors[0].message 
+      });
     }
 
-    // Billing request
-    const response = await billing.request({
-      plan: "Pro Plan",  // ← YEH SAHI NAME HAI
-      isTest: true,
-      returnUrl: `https://${session.shop}/admin/apps/widget-whatsapp`,
-    });
-
-    // Shopify payment page par redirect
-    if (response.confirmationUrl) {
-      return redirect(response.confirmationUrl);
+    if (data?.confirmationUrl) {
+      return redirect(data.confirmationUrl);
     }
 
     return json({ error: "No confirmation URL received" });
 
   } catch (error) {
-    console.error("Billing Error:", error);
-    return json({ error: error.message || "Billing error occurred" });
+    console.error("Error:", error);
+    return json({ error: error.message });
   }
 }
 
@@ -79,10 +101,6 @@ export default function UpgradePage() {
                 <Text as="p">✅ No free tier restrictions</Text>
                 <Text as="p">✅ Priority support</Text>
               </BlockStack>
-
-              <Text as="p" tone="subdued">
-                Clicking below will redirect you to Shopify's secure checkout.
-              </Text>
 
               <form method="POST">
                 <Button 
