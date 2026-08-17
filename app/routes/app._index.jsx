@@ -370,7 +370,7 @@ export default function Index() {
               <Button
                 primary
                 onClick={() => {
-                  window.open("https://apps.shopify.com/widget-whatsapp/pricing", "_blank");
+                  window.top.location.href = "/app/upgrade";
                 }}
               >
                 Upgrade to Pro Plan ($4.99/mo)
