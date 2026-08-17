@@ -9,10 +9,10 @@ export async function loader({ request }) {
       return redirect("/auth");
     }
     
+    // Shop domain remove .myshopify.com
     const shop = session.shop.replace(".myshopify.com", "");
     
-    // DIRECT SHOPIFY OFFICIAL BILLING PAGE
-    // Ye URL seedha Shopify ke official payment page par le jayega
+    // Direct Shopify Admin billing page
     const billingUrl = `https://admin.shopify.com/store/${shop}/admin/apps/widget-whatsapp/pricing`;
     
     return redirect(billingUrl);
