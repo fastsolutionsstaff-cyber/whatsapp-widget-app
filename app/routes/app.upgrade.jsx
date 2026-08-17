@@ -1,18 +1,19 @@
 import { redirect } from "@remix-run/node";
-import { authenticate } from "../shopify.server";
 
 export async function loader({ request }) {
   try {
-    const { session } = await authenticate.admin(request);
+    const url = new URL(request.url);
+    const host = url.searchParams.get("host");
     
-    if (!session) {
-      return redirect("/auth");
+    if (!host) {
+      return redirect("/app");
     }
     
-    // Shop domain se .myshopify.com hatayein
-    const shop = session.shop.replace(".myshopify.com", "");
+    // Decode host to get shop domain
+    const decodedHost = decodeURIComponent(host);
+    const shop = decodedHost.replace(".myshopify.com", "");
     
-    // Direct Shopify Admin Billing Page
+    // Direct Shopify billing page
     const billingUrl = `https://admin.shopify.com/store/${shop}/admin/apps/widget-whatsapp/pricing`;
     
     return redirect(billingUrl);
@@ -25,4 +26,4 @@ export async function loader({ request }) {
 
 export default function UpgradePage() {
   return null;
-}s
+}
