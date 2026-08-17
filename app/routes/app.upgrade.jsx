@@ -3,54 +3,69 @@ import { useLoaderData } from "@remix-run/react";
 import { Page, Layout, Card, Button, Text, BlockStack, Banner } from "@shopify/polaris";
 import { authenticate } from "../shopify.server";
 
-// Loader - Jab page open ho
+// Loader
 export async function loader({ request }) {
-  const { billing, session } = await authenticate.admin(request);
+  try {
+    const { billing, session } = await authenticate.admin(request);
+    
+    // Check if already on Pro
+    const subscriptions = await billing.check({
+      plans: ["Pro Plan - $4.99/mo"],
+      isTest: true,
+    });
 
-  // Check if already on Pro
-  const checkBilling = await billing.check({
-    plans: ["pro-plan"],
-    isTest: true,
-  });
+    // Agar already Pro hai
+    if (subscriptions.hasActiveSubscriptions) {
+      return redirect("/app");
+    }
 
-  // Agar already Pro hai toh settings page par redirect
-  if (checkBilling.hasActiveSubscriptions) {
-    return redirect("/app");
+    // Billing request
+    const response = await billing.request({
+      plan: "Pro Plan - $4.99/mo",
+      isTest: true,
+      returnUrl: `https://${session.shop}/admin/apps/widget-whatsapp`,
+    });
+
+    return json({ 
+      confirmationUrl: response.confirmationUrl, 
+      error: null 
+    });
+
+  } catch (error) {
+    console.error("Loader error:", error);
+    return json({ 
+      confirmationUrl: null, 
+      error: "Unable to process billing. Please try again." 
+    });
   }
-
-  // Billing request bhejo
-  const response = await billing.request({
-    plan: "pro-plan",
-    isTest: true,
-    returnUrl: `https://${session.shop}/admin/apps/widget-whatsapp`,
-  });
-
-  // Confirmation URL wapis bhejo
-  return json({ 
-    confirmationUrl: response.confirmationUrl, 
-    error: null 
-  });
 }
 
-// Action - Jab button click ho
+// Action
 export async function action({ request }) {
-  const { billing, session } = await authenticate.admin(request);
+  try {
+    const { billing, session } = await authenticate.admin(request);
 
-  // Billing request bhejo
-  const response = await billing.request({
-    plan: "pro-plan",
-    isTest: true,
-    returnUrl: `https://${session.shop}/admin/apps/widget-whatsapp`,
-  });
+    const response = await billing.request({
+      plan: "Pro Plan - $4.99/mo",
+      isTest: true,
+      returnUrl: `https://${session.shop}/admin/apps/widget-whatsapp`,
+    });
 
-  // Shopify payment page par redirect
-  return redirect(response.confirmationUrl);
+    return redirect(response.confirmationUrl);
+
+  } catch (error) {
+    console.error("Action error:", error);
+    return json({ 
+      confirmationUrl: null, 
+      error: "Billing error. Please try again." 
+    });
+  }
 }
 
 export default function UpgradePage() {
   const data = useLoaderData();
 
-  // Agar error hai toh show karo
+  // Error show karo
   if (data?.error) {
     return (
       <Page title="Upgrade to Pro">
@@ -73,13 +88,13 @@ export default function UpgradePage() {
     );
   }
 
-  // Agar confirmationUrl hai toh automatically redirect
+  // Agar confirmationUrl hai toh auto redirect
   if (data?.confirmationUrl && typeof window !== "undefined") {
     window.top.location.href = data.confirmationUrl;
     return null;
   }
 
-  // Upgrade page show karo
+  // Page show karo
   return (
     <Page title="Upgrade to Pro">
       <Layout>

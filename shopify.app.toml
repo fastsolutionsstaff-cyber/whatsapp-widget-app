@@ -10,6 +10,15 @@ url = "https://whatsapp-widget-app.vercel.app/proxy"
 subpath = "whatsapp-widget"
 prefix = "apps"
 
+[access_scopes]
+# Tumhare existing scopes
+
+[[billing]]
+name = "Pro Plan - $4.99/mo"
+price = 4.99
+currency_code = "USD"
+interval = "month"
+test = true
 
 [webhooks]
 api_version = "2026-07"
