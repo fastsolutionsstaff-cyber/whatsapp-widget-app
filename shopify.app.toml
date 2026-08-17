@@ -1,5 +1,4 @@
 # Shopify App Configuration
-# For more info: https://shopify.dev/docs/apps/tools/cli/configuration
 
 name = "widget-whatsapp"
 handle = "widget-whatsapp"
@@ -13,7 +12,7 @@ url = "https://whatsapp-widget-app.vercel.app/proxy"
 subpath = "whatsapp-widget"
 prefix = "apps"
 
-# Webhook Configuration
+# Webhook Configuration (Shopify Official Standard)
 [webhooks]
 api_version = "2025-01"
 
