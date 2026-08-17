@@ -32,7 +32,7 @@ embedded = true
 scopes = "write_products,read_products,write_metafields,read_metafields"
 
 [[billing]]
-name = "Professional Plan - $4.99/mo"
+name = "Pro Plan"  # ← YEH SAHI NAME HAI
 price = 4.99
 currency_code = "USD"
 interval = "month"

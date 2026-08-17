@@ -7,20 +7,20 @@ export async function loader({ request }) {
   try {
     const { billing, session } = await authenticate.admin(request);
     
-    // Check if already on Professional Plan
+    // Check if already on Pro Plan
     const checkBilling = await billing.check({
-      plans: ["Professional Plan"],  // ← YEH SAHI NAME HAI
+      plans: ["Pro Plan"],  // ← YEH SAHI NAME HAI
       isTest: true,
     });
 
-    // Agar already Professional Plan hai toh redirect
+    // Agar already Pro Plan hai toh redirect
     if (checkBilling.hasActiveSubscriptions) {
       return redirect("/app");
     }
 
     // Billing request
     const response = await billing.request({
-      plan: "Professional Plan",  // ← YEH SAHI NAME HAI
+      plan: "Pro Plan",  // ← YEH SAHI NAME HAI
       isTest: true,
       returnUrl: `https://${session.shop}/admin/apps/widget-whatsapp`,
     });
@@ -48,7 +48,7 @@ export default function UpgradePage() {
           <Layout.Section>
             <Card>
               <BlockStack gap="400">
-                <Text variant="headingMd" as="h2">Upgrade to Professional Plan</Text>
+                <Text variant="headingMd" as="h2">Upgrade to Pro Plan</Text>
                 <Banner title="Error" tone="critical">
                   <p>{data.error}</p>
                 </Banner>
@@ -64,13 +64,13 @@ export default function UpgradePage() {
   }
 
   return (
-    <Page title="Upgrade to Professional Plan">
+    <Page title="Upgrade to Pro Plan">
       <Layout>
         <Layout.Section>
           <Card>
             <BlockStack gap="400">
               <Text variant="headingLg" as="h2">
-                🚀 Unlock Professional Plan — $4.99/mo
+                🚀 Unlock Pro Plan — $4.99/mo
               </Text>
               
               <BlockStack gap="200">
