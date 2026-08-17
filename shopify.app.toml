@@ -17,7 +17,19 @@ prefix = "apps"
 [webhooks]
 api_version = "2026-07"
 
-# Access Scopes - Removed unused scope
+[[webhooks.subscriptions]]
+topic = "customers/data_request"
+callback_url = "https://whatsapp-widget-app.vercel.app/webhooks/customers/data_request"
+
+[[webhooks.subscriptions]]
+topic = "customers/redact"
+callback_url = "https://whatsapp-widget-app.vercel.app/webhooks/customers/redact"
+
+[[webhooks.subscriptions]]
+topic = "shop/redact"
+callback_url = "https://whatsapp-widget-app.vercel.app/webhooks/shop/redact"
+
+# Access Scopes
 [access_scopes]
 scopes = "write_products,read_products,write_metafields,read_metafields"
 optional_scopes = []
@@ -27,7 +39,7 @@ use_legacy_install_flow = false
 [auth]
 redirect_urls = ["https://whatsapp-widget-app.vercel.app/auth/callback"]
 
-# Billing Configuration - Pro Plan (Test Mode)
+# Billing Configuration - Pro Plan
 [[billing]]
 name = "Pro Plan"
 price = 4.99
