@@ -1,7 +1,6 @@
-# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
-
-client_id = "96d13c204caa88f27a5fd216a6caa250"
 name = "widget-whatsapp"
+handle = "widget-whatsapp"
+client_id = "96d13c204caa88f27a5fd216a6caa250"
 application_url = "https://whatsapp-widget-app.vercel.app"
 embedded = true
 
@@ -26,4 +25,4 @@ name = "Pro Plan"
 price = 4.99
 currency_code = "USD"
 interval = "month"
-test = trues
+test = true
