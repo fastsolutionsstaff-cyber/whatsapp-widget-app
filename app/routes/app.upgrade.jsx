@@ -1,5 +1,4 @@
-import { json, redirect } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { json } from "@remix-run/node";
 import { Page, Layout, Card, Button, Text, BlockStack, Banner } from "@shopify/polaris";
 import { authenticate } from "../shopify.server";
 
@@ -7,53 +6,31 @@ export async function loader({ request }) {
   try {
     const { admin, session } = await authenticate.admin(request);
     
-    // Direct GraphQL mutation with your plan handle
+    // Get app handle
     const response = await admin.graphql(`
-      mutation {
-        appSubscriptionCreate(
-          name: "Pro Plan"
-          returnUrl: "https://${session.shop}/admin/apps/widget-whatsapp"
-          test: true
-          lineItems: [
-            {
-              plan: {
-                appRecurringPricingDetails: {
-                  price: { amount: 4.99, currencyCode: USD }
-                }
-              }
-            }
-          ]
-        ) {
-          appSubscription {
-            id
-            status
-          }
-          confirmationUrl
-          userErrors {
-            field
-            message
+      query {
+        currentAppInstallation {
+          id
+          app {
+            handle
           }
         }
       }
     `);
-
-    const result = await response.json();
-    console.log("Response:", JSON.stringify(result, null, 2));
     
-    const data = result.data?.appSubscriptionCreate;
+    const data = await response.json();
+    const appHandle = data.data?.currentAppInstallation?.app?.handle;
+    const shop = session.shop;
     
-    if (data?.userErrors?.length > 0) {
-      return json({ 
-        error: data.userErrors[0].message 
-      });
-    }
-
-    if (data?.confirmationUrl) {
-      return redirect(data.confirmationUrl);
-    }
-
-    return json({ error: "No confirmation URL received" });
-
+    // Direct Shopify checkout URL for your plan
+    const checkoutUrl = `https://admin.shopify.com/store/${shop}/admin/apps/${appHandle}/pricing`;
+    
+    return json({ 
+      checkoutUrl,
+      shop,
+      appHandle 
+    });
+    
   } catch (error) {
     console.error("Error:", error);
     return json({ error: error.message });
@@ -85,6 +62,12 @@ export default function UpgradePage() {
     );
   }
 
+  const handleUpgrade = () => {
+    if (data?.checkoutUrl) {
+      window.top.location.href = data.checkoutUrl;
+    }
+  };
+
   return (
     <Page title="Upgrade to Pro Plan">
       <Layout>
@@ -102,19 +85,17 @@ export default function UpgradePage() {
                 <Text as="p">✅ Priority support</Text>
               </BlockStack>
 
-              <form method="POST">
-                <Button 
-                  primary 
-                  size="large"
-                  submit
-                >
-                  Proceed to Secure Payment ($4.99/mo)
-                </Button>
-              </form>
+              <Button 
+                primary 
+                size="large"
+                onClick={handleUpgrade}
+              >
+                Proceed to Secure Payment ($4.99/mo)
+              </Button>
             </BlockStack>
           </Card>
         </Layout.Section>
       </Layout>
     </Page>
   );
-}
+}s
