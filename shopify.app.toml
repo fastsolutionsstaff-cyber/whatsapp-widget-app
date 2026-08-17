@@ -1,4 +1,3 @@
-# Shopify App Configuration
 name = "widget-whatsapp"
 handle = "widget-whatsapp"
 client_id = "96d13c204caa88f27a5fd216a6caa250"
@@ -14,8 +13,16 @@ prefix = "apps"
 api_version = "2026-07"
 
 [[webhooks.subscriptions]]
-compliance_topics = [ "customers/data_request", "customers/redact", "shop/redact" ]
-uri = "/webhooks/compliance"
+topic = "customers/data_request"
+uri = "https://whatsapp-widget-app.vercel.app/webhooks/customers/data_request"
+
+[[webhooks.subscriptions]]
+topic = "customers/redact"
+uri = "https://whatsapp-widget-app.vercel.app/webhooks/customers/redact"
+
+[[webhooks.subscriptions]]
+topic = "shop/redact"
+uri = "https://whatsapp-widget-app.vercel.app/webhooks/shop/redact"
 
 [access_scopes]
 scopes = "write_products,read_products,write_metafields,read_metafields"
