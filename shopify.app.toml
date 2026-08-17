@@ -1,53 +1,38 @@
 # Shopify App Configuration
-
 name = "widget-whatsapp"
 handle = "widget-whatsapp"
 client_id = "96d13c204caa88f27a5fd216a6caa250"
 application_url = "https://whatsapp-widget-app.vercel.app"
 embedded = true
 
-# App Proxy Configuration
 [app_proxy]
 url = "https://whatsapp-widget-app.vercel.app/proxy"
 subpath = "whatsapp-widget"
 prefix = "apps"
 
-# Webhook Configuration
 [webhooks]
-api_version = "2025-01"
+api_version = "2026-07"
 
 [[webhooks.subscriptions]]
-topics = ["app/uninstalled"]
-uri = "/webhooks/app/uninstalled"
+topic = "customers/data_request"
+callback_url = "/webhooks/customers/data_request"
 
 [[webhooks.subscriptions]]
-topics = ["app/scopes_update"]
-uri = "/webhooks/app/scopes_update"
-
-# Mandatory Shopify privacy compliance webhooks
-[[webhooks.subscriptions]]
-compliance_topics = ["customers/data_request"]
-uri = "/webhooks/customers/data_request"
+topic = "customers/redact"
+callback_url = "/webhooks/customers/redact"
 
 [[webhooks.subscriptions]]
-compliance_topics = ["customers/redact"]
-uri = "/webhooks/customers/redact"
+topic = "shop/redact"
+callback_url = "/webhooks/shop/redact"
 
-[[webhooks.subscriptions]]
-compliance_topics = ["shop/redact"]
-uri = "/webhooks/shop/redact"
-
-# Access Scopes
 [access_scopes]
 scopes = "write_products,read_products,write_metafields,read_metafields"
 optional_scopes = []
 use_legacy_install_flow = false
 
-# Authentication
 [auth]
 redirect_urls = ["https://whatsapp-widget-app.vercel.app/auth/callback"]
 
-# Billing Configuration - Pro Plan
 [[billing]]
 name = "Pro Plan"
 price = 4.99
