@@ -22,7 +22,10 @@ import {
 import { authenticate } from "../shopify.server";
 import prisma from "../db.server";
 
-// Unique SVG Icons
+// ============================================================
+// ICON CONFIGURATION
+// ============================================================
+
 const UNIQUE_ICONS = [
   {
     id: "whatsapp-classic",
@@ -32,7 +35,10 @@ const UNIQUE_ICONS = [
       return (
         <svg width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="none">
           <circle cx="12" cy="12" r="10" fill={color} />
-          <path d="M17.5 14.3c-.3-.1-1.7-.8-1.9-.9-.3-.1-.5-.1-.7.1s-.8 1-.9 1.2c-.1.2-.3.2-.6.1s-1.3-.5-2.4-1.5c-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.2-.5s0-.4-.1-.5c-.1-.1-.7-1.7-.9-2.3-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4s-1.2 1.2-1.2 2.9 1.2 3.4 1.4 3.6c.2.2 2.4 3.7 5.9 5.2.8.4 1.5.6 2 .8.8.3 1.6.2 2.2.1.7-.1 2.2-.9 2.5-1.8.3-.9.3-1.6.2-1.8-.1-.1-.3-.2-.6-.3z" fill="#ffffff" />
+          <path
+            d="M17.5 14.3c-.3-.1-1.7-.8-1.9-.9-.3-.1-.5-.1-.7.1s-.8 1-.9 1.2c-.1.2-.3.2-.6.1s-1.3-.5-2.4-1.5c-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.2-.5s0-.4-.1-.5c-.1-.1-.7-1.7-.9-2.3-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4s-1.2 1.2-1.2 2.9 1.2 3.4 1.4 3.6c.2.2 2.4 3.7 5.9 5.2.8.4 1.5.6 2 .8.8.3 1.6.2 2.2.1.7-.1 2.2-.9 2.5-1.8.3-.9.3-1.6.2-1.8-.1-.1-.3-.2-.6-.3z"
+            fill="#ffffff"
+          />
         </svg>
       );
     },
@@ -45,7 +51,10 @@ const UNIQUE_ICONS = [
       return (
         <svg width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="none">
           <rect width="24" height="24" rx="12" fill={color} />
-          <path d="M12 6a6 6 0 00-6 6v3.5A2.5 2.5 0 008.5 18H9v-5H7.5v-1a4.5 4.5 0 119 0v1H15v5h.5a2.5 2.5 0 002.5-2.5V12a6 6 0 00-6-6z" fill="#ffffff" />
+          <path
+            d="M12 6a6 6 0 00-6 6v3.5A2.5 2.5 0 008.5 18H9v-5H7.5v-1a4.5 4.5 0 119 0v1H15v5h.5a2.5 2.5 0 002.5-2.5V12a6 6 0 00-6-6z"
+            fill="#ffffff"
+          />
         </svg>
       );
     },
@@ -58,7 +67,13 @@ const UNIQUE_ICONS = [
       return (
         <svg width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="none">
           <circle cx="12" cy="12" r="10" fill={color} />
-          <path d="M8 12l8-4-3 9-2-3-3-2z" fill="#ffffff" stroke="#ffffff" strokeWidth="1.5" strokeLinejoin="round" />
+          <path
+            d="M8 12l8-4-3 9-2-3-3-2z"
+            fill="#ffffff"
+            stroke="#ffffff"
+            strokeWidth="1.5"
+            strokeLinejoin="round"
+          />
         </svg>
       );
     },
@@ -71,7 +86,12 @@ const UNIQUE_ICONS = [
       return (
         <svg width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="none">
           <rect width="24" height="24" rx="8" fill={color} />
-          <path d="M7 8h10M7 12h7m-7 4h4" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" />
+          <path
+            d="M7 8h10M7 12h7m-7 4h4"
+            stroke="#ffffff"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
           <circle cx="17" cy="15" r="1.5" fill="#ffffff" />
         </svg>
       );
@@ -85,7 +105,13 @@ const UNIQUE_ICONS = [
       return (
         <svg width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="none">
           <circle cx="12" cy="12" r="10" fill={color} />
-          <path d="M8.5 12.5l2.5 2.5 5-5" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+          <path
+            d="M8.5 12.5l2.5 2.5 5-5"
+            stroke="#ffffff"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
         </svg>
       );
     },
@@ -96,7 +122,13 @@ const UNIQUE_ICONS = [
     render: (color, sizePx = 54, customUrl = "") => {
       const iconSize = Math.round(sizePx * 0.52);
       if (customUrl) {
-        return <img src={customUrl} alt="Custom Icon" style={{ width: iconSize, height: iconSize, objectFit: "contain" }} />;
+        return (
+          <img
+            src={customUrl}
+            alt="Custom Icon"
+            style={{ width: iconSize, height: iconSize, objectFit: "contain" }}
+          />
+        );
       }
       return (
         <svg width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="none">
@@ -108,10 +140,34 @@ const UNIQUE_ICONS = [
   },
 ];
 
+// ============================================================
+// DEFAULT SETTINGS
+// ============================================================
+
+const DEFAULT_SETTINGS = {
+  phoneNumber: "923424593231",
+  defaultMessage: "Hello! I have a question about your store.",
+  widgetColor: "#25D366",
+  selectedIcon: "whatsapp-classic",
+  customIconUrl: "",
+  position: "bottom-right",
+  widgetSizePx: 56,
+  mobilePosition: "bottom-right",
+  mobileWidgetSizePx: 48,
+  greetingHeader: "Chat with us on WhatsApp",
+  greetingSubtext: "We typically reply in a few minutes.",
+};
+
+// ============================================================
+// LOADER
+// ============================================================
+
 export const loader = async ({ request }) => {
   const { admin, session } = await authenticate.admin(request);
 
   let planInfo = { plan: "starter-plan", clickCount: 0 };
+
+  // Fetch subscription status
   try {
     const subResponse = await admin.graphql(`
       #graphql
@@ -142,6 +198,7 @@ export const loader = async ({ request }) => {
     console.error("Error checking plan status:", planError);
   }
 
+  // Fetch widget settings
   try {
     const response = await admin.graphql(`
       #graphql
@@ -156,24 +213,11 @@ export const loader = async ({ request }) => {
 
     const data = await response.json();
     const rawMetafield = data.data?.currentAppInstallation?.metafield?.value;
-
-    const defaultSettings = {
-      phoneNumber: "923424593231",
-      defaultMessage: "Hello! I have a question about your store.",
-      widgetColor: "#25D366",
-      selectedIcon: "whatsapp-classic",
-      customIconUrl: "",
-      position: "bottom-right",
-      widgetSizePx: 56,
-      mobilePosition: "bottom-right",
-      mobileWidgetSizePx: 48,
-      greetingHeader: "Chat with us on WhatsApp",
-      greetingSubtext: "We typically reply in a few minutes.",
-    };
+    const settings = rawMetafield ? { ...DEFAULT_SETTINGS, ...JSON.parse(rawMetafield) } : DEFAULT_SETTINGS;
 
     return json(
       {
-        settings: rawMetafield ? { ...defaultSettings, ...JSON.parse(rawMetafield) } : defaultSettings,
+        settings,
         plan: planInfo.plan,
         clickCount: planInfo.clickCount,
       },
@@ -181,41 +225,33 @@ export const loader = async ({ request }) => {
     );
   } catch (error) {
     return json({
-      settings: {
-        phoneNumber: "923424593231",
-        defaultMessage: "Hello! I have a question about your store.",
-        widgetColor: "#25D366",
-        selectedIcon: "whatsapp-classic",
-        customIconUrl: "",
-        position: "bottom-right",
-        widgetSizePx: 56,
-        mobilePosition: "bottom-right",
-        mobileWidgetSizePx: 48,
-        greetingHeader: "Chat with us on WhatsApp",
-        greetingSubtext: "We typically reply in a few minutes.",
-      },
+      settings: DEFAULT_SETTINGS,
       plan: planInfo.plan,
       clickCount: planInfo.clickCount,
     });
   }
 };
 
+// ============================================================
+// ACTION
+// ============================================================
+
 export const action = async ({ request }) => {
   const { admin } = await authenticate.admin(request);
   const formData = await request.formData();
 
   const settingsPayload = {
-    phoneNumber: formData.get("phoneNumber") || "923424593231",
-    defaultMessage: formData.get("defaultMessage") || "Hello! I have a question about your store.",
-    widgetColor: formData.get("widgetColor") || "#25D366",
-    selectedIcon: formData.get("selectedIcon") || "whatsapp-classic",
+    phoneNumber: formData.get("phoneNumber") || DEFAULT_SETTINGS.phoneNumber,
+    defaultMessage: formData.get("defaultMessage") || DEFAULT_SETTINGS.defaultMessage,
+    widgetColor: formData.get("widgetColor") || DEFAULT_SETTINGS.widgetColor,
+    selectedIcon: formData.get("selectedIcon") || DEFAULT_SETTINGS.selectedIcon,
     customIconUrl: formData.get("customIconUrl") || "",
-    position: formData.get("position") || "bottom-right",
-    widgetSizePx: Number(formData.get("widgetSizePx")) || 56,
-    mobilePosition: formData.get("mobilePosition") || "bottom-right",
-    mobileWidgetSizePx: Number(formData.get("mobileWidgetSizePx")) || 48,
-    greetingHeader: formData.get("greetingHeader") || "Chat with us on WhatsApp",
-    greetingSubtext: formData.get("greetingSubtext") || "We typically reply in a few minutes.",
+    position: formData.get("position") || DEFAULT_SETTINGS.position,
+    widgetSizePx: Number(formData.get("widgetSizePx")) || DEFAULT_SETTINGS.widgetSizePx,
+    mobilePosition: formData.get("mobilePosition") || DEFAULT_SETTINGS.mobilePosition,
+    mobileWidgetSizePx: Number(formData.get("mobileWidgetSizePx")) || DEFAULT_SETTINGS.mobileWidgetSizePx,
+    greetingHeader: formData.get("greetingHeader") || DEFAULT_SETTINGS.greetingHeader,
+    greetingSubtext: formData.get("greetingSubtext") || DEFAULT_SETTINGS.greetingSubtext,
   };
 
   try {
@@ -279,30 +315,35 @@ export const action = async ({ request }) => {
   }
 };
 
+// ============================================================
+// MAIN COMPONENT
+// ============================================================
+
 export default function Index() {
   const { settings: loadedSettings, plan, clickCount } = useLoaderData();
   const actionData = useActionData();
   const submit = useSubmit();
   const navigation = useNavigation();
 
+  // State for form fields
   const [phoneNumber, setPhoneNumber] = useState(loadedSettings.phoneNumber);
   const [defaultMessage, setDefaultMessage] = useState(loadedSettings.defaultMessage);
   const [widgetColor, setWidgetColor] = useState(loadedSettings.widgetColor);
   const [selectedIcon, setSelectedIcon] = useState(loadedSettings.selectedIcon || "whatsapp-classic");
   const [customIconUrl, setCustomIconUrl] = useState(loadedSettings.customIconUrl || "");
-
   const [position, setPosition] = useState(loadedSettings.position);
   const [widgetSizePx, setWidgetSizePx] = useState(Number(loadedSettings.widgetSizePx) || 56);
-
   const [mobilePosition, setMobilePosition] = useState(loadedSettings.mobilePosition || loadedSettings.position);
   const [mobileWidgetSizePx, setMobileWidgetSizePx] = useState(Number(loadedSettings.mobileWidgetSizePx) || 48);
-
   const [greetingHeader, setGreetingHeader] = useState(loadedSettings.greetingHeader);
   const [greetingSubtext, setGreetingSubtext] = useState(loadedSettings.greetingSubtext);
 
   const [previewDevice, setPreviewDevice] = useState("desktop");
   const [savedSuccess, setSavedSuccess] = useState(false);
 
+  const isSaving = navigation.state === "submitting";
+
+  // Handle success message
   useEffect(() => {
     if (actionData?.status === "success" && actionData?.settings) {
       setPhoneNumber(actionData.settings.phoneNumber);
@@ -323,8 +364,7 @@ export default function Index() {
     }
   }, [actionData]);
 
-  const isSaving = navigation.state === "submitting";
-
+  // Save handler
   const handleSave = () => {
     const formData = new FormData();
     formData.append("phoneNumber", phoneNumber);
@@ -342,6 +382,7 @@ export default function Index() {
     submit(formData, { method: "post" });
   };
 
+  // Preview calculations
   const activeIconObj = UNIQUE_ICONS.find((item) => item.id === selectedIcon) || UNIQUE_ICONS[0];
   const activeSizePx = previewDevice === "mobile" ? mobileWidgetSizePx : widgetSizePx;
   const activePos = previewDevice === "mobile" ? mobilePosition : position;
@@ -356,6 +397,7 @@ export default function Index() {
       }
     >
       <BlockStack gap="500">
+        {/* Plan Status Banner */}
         {plan === "pro-plan" ? (
           <Banner title="Pro Plan Active" tone="success">
             <p>You have unlimited WhatsApp clicks.</p>
@@ -378,6 +420,8 @@ export default function Index() {
             </BlockStack>
           </Banner>
         )}
+
+        {/* Success/Error Messages */}
         {savedSuccess && <Banner title="Settings saved successfully!" tone="success" />}
         {actionData?.status === "error" && <Banner title={actionData.message} tone="critical" />}
 
@@ -408,7 +452,7 @@ export default function Index() {
                 </BlockStack>
               </Card>
 
-              {/* Style & Size Customization */}
+              {/* Widget Style & Sizing Card */}
               <Card>
                 <BlockStack gap="400">
                   <Text as="h2" variant="headingMd">
@@ -445,7 +489,14 @@ export default function Index() {
                   </Grid>
 
                   {selectedIcon === "custom-upload" && (
-                    <Box style={{ backgroundColor: "#f9fafb", padding: "12px", borderRadius: "8px", border: "1px solid #e5e7eb" }}>
+                    <Box
+                      style={{
+                        backgroundColor: "#f9fafb",
+                        padding: "12px",
+                        borderRadius: "8px",
+                        border: "1px solid #e5e7eb",
+                      }}
+                    >
                       <TextField
                         label="Custom Icon Image URL (.png, .jpg, .svg)"
                         placeholder="https://cdn.shopify.com/s/files/1/.../my-icon.png"
@@ -474,6 +525,7 @@ export default function Index() {
 
                   <Divider />
 
+                  {/* Desktop Settings */}
                   <Text as="h3" variant="headingSm" tone="subdued">
                     💻 Desktop Settings
                   </Text>
@@ -504,6 +556,7 @@ export default function Index() {
 
                   <Divider />
 
+                  {/* Mobile Settings */}
                   <Text as="h3" variant="headingSm" tone="subdued">
                     📱 Mobile Settings
                   </Text>
@@ -534,7 +587,7 @@ export default function Index() {
                 </BlockStack>
               </Card>
 
-              {/* Popup Customization Card */}
+              {/* Popup Header Customization Card */}
               <Card>
                 <BlockStack gap="400">
                   <Text as="h2" variant="headingMd">
@@ -557,7 +610,7 @@ export default function Index() {
             </BlockStack>
           </Layout.Section>
 
-          {/* Right Column: Live Interactive Device Preview */}
+          {/* Live Preview */}
           <Layout.Section variant="oneThird">
             <Card>
               <BlockStack gap="400">
@@ -618,8 +671,16 @@ export default function Index() {
                       boxSizing: "border-box",
                     }}
                   >
-                    <div style={{ height: "12px", backgroundColor: "#f0f2f5", borderRadius: "4px", width: "40%" }} />
+                    <div
+                      style={{
+                        height: "12px",
+                        backgroundColor: "#f0f2f5",
+                        borderRadius: "4px",
+                        width: "40%",
+                      }}
+                    />
 
+                    {/* Chat Popup Preview */}
                     <div
                       style={{
                         backgroundColor: "#ffffff",
@@ -674,6 +735,7 @@ export default function Index() {
                       </div>
                     </div>
 
+                    {/* Floating Button Preview */}
                     <div
                       style={{
                         position: "absolute",

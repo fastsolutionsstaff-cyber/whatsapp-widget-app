@@ -1,28 +1,36 @@
+# Shopify App Configuration
+# For more info: https://shopify.dev/docs/apps/tools/cli/configuration
+
 name = "widget-whatsapp"
 handle = "widget-whatsapp"
 client_id = "96d13c204caa88f27a5fd216a6caa250"
 application_url = "https://whatsapp-widget-app.vercel.app"
 embedded = true
 
+# App Proxy Configuration
 [app_proxy]
 url = "https://whatsapp-widget-app.vercel.app/proxy"
 subpath = "whatsapp-widget"
 prefix = "apps"
 
+# Webhook Configuration
 [webhooks]
 api_version = "2026-07"
 
+# Access Scopes
 [access_scopes]
 scopes = "write_products,read_products,write_metafields,read_metafields"
 optional_scopes = []
 use_legacy_install_flow = false
 
+# Authentication
 [auth]
 redirect_urls = ["https://whatsapp-widget-app.vercel.app/auth/callback"]
 
+# Billing Configuration - Pro Plan
 [[billing]]
 name = "Pro Plan"
 price = 4.99
 currency_code = "USD"
 interval = "month"
-test = true
+test = false
