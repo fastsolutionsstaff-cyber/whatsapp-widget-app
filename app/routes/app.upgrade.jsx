@@ -3,69 +3,44 @@ import { useLoaderData } from "@remix-run/react";
 import { Page, Layout, Card, Button, Text, BlockStack, Banner } from "@shopify/polaris";
 import { authenticate } from "../shopify.server";
 
-// Loader
 export async function loader({ request }) {
   try {
     const { billing, session } = await authenticate.admin(request);
     
-    // Check if already on Pro
-    const subscriptions = await billing.check({
-      plans: ["Pro Plan - $4.99/mo"],
+    // Check if already on Professional Plan
+    const checkBilling = await billing.check({
+      plans: ["Professional Plan"],  // ← YEH SAHI NAME HAI
       isTest: true,
     });
 
-    // Agar already Pro hai
-    if (subscriptions.hasActiveSubscriptions) {
+    // Agar already Professional Plan hai toh redirect
+    if (checkBilling.hasActiveSubscriptions) {
       return redirect("/app");
     }
 
     // Billing request
     const response = await billing.request({
-      plan: "Pro Plan - $4.99/mo",
+      plan: "Professional Plan",  // ← YEH SAHI NAME HAI
       isTest: true,
       returnUrl: `https://${session.shop}/admin/apps/widget-whatsapp`,
     });
 
-    return json({ 
-      confirmationUrl: response.confirmationUrl, 
-      error: null 
-    });
+    // Shopify payment page par redirect
+    if (response.confirmationUrl) {
+      return redirect(response.confirmationUrl);
+    }
+
+    return json({ error: "No confirmation URL received" });
 
   } catch (error) {
-    console.error("Loader error:", error);
-    return json({ 
-      confirmationUrl: null, 
-      error: "Unable to process billing. Please try again." 
-    });
-  }
-}
-
-// Action
-export async function action({ request }) {
-  try {
-    const { billing, session } = await authenticate.admin(request);
-
-    const response = await billing.request({
-      plan: "Pro Plan - $4.99/mo",
-      isTest: true,
-      returnUrl: `https://${session.shop}/admin/apps/widget-whatsapp`,
-    });
-
-    return redirect(response.confirmationUrl);
-
-  } catch (error) {
-    console.error("Action error:", error);
-    return json({ 
-      confirmationUrl: null, 
-      error: "Billing error. Please try again." 
-    });
+    console.error("Billing Error:", error);
+    return json({ error: error.message || "Billing error occurred" });
   }
 }
 
 export default function UpgradePage() {
   const data = useLoaderData();
 
-  // Error show karo
   if (data?.error) {
     return (
       <Page title="Upgrade to Pro">
@@ -73,7 +48,7 @@ export default function UpgradePage() {
           <Layout.Section>
             <Card>
               <BlockStack gap="400">
-                <Text variant="headingMd" as="h2">Upgrade to Pro</Text>
+                <Text variant="headingMd" as="h2">Upgrade to Professional Plan</Text>
                 <Banner title="Error" tone="critical">
                   <p>{data.error}</p>
                 </Banner>
@@ -88,21 +63,14 @@ export default function UpgradePage() {
     );
   }
 
-  // Agar confirmationUrl hai toh auto redirect
-  if (data?.confirmationUrl && typeof window !== "undefined") {
-    window.top.location.href = data.confirmationUrl;
-    return null;
-  }
-
-  // Page show karo
   return (
-    <Page title="Upgrade to Pro">
+    <Page title="Upgrade to Professional Plan">
       <Layout>
         <Layout.Section>
           <Card>
             <BlockStack gap="400">
               <Text variant="headingLg" as="h2">
-                🚀 Unlock Pro Features — $4.99/mo
+                🚀 Unlock Professional Plan — $4.99/mo
               </Text>
               
               <BlockStack gap="200">
@@ -111,6 +79,10 @@ export default function UpgradePage() {
                 <Text as="p">✅ No free tier restrictions</Text>
                 <Text as="p">✅ Priority support</Text>
               </BlockStack>
+
+              <Text as="p" tone="subdued">
+                Clicking below will redirect you to Shopify's secure checkout.
+              </Text>
 
               <form method="POST">
                 <Button 

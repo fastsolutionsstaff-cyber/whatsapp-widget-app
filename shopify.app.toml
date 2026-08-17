@@ -10,15 +10,6 @@ url = "https://whatsapp-widget-app.vercel.app/proxy"
 subpath = "whatsapp-widget"
 prefix = "apps"
 
-[access_scopes]
-# Tumhare existing scopes
-
-[[billing]]
-name = "Pro Plan - $4.99/mo"
-price = 4.99
-currency_code = "USD"
-interval = "month"
-test = true
 
 [webhooks]
 api_version = "2026-07"
@@ -31,3 +22,18 @@ use_legacy_install_flow = false
 
 [auth]
 redirect_urls = [ "https://whatsapp-widget-app.vercel.app/auth/callback" ]
+name = "widget-whatsapp"
+handle = "widget-whatsapp"
+client_id = "your_client_id"
+application_url = "https://your-app-url.com"
+embedded = true
+
+[access_scopes]
+scopes = "write_products,read_products,write_metafields,read_metafields"
+
+[[billing]]
+name = "Professional Plan - $4.99/mo"
+price = 4.99
+currency_code = "USD"
+interval = "month"
+test = true
