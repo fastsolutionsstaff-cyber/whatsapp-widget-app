@@ -370,8 +370,7 @@ export default function Index() {
               <Button
                 primary
                 onClick={() => {
-                  const shop = window.location.hostname;
-                  window.top.location.href = `https://admin.shopify.com/store/${shop}/admin/apps/widget-whatsapp/pricing`;
+                  window.open("https://apps.shopify.com/widget-whatsapp/pricing", "_blank");
                 }}
               >
                 Upgrade to Pro Plan ($4.99/mo)
@@ -385,7 +384,7 @@ export default function Index() {
         <Layout>
           <Layout.Section>
             <BlockStack gap="400">
-              {/* Merchant Setup Card (KEPT INTACT) */}
+              {/* Merchant Setup Card */}
               <Card>
                 <BlockStack gap="400">
                   <Text as="h2" variant="headingMd">
@@ -409,14 +408,13 @@ export default function Index() {
                 </BlockStack>
               </Card>
 
-              {/* Style & Size Customization (KEPT INTACT) */}
+              {/* Style & Size Customization */}
               <Card>
                 <BlockStack gap="400">
                   <Text as="h2" variant="headingMd">
                     Widget Style & Sizing
                   </Text>
 
-                  {/* Icon Selector Grid */}
                   <Text as="p" variant="bodySm" fontWeight="medium">
                     Select Icon Style:
                   </Text>
@@ -446,7 +444,6 @@ export default function Index() {
                     ))}
                   </Grid>
 
-                  {/* Custom Icon Image URL Input */}
                   {selectedIcon === "custom-upload" && (
                     <Box style={{ backgroundColor: "#f9fafb", padding: "12px", borderRadius: "8px", border: "1px solid #e5e7eb" }}>
                       <TextField
@@ -477,7 +474,6 @@ export default function Index() {
 
                   <Divider />
 
-                  {/* DESKTOP SETTINGS */}
                   <Text as="h3" variant="headingSm" tone="subdued">
                     💻 Desktop Settings
                   </Text>
@@ -508,7 +504,6 @@ export default function Index() {
 
                   <Divider />
 
-                  {/* MOBILE SETTINGS */}
                   <Text as="h3" variant="headingSm" tone="subdued">
                     📱 Mobile Settings
                   </Text>
@@ -539,7 +534,7 @@ export default function Index() {
                 </BlockStack>
               </Card>
 
-              {/* Popup Customization Card (KEPT INTACT) */}
+              {/* Popup Customization Card */}
               <Card>
                 <BlockStack gap="400">
                   <Text as="h2" variant="headingMd">
@@ -625,7 +620,6 @@ export default function Index() {
                   >
                     <div style={{ height: "12px", backgroundColor: "#f0f2f5", borderRadius: "4px", width: "40%" }} />
 
-                    {/* Chat Popup */}
                     <div
                       style={{
                         backgroundColor: "#ffffff",
@@ -680,7 +674,6 @@ export default function Index() {
                       </div>
                     </div>
 
-                    {/* Dynamic Floating Button */}
                     <div
                       style={{
                         position: "absolute",
