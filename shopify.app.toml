@@ -14,16 +14,8 @@ prefix = "apps"
 api_version = "2026-07"
 
 [[webhooks.subscriptions]]
-topic = "customers/data_request"
-callback_url = "/webhooks/customers/data_request"
-
-[[webhooks.subscriptions]]
-topic = "customers/redact"
-callback_url = "/webhooks/customers/redact"
-
-[[webhooks.subscriptions]]
-topic = "shop/redact"
-callback_url = "/webhooks/shop/redact"
+compliance_topics = [ "customers/data_request", "customers/redact", "shop/redact" ]
+uri = "/webhooks/compliance"
 
 [access_scopes]
 scopes = "write_products,read_products,write_metafields,read_metafields"
