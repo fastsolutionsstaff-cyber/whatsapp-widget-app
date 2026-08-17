@@ -10,30 +10,20 @@ url = "https://whatsapp-widget-app.vercel.app/proxy"
 subpath = "whatsapp-widget"
 prefix = "apps"
 
-
 [webhooks]
 api_version = "2026-07"
 
 [access_scopes]
-# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = ""
-optional_scopes = [ ]
+scopes = "write_products,read_products,write_metafields,read_metafields"
+optional_scopes = []
 use_legacy_install_flow = false
 
 [auth]
-redirect_urls = [ "https://whatsapp-widget-app.vercel.app/auth/callback" ]
-name = "widget-whatsapp"
-handle = "widget-whatsapp"
-client_id = "your_client_id"
-application_url = "https://your-app-url.com"
-embedded = true
-
-[access_scopes]
-scopes = "write_products,read_products,write_metafields,read_metafields"
+redirect_urls = ["https://whatsapp-widget-app.vercel.app/auth/callback"]
 
 [[billing]]
-name = "Pro Plan"  # ← YEH SAHI NAME HAI
+name = "Pro Plan"
 price = 4.99
 currency_code = "USD"
 interval = "month"
-test = true
+test = trues

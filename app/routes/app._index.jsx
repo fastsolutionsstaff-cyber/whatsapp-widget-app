@@ -364,9 +364,19 @@ export default function Index() {
           <Banner
             title={`Free Plan — ${clickCount}/100 clicks used`}
             tone={clickCount >= 100 ? "critical" : "info"}
-            action={{ content: "Upgrade to Pro", url: "/app/upgrade" }}
           >
-            <p>Upgrade to Pro for unlimited WhatsApp clicks.</p>
+            <BlockStack gap="200">
+              <p>Upgrade to Pro Plan for unlimited WhatsApp clicks.</p>
+              <Button
+                primary
+                onClick={() => {
+                  const shop = window.location.hostname;
+                  window.top.location.href = `https://admin.shopify.com/store/${shop}/admin/apps/widget-whatsapp/pricing`;
+                }}
+              >
+                Upgrade to Pro Plan ($4.99/mo)
+              </Button>
+            </BlockStack>
           </Banner>
         )}
         {savedSuccess && <Banner title="Settings saved successfully!" tone="success" />}
