@@ -15,19 +15,27 @@ prefix = "apps"
 
 # Webhook Configuration
 [webhooks]
-api_version = "2026-07"
+api_version = "2025-01"
 
 [[webhooks.subscriptions]]
-topic = "customers/data_request"
-callback_url = "https://whatsapp-widget-app.vercel.app/webhooks/customers/data_request"
+topics = ["app/uninstalled"]
+uri = "/webhooks/app/uninstalled"
 
 [[webhooks.subscriptions]]
-topic = "customers/redact"
-callback_url = "https://whatsapp-widget-app.vercel.app/webhooks/customers/redact"
+topics = ["app/scopes_update"]
+uri = "/webhooks/app/scopes_update"
 
 [[webhooks.subscriptions]]
-topic = "shop/redact"
-callback_url = "https://whatsapp-widget-app.vercel.app/webhooks/shop/redact"
+topics = ["customers/data_request"]
+uri = "/webhooks/customers/data_request"
+
+[[webhooks.subscriptions]]
+topics = ["customers/redact"]
+uri = "/webhooks/customers/redact"
+
+[[webhooks.subscriptions]]
+topics = ["shop/redact"]
+uri = "/webhooks/shop/redact"
 
 # Access Scopes
 [access_scopes]
