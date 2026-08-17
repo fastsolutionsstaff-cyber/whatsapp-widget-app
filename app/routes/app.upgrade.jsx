@@ -3,21 +3,38 @@ import { authenticate } from "../shopify.server";
 
 export async function loader({ request }) {
   try {
-    const { session } = await authenticate.admin(request);
+    const { billing, session } = await authenticate.admin(request);
     
     if (!session) {
       return redirect("/auth");
     }
     
-    const shop = session.shop.replace(".myshopify.com", "");
-    
-    // DIRECT SHOPIFY BILLING URL
-    const billingUrl = `https://admin.shopify.com/store/${shop}/admin/apps/widget-whatsapp/pricing`;
-    
-    return redirect(billingUrl);
-    
+    // Check if already on Pro Plan
+    const checkBilling = await billing.check({
+      plans: ["Pro Plan"],
+      isTest: true,
+    });
+
+    // Agar already Pro hai toh wapas settings par
+    if (checkBilling.hasActiveSubscriptions) {
+      return redirect("/app");
+    }
+
+    // Billing request with test mode
+    const response = await billing.request({
+      plan: "Pro Plan",
+      isTest: true,
+      returnUrl: `https://${session.shop}/admin/apps/widget-whatsapp`,
+    });
+
+    if (response.confirmationUrl) {
+      return redirect(response.confirmationUrl);
+    }
+
+    return redirect("/app");
+
   } catch (error) {
-    console.error("Upgrade error:", error);
+    console.error("Billing error:", error);
     return redirect("/app");
   }
 }
