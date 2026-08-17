@@ -17,9 +17,9 @@ prefix = "apps"
 [webhooks]
 api_version = "2026-07"
 
-# Access Scopes - INCLUDING BILLING SCOPE
+# Access Scopes - Removed unused scope
 [access_scopes]
-scopes = "write_products,read_products,write_metafields,read_metafields,read_shopify_payments_payouts"
+scopes = "write_products,read_products,write_metafields,read_metafields"
 optional_scopes = []
 use_legacy_install_flow = false
 
@@ -27,10 +27,10 @@ use_legacy_install_flow = false
 [auth]
 redirect_urls = ["https://whatsapp-widget-app.vercel.app/auth/callback"]
 
-# Billing Configuration - Pro Plan
+# Billing Configuration - Pro Plan (Test Mode)
 [[billing]]
 name = "Pro Plan"
 price = 4.99
 currency_code = "USD"
 interval = "month"
-test = false
+test = true
