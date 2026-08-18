@@ -1,39 +1,43 @@
 import { authenticate } from "../shopify.server";
 import db from "../db.server";
 
-export async function action({ request }) {
+export const action = async ({ request }) => {
   try {
-    const { shop, topic } = await authenticate.webhook(request);
+    const { topic, shop, payload } = await authenticate.webhook(request);
+
     console.log(`✅ Compliance webhook received: ${topic} for shop: ${shop}`);
 
-    const payload = await request.json();
-
     switch (topic) {
-      case "customers/data_request":
-        // Handle customer personal data requests here
+      case "CUSTOMERS_DATA_REQUEST":
+      case "customers/data_request": {
         console.log("Customer data request payload:", payload);
         break;
+      }
 
-      case "customers/redact":
-        // Handle customer data erasure requests here
+      case "CUSTOMERS_REDACT":
+      case "customers/redact": {
         console.log("Customer redact payload:", payload);
         break;
+      }
 
-      case "shop/redact":
-        // Handle shop data deletion (e.g., clearing store settings from database)
-        await db.storeSetting.deleteMany({
-          where: { shop },
-        });
-        console.log(`🗑️ All data deleted for shop: ${shop}`);
+      case "SHOP_REDACT":
+      case "shop/redact": {
+        if (shop) {
+          await db.storeSetting.deleteMany({
+            where: { shop },
+          });
+          console.log(`🗑️ All data deleted for shop: ${shop}`);
+        }
         break;
+      }
 
       default:
-        console.warn(`Unhandled compliance webhook topic: ${topic}`);
+        console.warn(`Unhandled compliance topic: ${topic}`);
     }
 
     return new Response("OK", { status: 200 });
   } catch (error) {
-    console.error("Compliance webhook validation error:", error);
+    console.error("Compliance webhook error:", error);
     return new Response("Unauthorized", { status: 401 });
   }
-}
+};
