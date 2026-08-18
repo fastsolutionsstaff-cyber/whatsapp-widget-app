@@ -31,3 +31,10 @@ use_legacy_install_flow = false
 
 [auth]
 redirect_urls = ["https://whatsapp-widget-app.vercel.app/auth/callback"]
+
+[[billing]]
+name = "Pro Plan"
+price = 4.99
+currency_code = "USD"
+interval = "month"
+test = true
