@@ -3,9 +3,12 @@ import {
   ApiVersion,
   AppDistribution,
   shopifyApp,
+  BillingInterval,
 } from "@shopify/shopify-app-remix/server";
 import { PrismaSessionStorage } from "@shopify/shopify-app-session-storage-prisma";
 import prisma from "./db.server";
+
+export const MONTHLY_PLAN = "pro-plan";
 
 const shopify = shopifyApp({
   apiKey: process.env.SHOPIFY_API_KEY,
@@ -17,17 +20,13 @@ const shopify = shopifyApp({
   sessionStorage: new PrismaSessionStorage(prisma),
   distribution: AppDistribution.AppStore,
 
-  // Correct Shopify billing configuration with lineItems
   billing: {
-    "pro-plan": {
-      amount: 4.99,
-      currency_code: "USD",
-      interval: "EVERY_30_DAYS",
+    [MONTHLY_PLAN]: {
       lineItems: [
         {
           amount: 4.99,
           currencyCode: "USD",
-          interval: "EVERY_30_DAYS",
+          interval: BillingInterval.Every30Days,
         },
       ],
     },
