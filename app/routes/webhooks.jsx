@@ -3,28 +3,33 @@ import db from "../db.server";
 
 export const action = async ({ request }) => {
   try {
-    const { topic, shop } = await authenticate.webhook(request);
+    const { topic, shop, admin } = await authenticate.webhook(request);
 
-    switch (topic) {
-      case "CUSTOMERS_DATA_REQUEST":
-      case "customers/data_request":
-        console.log(`Data request received for shop: ${shop}`);
-        break;
+    if (topic === "APP_SUBSCRIPTIONS_UPDATE" || topic === "app/subscriptions_update") {
+      if (admin) {
+        const response = await admin.graphql(
+          `#graphql
+          query {
+            currentAppInstallation {
+              activeSubscriptions {
+                name
+                status
+              }
+            }
+          }`
+        );
 
-      case "CUSTOMERS_REDACT":
-      case "customers/redact":
-        console.log(`Customer redact request for shop: ${shop}`);
-        break;
+        const data = await response.json();
+        const subscriptions = data.data?.currentAppInstallation?.activeSubscriptions || [];
+        const hasActivePro = subscriptions.some(
+          (sub) => sub.status === "ACTIVE" && sub.name.toLowerCase().includes("pro")
+        );
 
-      case "SHOP_REDACT":
-      case "shop/redact":
-        if (shop) {
-          await db.storeSetting.deleteMany({ where: { shop } });
-        }
-        break;
-
-      default:
-        console.log(`Unhandled webhook topic: ${topic}`);
+        await db.storeSetting.updateMany({
+          where: { shop },
+          data: { plan: hasActivePro ? "pro-plan" : "starter-plan" },
+        });
+      }
     }
 
     return new Response("OK", { status: 200 });
