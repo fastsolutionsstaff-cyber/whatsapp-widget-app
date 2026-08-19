@@ -1,5 +1,4 @@
 name = "widget-whatsapp"
-handle = "widget-whatsapp"
 client_id = "96d13c204caa88f27a5fd216a6caa250"
 application_url = "https://whatsapp-widget-app.vercel.app"
 embedded = true
@@ -25,7 +24,7 @@ topics = [ "app/scopes_update" ]
 uri = "/webhooks/app/scopes_update"
 
 [access_scopes]
-scopes = "write_products,read_products,write_metafields,read_metafields"
+scopes = "write_products,read_products"
 optional_scopes = []
 use_legacy_install_flow = false
 
