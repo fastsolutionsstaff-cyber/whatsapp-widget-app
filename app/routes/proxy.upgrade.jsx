@@ -31,12 +31,8 @@ export async function loader({ request }) {
       });
     }
 
-    const storeHandle = session.shop.resubplace
-      ? session.shop.replace(".myshopify.com", "")
-      : session.shop.replace(".myshopify.com", "");
-
-    // Seedha app ke inside upgrade page par ya Shopify pricing flow par redirect karein
-    const embeddedUpgradeUrl = `https://admin.shopify.com/store/${storeHandle}/apps/${appHandle}/upgrade`;
+    const storeHandle = session.shop.replace(".myshopify.com", "");
+    const embeddedUpgradeUrl = `https://admin.shopify.com/store/${storeHandle}/apps/${appHandle}/app/upgrade`;
 
     return redirect(embeddedUpgradeUrl);
   } catch (error) {

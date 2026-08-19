@@ -1,19 +1,32 @@
-# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
-
+name = "FS Whatsapp"
 client_id = "96d13c204caa88f27a5fd216a6caa250"
-name = "widget-whatsapp"
 application_url = "https://whatsapp-widget-app.vercel.app"
 embedded = true
+
+[app_proxy]
+url = "https://whatsapp-widget-app.vercel.app/proxy"
+subpath = "whatsapp-widget"
+prefix = "apps"
 
 [webhooks]
 api_version = "2026-07"
 
+[[webhooks.subscriptions]]
+compliance_topics = [ "customers/data_request", "customers/redact", "shop/redact" ]
+uri = "/webhooks/privacy"
+
+[[webhooks.subscriptions]]
+topics = [ "app/uninstalled" ]
+uri = "/webhooks/app/uninstalled"
+
+[[webhooks.subscriptions]]
+topics = [ "app/scopes_update" ]
+uri = "/webhooks/app/scopes_update"
+
 [access_scopes]
-scopes = ""
+scopes = "write_products,read_products"
 optional_scopes = []
 use_legacy_install_flow = false
 
 [auth]
-redirect_urls = [
-  "https://whatsapp-widget-app.vercel.app/auth/callback"
-]
+redirect_urls = ["https://whatsapp-widget-app.vercel.app/auth/callback"]
