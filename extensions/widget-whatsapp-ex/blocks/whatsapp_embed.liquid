@@ -139,6 +139,7 @@
         text-decoration: none;
         font-weight: 600;
         font-size: 13px;
+        cursor: pointer;
       "
     >
       Upgrade to Pro ($4.99/mo)
@@ -629,8 +630,6 @@
 
           if (upgradeUrl) {
             window.top.location.href = upgradeUrl;
-          } else {
-            window.top.location.href = "https://admin.shopify.com/store/{{ shop.permanent_domain | remove: '.myshopify.com' }}/charges/widget-whatsapp-1/plans/pro-plan?interval=EVERY_30_DAYS";
           }
         });
       }
