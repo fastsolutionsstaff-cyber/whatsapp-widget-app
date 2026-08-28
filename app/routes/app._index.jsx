@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { json } from "@remix-run/node";
-import { useLoaderData, useSubmit, useNavigation, useActionData } from "@remix-run/react";
+import { useLoaderData, useSubmit, useNavigation, useActionData, useFetcher } from "@remix-run/react";
 import {
   Page,
   Layout,
@@ -19,7 +19,7 @@ import {
   RangeSlider,
   Divider,
 } from "@shopify/polaris";
-import { authenticate } from "../shopify.server";
+import { authenticate, billing } from "../shopify.server";
 import prisma from "../db.server";
 
 // ============================================================
@@ -163,30 +163,46 @@ const DEFAULT_SETTINGS = {
 // ============================================================
 
 export const loader = async ({ request }) => {
-  const { admin, session } = await authenticate.admin(request);
+  const { admin, session, billing: billingCheck } = await authenticate.admin(request);
 
   let planInfo = { plan: "starter-plan", clickCount: 0 };
+  let hasProPlan = false;
 
-  // Fetch subscription status
+  // Check if merchant has active subscription using billing API
   try {
-    const subResponse = await admin.graphql(`
-      #graphql
-      query {
-        currentAppInstallation {
-          activeSubscriptions {
-            name
-            status
+    const billingCheckResult = await billingCheck.require({
+      plans: ["pro-plan"],
+      onFailure: async () => false,
+    });
+    hasProPlan = billingCheckResult?.hasActivePayment || false;
+  } catch (error) {
+    console.error("Error checking billing:", error);
+    // Fallback to checking subscriptions via GraphQL
+    try {
+      const subResponse = await admin.graphql(`
+        #graphql
+        query {
+          currentAppInstallation {
+            activeSubscriptions {
+              name
+              status
+            }
           }
         }
-      }
-    `);
-    const subData = await subResponse.json();
-    const activeSubs = subData.data?.currentAppInstallation?.activeSubscriptions || [];
-    const hasProSubscription = activeSubs.some(
-      (sub) => sub.status === "ACTIVE" && sub.name.toLowerCase().includes("pro")
-    );
-    const currentPlan = hasProSubscription ? "pro-plan" : "starter-plan";
+      `);
+      const subData = await subResponse.json();
+      const activeSubs = subData.data?.currentAppInstallation?.activeSubscriptions || [];
+      hasProPlan = activeSubs.some(
+        (sub) => sub.status === "ACTIVE" && sub.name.toLowerCase().includes("pro")
+      );
+    } catch (subError) {
+      console.error("Error checking subscriptions:", subError);
+    }
+  }
 
+  const currentPlan = hasProPlan ? "pro-plan" : "starter-plan";
+
+  try {
     const storeSetting = await prisma.storeSetting.upsert({
       where: { shop: session.shop },
       update: { plan: currentPlan },
@@ -195,7 +211,7 @@ export const loader = async ({ request }) => {
 
     planInfo = { plan: storeSetting.plan, clickCount: storeSetting.clickCount };
   } catch (planError) {
-    console.error("Error checking plan status:", planError);
+    console.error("Error updating plan status:", planError);
   }
 
   // Fetch widget settings
@@ -237,9 +253,44 @@ export const loader = async ({ request }) => {
 // ============================================================
 
 export const action = async ({ request }) => {
-  const { admin } = await authenticate.admin(request);
+  const { admin, session, billing: billingRequest } = await authenticate.admin(request);
   const formData = await request.formData();
+  const actionType = formData.get("actionType");
 
+  // Handle upgrade action
+  if (actionType === "upgrade") {
+    try {
+      // Use Shopify's billing API to request payment
+      const billingResponse = await billingRequest.request({
+        plan: "pro-plan",
+        isTest: process.env.NODE_ENV !== "production",
+        returnUrl: `https://${session.shop}/admin/apps/${process.env.SHOPIFY_API_KEY}/app`,
+      });
+
+      if (billingResponse?.confirmationUrl) {
+        return json({
+          status: "success",
+          type: "upgrade",
+          confirmationUrl: billingResponse.confirmationUrl,
+        });
+      }
+
+      return json({
+        status: "error",
+        type: "upgrade",
+        message: "Unable to create billing request. Please try again.",
+      });
+    } catch (error) {
+      console.error("Billing request error:", error);
+      return json({
+        status: "error",
+        type: "upgrade",
+        message: "Failed to process upgrade. Please try again.",
+      });
+    }
+  }
+
+  // Handle settings save
   const settingsPayload = {
     phoneNumber: formData.get("phoneNumber") || DEFAULT_SETTINGS.phoneNumber,
     defaultMessage: formData.get("defaultMessage") || DEFAULT_SETTINGS.defaultMessage,
@@ -340,10 +391,11 @@ export default function Index() {
 
   const [previewDevice, setPreviewDevice] = useState("desktop");
   const [savedSuccess, setSavedSuccess] = useState(false);
+  const [isUpgrading, setIsUpgrading] = useState(false);
 
   const isSaving = navigation.state === "submitting";
 
-  // Handle success message
+  // Handle success message and upgrade redirect
   useEffect(() => {
     if (actionData?.status === "success" && actionData?.settings) {
       setPhoneNumber(actionData.settings.phoneNumber);
@@ -362,6 +414,16 @@ export default function Index() {
       const timer = setTimeout(() => setSavedSuccess(false), 4000);
       return () => clearTimeout(timer);
     }
+
+    // Handle upgrade redirect
+    if (actionData?.type === "upgrade" && actionData?.confirmationUrl) {
+      setIsUpgrading(false);
+      window.top.location.href = actionData.confirmationUrl;
+    }
+
+    if (actionData?.type === "upgrade" && actionData?.status === "error") {
+      setIsUpgrading(false);
+    }
   }, [actionData]);
 
   // Save handler
@@ -379,6 +441,14 @@ export default function Index() {
     formData.append("greetingHeader", greetingHeader);
     formData.append("greetingSubtext", greetingSubtext);
 
+    submit(formData, { method: "post" });
+  };
+
+  // Upgrade handler
+  const handleUpgrade = () => {
+    setIsUpgrading(true);
+    const formData = new FormData();
+    formData.append("actionType", "upgrade");
     submit(formData, { method: "post" });
   };
 
@@ -411,9 +481,8 @@ export default function Index() {
               <p>Upgrade to Pro Plan for unlimited WhatsApp clicks.</p>
               <Button
                 primary
-                onClick={() => {
-                  window.open('https://apps.shopify.com/fs-whatsapp/pricing', '_blank');
-                }}
+                loading={isUpgrading}
+                onClick={handleUpgrade}
               >
                 Upgrade to Pro Plan ($4.99/mo)
               </Button>
@@ -423,7 +492,12 @@ export default function Index() {
 
         {/* Success/Error Messages */}
         {savedSuccess && <Banner title="Settings saved successfully!" tone="success" />}
-        {actionData?.status === "error" && <Banner title={actionData.message} tone="critical" />}
+        {actionData?.status === "error" && actionData?.type !== "upgrade" && (
+          <Banner title={actionData.message} tone="critical" />
+        )}
+        {actionData?.status === "error" && actionData?.type === "upgrade" && (
+          <Banner title={`Upgrade failed: ${actionData.message}`} tone="critical" />
+        )}
 
         <Layout>
           <Layout.Section>
