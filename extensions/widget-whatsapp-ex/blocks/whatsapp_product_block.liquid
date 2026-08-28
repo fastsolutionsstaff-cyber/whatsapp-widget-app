@@ -108,12 +108,11 @@
 
     <p>
       You have used your 100 free WhatsApp clicks this month.
-      Please upgrade to Pro Plan to continue chatting.
     </p>
 
-    <a href="https://admin.shopify.com/store/{{ shop.permanent_domain | remove: '.myshopify.com' }}/apps/whatsapp-widget/app/upgrade" target="_top">
-      Upgrade to Pro ($4.99/mo)
-    </a>
+    <p style="margin-top: 12px; font-weight: 600; color: #25D366; font-size: 13px;">
+      Please upgrade to Pro plan from the dashboard.
+    </p>
   </div>
 
   {% if block.settings.footer_text != blank %}
@@ -326,22 +325,10 @@
   }
 
   #wa-inline-paywall-modal p {
-    margin: 0 0 16px 0;
+    margin: 0 0 8px 0;
     color: #666666;
     font-size: 12px;
     line-height: 1.4;
-  }
-
-  #wa-inline-paywall-modal a {
-    display: block;
-    background: #25D366;
-    color: #ffffff;
-    padding: 10px;
-    border-radius: 20px;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 13px;
-    cursor: pointer;
   }
 
   .wa-inline-footer-subtext {
