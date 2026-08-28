@@ -165,7 +165,7 @@ const DEFAULT_SETTINGS = {
 export const loader = async ({ request }) => {
   const { admin, session } = await authenticate.admin(request);
 
-  let planInfo = { plan: "starter-plan", clickCount: 0 };
+  let planInfo = { plan: "starter-plan", clickCount: 0, shop: session.shop };
   let hasProPlan = false;
 
   // Check subscription status
@@ -199,7 +199,7 @@ export const loader = async ({ request }) => {
       create: { shop: session.shop, plan: currentPlan, clickCount: 0, monthStart: new Date() },
     });
 
-    planInfo = { plan: storeSetting.plan, clickCount: storeSetting.clickCount };
+    planInfo = { plan: storeSetting.plan, clickCount: storeSetting.clickCount, shop: session.shop };
   } catch (planError) {
     console.error("Error updating plan status:", planError);
   }
@@ -226,6 +226,7 @@ export const loader = async ({ request }) => {
         settings,
         plan: planInfo.plan,
         clickCount: planInfo.clickCount,
+        shop: session.shop,
       },
       { headers: { "Cache-Control": "no-cache, no-store, must-revalidate" } }
     );
@@ -234,6 +235,7 @@ export const loader = async ({ request }) => {
       settings: DEFAULT_SETTINGS,
       plan: planInfo.plan,
       clickCount: planInfo.clickCount,
+      shop: session.shop,
     });
   }
 };
@@ -326,7 +328,7 @@ export const action = async ({ request }) => {
 // ============================================================
 
 export default function Index() {
-  const { settings: loadedSettings, plan, clickCount } = useLoaderData();
+  const { settings: loadedSettings, plan, clickCount, shop } = useLoaderData();
   const actionData = useActionData();
   const submit = useSubmit();
   const navigation = useNavigation();
@@ -388,6 +390,13 @@ export default function Index() {
     submit(formData, { method: "post" });
   };
 
+  // Upgrade handler - Direct redirect to Shopify billing page
+  const handleUpgrade = () => {
+    const shopDomain = shop || window.location.hostname;
+    const upgradeUrl = `https://admin.shopify.com/store/${shopDomain.replace('.myshopify.com', '')}/charges/widget-whatsapp-1/plans/pro-plan?interval=EVERY_30_DAYS`;
+    window.top.location.href = upgradeUrl;
+  };
+
   // Preview calculations
   const activeIconObj = UNIQUE_ICONS.find((item) => item.id === selectedIcon) || UNIQUE_ICONS[0];
   const activeSizePx = previewDevice === "mobile" ? mobileWidgetSizePx : widgetSizePx;
@@ -417,11 +426,7 @@ export default function Index() {
               <p>Upgrade to Pro Plan for unlimited WhatsApp clicks.</p>
               <Button
                 primary
-                onClick={() => {
-                  // For Shopify App Pricing, this will open the billing page
-                  // The merchant can upgrade directly from Shopify's billing system
-                  window.location.reload();
-                }}
+                onClick={handleUpgrade}
               >
                 Upgrade to Pro Plan ($4.99/mo)
               </Button>
