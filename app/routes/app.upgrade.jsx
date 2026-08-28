@@ -1,8 +1,8 @@
 import { authenticate } from "../shopify.server";
+import { json } from "@remix-run/node";
 
 export const loader = async ({ request }) => {
-  // Destructure 'redirect' from authenticate.admin, NOT @remix-run/node
-  const { admin, session, redirect } = await authenticate.admin(request);
+  const { admin, session } = await authenticate.admin(request);
 
   const apiKey = process.env.SHOPIFY_API_KEY;
   const returnUrl = `https://${session.shop}/admin/apps/${apiKey}/app`;
@@ -48,15 +48,76 @@ export const loader = async ({ request }) => {
 
     const data = await response.json();
     const confirmationUrl = data.data?.appSubscriptionCreate?.confirmationUrl;
+    const userErrors = data.data?.appSubscriptionCreate?.userErrors;
 
-    if (confirmationUrl) {
-      // Shopify's authenticated redirect forces top-level window navigation
-      return redirect(confirmationUrl, { target: "_top" });
+    if (userErrors && userErrors.length > 0) {
+      console.error("Subscription creation errors:", userErrors);
+      return json({ error: userErrors[0].message }, { status: 400 });
     }
 
-    return redirect("/app");
+    if (confirmationUrl) {
+      // Return a script that redirects the parent window to the confirmation URL
+      return new Response(
+        `<!DOCTYPE html>
+        <html>
+          <head>
+            <title>Redirecting to Shopify Billing...</title>
+          </head>
+          <body>
+            <script>
+              window.top.location.href = "${confirmationUrl}";
+            </script>
+            <p>Redirecting to Shopify billing...</p>
+          </body>
+        </html>`,
+        {
+          headers: {
+            "Content-Type": "text/html",
+          },
+        }
+      );
+    }
+
+    // If no confirmation URL, redirect back to app
+    return new Response(
+      `<!DOCTYPE html>
+      <html>
+        <head>
+          <title>Redirecting...</title>
+        </head>
+        <body>
+          <script>
+            window.top.location.href = "/app";
+          </script>
+          <p>Redirecting...</p>
+        </body>
+      </html>`,
+      {
+        headers: {
+          "Content-Type": "text/html",
+        },
+      }
+    );
   } catch (error) {
     console.error("Error creating subscription:", error);
-    return redirect("/app");
+    return new Response(
+      `<!DOCTYPE html>
+      <html>
+        <head>
+          <title>Error</title>
+        </head>
+        <body>
+          <script>
+            window.top.location.href = "/app";
+          </script>
+          <p>Error occurred. Redirecting back...</p>
+        </body>
+      </html>`,
+      {
+        headers: {
+          "Content-Type": "text/html",
+        },
+      }
+    );
   }
 };

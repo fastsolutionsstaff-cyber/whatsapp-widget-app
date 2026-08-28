@@ -1,4 +1,3 @@
-import { redirect } from "@remix-run/node";
 import { authenticate } from "../shopify.server";
 
 export async function loader({ request }) {
@@ -39,7 +38,26 @@ async function handleProxyUpgrade(request) {
     const storeHandle = session.shop.replace(".myshopify.com", "");
     const embeddedUpgradeUrl = `https://admin.shopify.com/store/${storeHandle}/apps/${appHandle}/app/upgrade`;
 
-    return redirect(embeddedUpgradeUrl);
+    // Return HTML with script to redirect top window
+    return new Response(
+      `<!DOCTYPE html>
+      <html>
+        <head>
+          <title>Redirecting to Upgrade...</title>
+        </head>
+        <body>
+          <script>
+            window.top.location.href = "${embeddedUpgradeUrl}";
+          </script>
+          <p>Redirecting to upgrade page...</p>
+        </body>
+      </html>`,
+      {
+        headers: {
+          "Content-Type": "text/html",
+        },
+      }
+    );
   } catch (error) {
     console.error("App Proxy Upgrade Error:", error);
     return new Response("Unable to open the upgrade page.", {

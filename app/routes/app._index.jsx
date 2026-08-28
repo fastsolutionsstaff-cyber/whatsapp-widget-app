@@ -382,6 +382,12 @@ export default function Index() {
     submit(formData, { method: "post" });
   };
 
+  // Upgrade handler - this will break out of the iframe
+  const handleUpgradeClick = () => {
+    // This will navigate the top-level window to the upgrade page
+    window.open("/app/upgrade", "_top");
+  };
+
   // Preview calculations
   const activeIconObj = UNIQUE_ICONS.find((item) => item.id === selectedIcon) || UNIQUE_ICONS[0];
   const activeSizePx = previewDevice === "mobile" ? mobileWidgetSizePx : widgetSizePx;
@@ -411,8 +417,7 @@ export default function Index() {
               <p>Upgrade to Pro Plan for unlimited WhatsApp clicks.</p>
               <Button
                 primary
-                url="/app/upgrade"
-                target="_top"
+                onClick={handleUpgradeClick}
               >
                 Upgrade to Pro Plan ($4.99/mo)
               </Button>
