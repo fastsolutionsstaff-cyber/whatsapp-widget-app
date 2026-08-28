@@ -55,7 +55,6 @@
   class="wa-desktop-pos-{{ desktop_position }} wa-mobile-pos-{{ mobile_position }}"
   data-shop="{{ shop.permanent_domain }}"
   data-wa-url="{{ whatsapp_url }}"
-  data-upgrade-url="https://admin.shopify.com/store/{{ shop.permanent_domain | remove: '.myshopify.com' }}/charges/widget-whatsapp-1/plans/pro-plan?interval=EVERY_30_DAYS"
 >
 
   <div id="wa-chat-popup" class="wa-popup-hidden" role="dialog" aria-modal="true">
@@ -128,8 +127,8 @@
     </p>
 
     <a
-      href="#"
-      id="wa-upgrade-link"
+      href="https://admin.shopify.com/store/{{ shop.permanent_domain | remove: '.myshopify.com' }}/charges/widget-whatsapp-1/plans/pro-plan?interval=EVERY_30_DAYS"
+      target="_blank"
       style="
         display: block;
         background: #25D366;
@@ -585,7 +584,6 @@
       const paywallModal = document.getElementById("wa-paywall-modal");
       const closeBtn = document.getElementById("wa-popup-close");
       const trackLink = document.getElementById("wa-track-link");
-      const upgradeLink = document.getElementById("wa-upgrade-link");
 
       if (
         !widgetContainer ||
@@ -621,25 +619,11 @@
         popup.classList.add("wa-popup-hidden");
       });
 
-      if (upgradeLink) {
-        upgradeLink.addEventListener("click", function(e) {
-          e.preventDefault();
-          e.stopPropagation();
-
-          const upgradeUrl = widgetContainer.getAttribute("data-upgrade-url");
-
-          if (upgradeUrl) {
-            window.open(upgradeUrl, "_blank");
-          }
-        });
-      }
-
       trackLink.addEventListener("click", async function(e) {
         e.preventDefault();
         e.stopPropagation();
 
         const waUrl = widgetContainer.getAttribute("data-wa-url");
-        const shop = widgetContainer.getAttribute("data-shop");
 
         if (!waUrl) {
           console.error("WhatsApp widget: missing WhatsApp URL.");
