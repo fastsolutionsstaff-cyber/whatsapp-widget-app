@@ -411,9 +411,8 @@ export default function Index() {
               <p>Upgrade to Pro Plan for unlimited WhatsApp clicks.</p>
               <Button
                 primary
-                onClick={() => {
-                  window.top.location.href = "/app/upgrade";
-                }}
+                url="/app/upgrade"
+                target="_top"
               >
                 Upgrade to Pro Plan ($4.99/mo)
               </Button>

@@ -1,49 +1,63 @@
 import { redirect } from "@remix-run/node";
-import { authenticate, MONTHLY_PLAN } from "../shopify.server";
+import { authenticate } from "../shopify.server";
 
-export async function loader({ request }) {
-  return handleUpgrade(request);
-}
+export const loader = async ({ request }) => {
+  const { admin, session } = await authenticate.admin(request);
 
-export async function action({ request }) {
-  return handleUpgrade(request);
-}
+  // Return URL after merchant approves subscription
+  const apiKey = process.env.SHOPIFY_API_KEY;
+  const returnUrl = `https://${session.shop}/admin/apps/${apiKey}/app`;
 
-async function handleUpgrade(request) {
   try {
-    const { billing, session } = await authenticate.admin(request);
-
-    if (!session) {
-      return redirect("/auth");
-    }
-
-    // 1. Check if merchant already has an active Pro subscription
-    try {
-      const checkBilling = await billing.check({
-        plans: [MONTHLY_PLAN],
-        isTest: true,
-      });
-
-      if (checkBilling.hasActiveSubscriptions) {
-        return redirect("/app");
+    const response = await admin.graphql(
+      `#graphql
+      mutation appSubscriptionCreate($name: String!, $lineItems: [AppSubscriptionLineItemInput!]!, $returnUrl: URL!, $test: Boolean) {
+        appSubscriptionCreate(
+          name: $name
+          returnUrl: $returnUrl
+          lineItems: $lineItems
+          test: $test
+        ) {
+          userErrors {
+            field
+            message
+          }
+          confirmationUrl
+          appSubscription {
+            id
+          }
+        }
+      }`,
+      {
+        variables: {
+          name: "Pro Plan",
+          returnUrl: returnUrl,
+          test: process.env.NODE_ENV !== "production", // Set test mode automatically based on environment
+          lineItems: [
+            {
+              plan: {
+                appRecurringPricingDetails: {
+                  price: { amount: 4.99, currencyCode: "USD" },
+                  interval: "EVERY_30_DAYS",
+                },
+              },
+            },
+          ],
+        },
       }
-    } catch (checkError) {
-      console.log("No existing subscription found, proceeding with billing request");
+    );
+
+    const data = await response.json();
+    const confirmationUrl = data.data?.appSubscriptionCreate?.confirmationUrl;
+
+    if (confirmationUrl) {
+      // Break out of the Shopify admin iframe to the billing approval screen
+      return redirect(confirmationUrl, { target: "_top" });
     }
 
-    // 2. Directly return billing.request to let App Bridge perform the top-level iframe exit
-    return await billing.request({
-      plan: MONTHLY_PLAN,
-      isTest: true,
-      returnUrl: `https://${session.shop}/admin/apps/${process.env.SHOPIFY_APP_HANDLE || "fs-whatsapp"}`,
-    });
-
+    return redirect("/app");
   } catch (error) {
-    console.error("Billing error:", error);
+    console.error("Error creating subscription:", error);
     return redirect("/app");
   }
-}
-
-export default function UpgradePage() {
-  return null;
-}
+};
