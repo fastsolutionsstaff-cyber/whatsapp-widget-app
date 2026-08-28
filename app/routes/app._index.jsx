@@ -392,9 +392,10 @@ export default function Index() {
 
   // Upgrade handler - Direct redirect to Shopify billing page
   const handleUpgrade = () => {
-    const shopDomain = shop || window.location.hostname;
-    const upgradeUrl = `https://admin.shopify.com/store/${shopDomain.replace('.myshopify.com', '')}/charges/widget-whatsapp-1/plans/pro-plan?interval=EVERY_30_DAYS`;
-    window.top.location.href = upgradeUrl;
+    const shopDomain = shop || "";
+    const storeName = shopDomain.replace('.myshopify.com', '');
+    const upgradeUrl = `https://admin.shopify.com/store/${storeName}/charges/widget-whatsapp-1/plans/pro-plan?interval=EVERY_30_DAYS`;
+    window.open(upgradeUrl, "_blank");
   };
 
   // Preview calculations
