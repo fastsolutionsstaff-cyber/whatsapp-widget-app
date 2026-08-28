@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { json } from "@remix-run/node";
-import { useLoaderData, useSubmit, useNavigation, useActionData, useFetcher } from "@remix-run/react";
+import { useLoaderData, useSubmit, useNavigation, useActionData } from "@remix-run/react";
 import {
   Page,
   Layout,
@@ -19,7 +19,7 @@ import {
   RangeSlider,
   Divider,
 } from "@shopify/polaris";
-import { authenticate, billing } from "../shopify.server";
+import { authenticate } from "../shopify.server";
 import prisma from "../db.server";
 
 // ============================================================
