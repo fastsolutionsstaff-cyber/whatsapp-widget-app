@@ -55,6 +55,7 @@
   class="wa-desktop-pos-{{ desktop_position }} wa-mobile-pos-{{ mobile_position }}"
   data-shop="{{ shop.permanent_domain }}"
   data-wa-url="{{ whatsapp_url }}"
+  data-upgrade-url="https://admin.shopify.com/store/{{ shop.permanent_domain | remove: '.myshopify.com' }}/charges/widget-whatsapp-1/plans/pro-plan?interval=EVERY_30_DAYS"
 >
 
   <div id="wa-chat-popup" class="wa-popup-hidden" role="dialog" aria-modal="true">
@@ -90,7 +91,7 @@
         style="background-color: {{ button_color }};"
       >
         <svg width="18" height="18" viewBox="0 0 24 24" fill="#ffffff">
-          <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981 3.742-.981z"/>
+          <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/>
         </svg>
         Start Chat
       </a>
@@ -126,9 +127,9 @@
       Please upgrade to Pro Plan to continue chatting.
     </p>
 
-    <!-- Updated to /app/upgrade to fix 404 error -->
     <a
-      href="/app/upgrade"
+      href="#"
+      id="wa-upgrade-link"
       style="
         display: block;
         background: #25D366;
@@ -244,19 +245,6 @@
             />
           </svg>
 
-        {% when 'wave-message' %}
-          <svg
-            viewBox="0 0 24 24"
-            width="{{ desktop_icon_size_px }}"
-            height="{{ desktop_icon_size_px }}"
-            fill="none"
-          >
-            <path
-              d="M7 12a2 2 0 012-2h6a2 2 0 012 2v3a2 2 0 01-2 2h-2l-3 2v-2H9a2 2 0 01-2-2v-3z"
-              fill="#ffffff"
-            />
-          </svg>
-
         {% else %}
           <svg
             viewBox="0 0 24 24"
@@ -363,19 +351,6 @@
               stroke-width="2.5"
               stroke-linecap="round"
               stroke-linejoin="round"
-            />
-          </svg>
-
-        {% when 'wave-message' %}
-          <svg
-            viewBox="0 0 24 24"
-            width="{{ mobile_icon_size_px }}"
-            height="{{ mobile_icon_size_px }}"
-            fill="none"
-          >
-            <path
-              d="M7 12a2 2 0 012-2h6a2 2 0 012 2v3a2 2 0 01-2 2h-2l-3 2v-2H9a2 2 0 01-2-2v-3z"
-              fill="#ffffff"
             />
           </svg>
 
@@ -609,6 +584,7 @@
       const paywallModal = document.getElementById("wa-paywall-modal");
       const closeBtn = document.getElementById("wa-popup-close");
       const trackLink = document.getElementById("wa-track-link");
+      const upgradeLink = document.getElementById("wa-upgrade-link");
 
       if (
         !widgetContainer ||
@@ -643,6 +619,21 @@
 
         popup.classList.add("wa-popup-hidden");
       });
+
+      if (upgradeLink) {
+        upgradeLink.addEventListener("click", function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+
+          const upgradeUrl = widgetContainer.getAttribute("data-upgrade-url");
+
+          if (upgradeUrl) {
+            window.top.location.href = upgradeUrl;
+          } else {
+            window.top.location.href = "https://admin.shopify.com/store/{{ shop.permanent_domain | remove: '.myshopify.com' }}/charges/widget-whatsapp-1/plans/pro-plan?interval=EVERY_30_DAYS";
+          }
+        });
+      }
 
       trackLink.addEventListener("click", async function(e) {
         e.preventDefault();

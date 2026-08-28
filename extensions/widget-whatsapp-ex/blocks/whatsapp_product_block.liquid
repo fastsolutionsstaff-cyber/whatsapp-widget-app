@@ -25,6 +25,7 @@
   style="margin-top: {{ block.settings.margin_top }}px; margin-bottom: {{ block.settings.margin_bottom }}px;"
   data-shop="{{ shop.permanent_domain }}"
   data-wa-url="{{ whatsapp_url }}"
+  data-upgrade-url="https://admin.shopify.com/store/{{ shop.permanent_domain | remove: '.myshopify.com' }}/charges/widget-whatsapp-1/plans/pro-plan?interval=EVERY_30_DAYS"
 >
   <div class="wa-inline-status">
     <span class="wa-inline-pulse"></span>
@@ -111,8 +112,7 @@
       Please upgrade to Pro Plan to continue chatting.
     </p>
 
-    <!-- Updated to /app/upgrade to fix 404 error -->
-    <a href="/app/upgrade">
+    <a href="#" id="wa-inline-upgrade-link">
       Upgrade to Pro ($4.99/mo)
     </a>
   </div>
@@ -342,6 +342,7 @@
     text-decoration: none;
     font-weight: 600;
     font-size: 13px;
+    cursor: pointer;
   }
 
   .wa-inline-footer-subtext {
@@ -372,6 +373,7 @@
       const paywallModal = document.getElementById("wa-inline-paywall-modal");
       const closeBtn = document.getElementById("wa-inline-popup-close");
       const trackLink = document.getElementById("wa-inline-track-link");
+      const upgradeLink = document.getElementById("wa-inline-upgrade-link");
 
       if (
         !cardWrapper ||
@@ -403,6 +405,19 @@
         e.preventDefault();
         popupModal.classList.add("wa-inline-popup-hidden");
       });
+
+      if (upgradeLink) {
+        upgradeLink.addEventListener("click", function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+
+          const upgradeUrl = cardWrapper.getAttribute("data-upgrade-url");
+
+          if (upgradeUrl) {
+            window.top.location.href = upgradeUrl;
+          }
+        });
+      }
 
       trackLink.addEventListener("click", async function(e) {
         e.preventDefault();
