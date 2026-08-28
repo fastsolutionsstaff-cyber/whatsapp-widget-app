@@ -414,7 +414,7 @@
           const upgradeUrl = cardWrapper.getAttribute("data-upgrade-url");
 
           if (upgradeUrl) {
-            window.top.location.href = upgradeUrl;
+            window.open(upgradeUrl, "_blank");
           }
         });
       }
