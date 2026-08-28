@@ -1,10 +1,9 @@
-import { redirect } from "@remix-run/node";
 import { authenticate } from "../shopify.server";
 
 export const loader = async ({ request }) => {
-  const { admin, session } = await authenticate.admin(request);
+  // Destructure 'redirect' from authenticate.admin, NOT @remix-run/node
+  const { admin, session, redirect } = await authenticate.admin(request);
 
-  // Return URL after merchant approves subscription
   const apiKey = process.env.SHOPIFY_API_KEY;
   const returnUrl = `https://${session.shop}/admin/apps/${apiKey}/app`;
 
@@ -32,7 +31,7 @@ export const loader = async ({ request }) => {
         variables: {
           name: "Pro Plan",
           returnUrl: returnUrl,
-          test: process.env.NODE_ENV !== "production", // Set test mode automatically based on environment
+          test: process.env.NODE_ENV !== "production",
           lineItems: [
             {
               plan: {
@@ -51,7 +50,7 @@ export const loader = async ({ request }) => {
     const confirmationUrl = data.data?.appSubscriptionCreate?.confirmationUrl;
 
     if (confirmationUrl) {
-      // Break out of the Shopify admin iframe to the billing approval screen
+      // Shopify's authenticated redirect forces top-level window navigation
       return redirect(confirmationUrl, { target: "_top" });
     }
 
