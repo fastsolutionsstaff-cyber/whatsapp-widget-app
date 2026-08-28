@@ -243,100 +243,9 @@ export const loader = async ({ request }) => {
 // ============================================================
 
 export const action = async ({ request }) => {
-  const { admin, session } = await authenticate.admin(request);
+  const { admin } = await authenticate.admin(request);
   const formData = await request.formData();
-  const actionType = formData.get("actionType");
 
-  // Handle upgrade action
-  if (actionType === "upgrade") {
-    try {
-      const apiKey = process.env.SHOPIFY_API_KEY;
-      const returnUrl = `https://${session.shop}/admin/apps/${apiKey}/app`;
-
-      // Use direct GraphQL mutation to create subscription
-      const response = await admin.graphql(
-        `#graphql
-        mutation appSubscriptionCreate(
-          $name: String!
-          $lineItems: [AppSubscriptionLineItemInput!]!
-          $returnUrl: URL!
-          $test: Boolean
-        ) {
-          appSubscriptionCreate(
-            name: $name
-            returnUrl: $returnUrl
-            lineItems: $lineItems
-            test: $test
-          ) {
-            userErrors {
-              field
-              message
-            }
-            confirmationUrl
-            appSubscription {
-              id
-            }
-          }
-        }`,
-        {
-          variables: {
-            name: "Professional Plan",
-            returnUrl: returnUrl,
-            test: process.env.NODE_ENV !== "production",
-            lineItems: [
-              {
-                plan: {
-                  appRecurringPricingDetails: {
-                    price: { amount: 4.99, currencyCode: "USD" },
-                    interval: "EVERY_30_DAYS",
-                  },
-                },
-              },
-            ],
-          },
-        }
-      );
-
-      const data = await response.json();
-      
-      console.log("Billing API Response:", JSON.stringify(data, null, 2));
-
-      const userErrors = data.data?.appSubscriptionCreate?.userErrors;
-      const confirmationUrl = data.data?.appSubscriptionCreate?.confirmationUrl;
-
-      if (userErrors && userErrors.length > 0) {
-        console.error("Billing user errors:", userErrors);
-        return json({
-          status: "error",
-          type: "upgrade",
-          message: userErrors[0].message || "Billing error occurred",
-        });
-      }
-
-      if (confirmationUrl) {
-        return json({
-          status: "success",
-          type: "upgrade",
-          confirmationUrl: confirmationUrl,
-        });
-      }
-
-      return json({
-        status: "error",
-        type: "upgrade",
-        message: "No confirmation URL received. Please try again.",
-      });
-    } catch (error) {
-      console.error("Billing request error:", error);
-      return json({
-        status: "error",
-        type: "upgrade",
-        message: "Failed to process upgrade. Please try again.",
-      });
-    }
-  }
-
-  // Handle settings save
   const settingsPayload = {
     phoneNumber: formData.get("phoneNumber") || DEFAULT_SETTINGS.phoneNumber,
     defaultMessage: formData.get("defaultMessage") || DEFAULT_SETTINGS.defaultMessage,
@@ -437,11 +346,10 @@ export default function Index() {
 
   const [previewDevice, setPreviewDevice] = useState("desktop");
   const [savedSuccess, setSavedSuccess] = useState(false);
-  const [isUpgrading, setIsUpgrading] = useState(false);
 
   const isSaving = navigation.state === "submitting";
 
-  // Handle success message and upgrade redirect
+  // Handle success message
   useEffect(() => {
     if (actionData?.status === "success" && actionData?.settings) {
       setPhoneNumber(actionData.settings.phoneNumber);
@@ -460,17 +368,6 @@ export default function Index() {
       const timer = setTimeout(() => setSavedSuccess(false), 4000);
       return () => clearTimeout(timer);
     }
-
-    // Handle upgrade redirect
-    if (actionData?.type === "upgrade" && actionData?.confirmationUrl) {
-      setIsUpgrading(false);
-      // Use window.top.location.href to break out of iframe
-      window.top.location.href = actionData.confirmationUrl;
-    }
-
-    if (actionData?.type === "upgrade" && actionData?.status === "error") {
-      setIsUpgrading(false);
-    }
   }, [actionData]);
 
   // Save handler
@@ -488,14 +385,6 @@ export default function Index() {
     formData.append("greetingHeader", greetingHeader);
     formData.append("greetingSubtext", greetingSubtext);
 
-    submit(formData, { method: "post" });
-  };
-
-  // Upgrade handler
-  const handleUpgrade = () => {
-    setIsUpgrading(true);
-    const formData = new FormData();
-    formData.append("actionType", "upgrade");
     submit(formData, { method: "post" });
   };
 
@@ -528,8 +417,11 @@ export default function Index() {
               <p>Upgrade to Pro Plan for unlimited WhatsApp clicks.</p>
               <Button
                 primary
-                loading={isUpgrading}
-                onClick={handleUpgrade}
+                onClick={() => {
+                  // For Shopify App Pricing, this will open the billing page
+                  // The merchant can upgrade directly from Shopify's billing system
+                  window.location.reload();
+                }}
               >
                 Upgrade to Pro Plan ($4.99/mo)
               </Button>
@@ -539,12 +431,7 @@ export default function Index() {
 
         {/* Success/Error Messages */}
         {savedSuccess && <Banner title="Settings saved successfully!" tone="success" />}
-        {actionData?.status === "error" && actionData?.type !== "upgrade" && (
-          <Banner title={actionData.message} tone="critical" />
-        )}
-        {actionData?.status === "error" && actionData?.type === "upgrade" && (
-          <Banner title={`Upgrade failed: ${actionData.message}`} tone="critical" />
-        )}
+        {actionData?.status === "error" && <Banner title={actionData.message} tone="critical" />}
 
         <Layout>
           <Layout.Section>
