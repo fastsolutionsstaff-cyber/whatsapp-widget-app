@@ -2,6 +2,14 @@ import { redirect } from "@remix-run/node";
 import { authenticate } from "../shopify.server";
 
 export async function loader({ request }) {
+  return handleProxyUpgrade(request);
+}
+
+export async function action({ request }) {
+  return handleProxyUpgrade(request);
+}
+
+async function handleProxyUpgrade(request) {
   try {
     const { admin, session } = await authenticate.public.appProxy(request);
 
@@ -23,13 +31,10 @@ export async function loader({ request }) {
     `);
 
     const data = await response.json();
-    const appHandle = data.data?.currentAppInstallation?.app?.handle;
-
-    if (!appHandle) {
-      return new Response("Shopify app handle could not be found.", {
-        status: 500,
-      });
-    }
+    const appHandle =
+      data.data?.currentAppInstallation?.app?.handle ||
+      process.env.SHOPIFY_APP_HANDLE ||
+      "fs-whatsapp";
 
     const storeHandle = session.shop.replace(".myshopify.com", "");
     const embeddedUpgradeUrl = `https://admin.shopify.com/store/${storeHandle}/apps/${appHandle}/app/upgrade`;
