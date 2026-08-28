@@ -163,41 +163,31 @@ const DEFAULT_SETTINGS = {
 // ============================================================
 
 export const loader = async ({ request }) => {
-  const { admin, session, billing: billingCheck } = await authenticate.admin(request);
+  const { admin, session } = await authenticate.admin(request);
 
   let planInfo = { plan: "starter-plan", clickCount: 0 };
   let hasProPlan = false;
 
-  // Check if merchant has active subscription using billing API
+  // Check subscription status
   try {
-    const billingCheckResult = await billingCheck.require({
-      plans: ["pro-plan"],
-      onFailure: async () => false,
-    });
-    hasProPlan = billingCheckResult?.hasActivePayment || false;
-  } catch (error) {
-    console.error("Error checking billing:", error);
-    // Fallback to checking subscriptions via GraphQL
-    try {
-      const subResponse = await admin.graphql(`
-        #graphql
-        query {
-          currentAppInstallation {
-            activeSubscriptions {
-              name
-              status
-            }
+    const subResponse = await admin.graphql(`
+      #graphql
+      query {
+        currentAppInstallation {
+          activeSubscriptions {
+            name
+            status
           }
         }
-      `);
-      const subData = await subResponse.json();
-      const activeSubs = subData.data?.currentAppInstallation?.activeSubscriptions || [];
-      hasProPlan = activeSubs.some(
-        (sub) => sub.status === "ACTIVE" && sub.name.toLowerCase().includes("pro")
-      );
-    } catch (subError) {
-      console.error("Error checking subscriptions:", subError);
-    }
+      }
+    `);
+    const subData = await subResponse.json();
+    const activeSubs = subData.data?.currentAppInstallation?.activeSubscriptions || [];
+    hasProPlan = activeSubs.some(
+      (sub) => sub.status === "ACTIVE" && (sub.name.toLowerCase().includes("pro") || sub.name.toLowerCase().includes("professional"))
+    );
+  } catch (error) {
+    console.error("Error checking subscriptions:", error);
   }
 
   const currentPlan = hasProPlan ? "pro-plan" : "starter-plan";
@@ -253,32 +243,88 @@ export const loader = async ({ request }) => {
 // ============================================================
 
 export const action = async ({ request }) => {
-  const { admin, session, billing: billingRequest } = await authenticate.admin(request);
+  const { admin, session } = await authenticate.admin(request);
   const formData = await request.formData();
   const actionType = formData.get("actionType");
 
   // Handle upgrade action
   if (actionType === "upgrade") {
     try {
-      // Use Shopify's billing API to request payment
-      const billingResponse = await billingRequest.request({
-        plan: "pro-plan",
-        isTest: process.env.NODE_ENV !== "production",
-        returnUrl: `https://${session.shop}/admin/apps/${process.env.SHOPIFY_API_KEY}/app`,
-      });
+      const apiKey = process.env.SHOPIFY_API_KEY;
+      const returnUrl = `https://${session.shop}/admin/apps/${apiKey}/app`;
 
-      if (billingResponse?.confirmationUrl) {
+      // Use direct GraphQL mutation to create subscription
+      const response = await admin.graphql(
+        `#graphql
+        mutation appSubscriptionCreate(
+          $name: String!
+          $lineItems: [AppSubscriptionLineItemInput!]!
+          $returnUrl: URL!
+          $test: Boolean
+        ) {
+          appSubscriptionCreate(
+            name: $name
+            returnUrl: $returnUrl
+            lineItems: $lineItems
+            test: $test
+          ) {
+            userErrors {
+              field
+              message
+            }
+            confirmationUrl
+            appSubscription {
+              id
+            }
+          }
+        }`,
+        {
+          variables: {
+            name: "Professional Plan",
+            returnUrl: returnUrl,
+            test: process.env.NODE_ENV !== "production",
+            lineItems: [
+              {
+                plan: {
+                  appRecurringPricingDetails: {
+                    price: { amount: 4.99, currencyCode: "USD" },
+                    interval: "EVERY_30_DAYS",
+                  },
+                },
+              },
+            ],
+          },
+        }
+      );
+
+      const data = await response.json();
+      
+      console.log("Billing API Response:", JSON.stringify(data, null, 2));
+
+      const userErrors = data.data?.appSubscriptionCreate?.userErrors;
+      const confirmationUrl = data.data?.appSubscriptionCreate?.confirmationUrl;
+
+      if (userErrors && userErrors.length > 0) {
+        console.error("Billing user errors:", userErrors);
+        return json({
+          status: "error",
+          type: "upgrade",
+          message: userErrors[0].message || "Billing error occurred",
+        });
+      }
+
+      if (confirmationUrl) {
         return json({
           status: "success",
           type: "upgrade",
-          confirmationUrl: billingResponse.confirmationUrl,
+          confirmationUrl: confirmationUrl,
         });
       }
 
       return json({
         status: "error",
         type: "upgrade",
-        message: "Unable to create billing request. Please try again.",
+        message: "No confirmation URL received. Please try again.",
       });
     } catch (error) {
       console.error("Billing request error:", error);
@@ -418,6 +464,7 @@ export default function Index() {
     // Handle upgrade redirect
     if (actionData?.type === "upgrade" && actionData?.confirmationUrl) {
       setIsUpgrading(false);
+      // Use window.top.location.href to break out of iframe
       window.top.location.href = actionData.confirmationUrl;
     }
 
