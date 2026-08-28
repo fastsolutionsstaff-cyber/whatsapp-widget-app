@@ -25,6 +25,7 @@
   style="margin-top: {{ block.settings.margin_top }}px; margin-bottom: {{ block.settings.margin_bottom }}px;"
   data-shop="{{ shop.permanent_domain }}"
   data-wa-url="{{ whatsapp_url }}"
+  data-upgrade-url="https://admin.shopify.com/store/{{ shop.permanent_domain | remove: '.myshopify.com' }}/charges/widget-whatsapp-1/plans/pro-plan?interval=EVERY_30_DAYS"
 >
   <div class="wa-inline-status">
     <span class="wa-inline-pulse"></span>
@@ -108,11 +109,12 @@
 
     <p>
       You have used your 100 free WhatsApp clicks this month.
+      Please upgrade to Pro Plan to continue chatting.
     </p>
 
-    <p style="margin-top: 12px; font-weight: 600; color: #25D366; font-size: 13px;">
-      Please upgrade to Pro plan from the dashboard.
-    </p>
+    <a href="#" id="wa-inline-upgrade-link">
+      Upgrade to Pro ($4.99/mo)
+    </a>
   </div>
 
   {% if block.settings.footer_text != blank %}
@@ -325,10 +327,22 @@
   }
 
   #wa-inline-paywall-modal p {
-    margin: 0 0 8px 0;
+    margin: 0 0 16px 0;
     color: #666666;
     font-size: 12px;
     line-height: 1.4;
+  }
+
+  #wa-inline-paywall-modal a {
+    display: block;
+    background: #25D366;
+    color: #ffffff;
+    padding: 10px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
   }
 
   .wa-inline-footer-subtext {
@@ -359,6 +373,7 @@
       const paywallModal = document.getElementById("wa-inline-paywall-modal");
       const closeBtn = document.getElementById("wa-inline-popup-close");
       const trackLink = document.getElementById("wa-inline-track-link");
+      const upgradeLink = document.getElementById("wa-inline-upgrade-link");
 
       if (
         !cardWrapper ||
@@ -391,10 +406,24 @@
         popupModal.classList.add("wa-inline-popup-hidden");
       });
 
+      if (upgradeLink) {
+        upgradeLink.addEventListener("click", function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+
+          const upgradeUrl = cardWrapper.getAttribute("data-upgrade-url");
+
+          if (upgradeUrl) {
+            window.top.location.href = upgradeUrl;
+          }
+        });
+      }
+
       trackLink.addEventListener("click", async function(e) {
         e.preventDefault();
 
         const waUrl = cardWrapper.getAttribute("data-wa-url");
+        const shop = cardWrapper.getAttribute("data-shop");
 
         if (!waUrl) {
           return;
