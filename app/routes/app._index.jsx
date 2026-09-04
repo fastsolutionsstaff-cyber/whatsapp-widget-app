@@ -429,7 +429,7 @@ export default function Index() {
                 primary
                 onClick={handleUpgrade}
               >
-                Upgrade to Pro Plan ($4.99/mo)
+                Upgrade to Pro Plan ($2.99/mo)
               </Button>
             </BlockStack>
           </Banner>
