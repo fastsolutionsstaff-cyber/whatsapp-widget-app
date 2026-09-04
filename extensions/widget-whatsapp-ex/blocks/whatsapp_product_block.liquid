@@ -40,10 +40,10 @@
     class="wa-inline-main-btn"
     style="background-color: {{ block.settings.btn_bg_color }}; color: {{ block.settings.btn_text_color }};"
   >
+    <!-- ✅ ICON #1: OFFICIAL WHATSAPP (Main Button) -->
     <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
       <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/>
     </svg>
-
     <span>{{ button_text | escape }}</span>
   </button>
 
@@ -57,9 +57,9 @@
       class="wa-inline-popup-header"
       style="background-color: {{ block.settings.btn_bg_color }};"
     >
-      <!-- ✅ CHANGED: This avatar icon is now the official WhatsApp icon (replaced the person/call icon) -->
+      <!-- ✅ ICON #2: OFFICIAL WHATSAPP (Popup Avatar - THIS IS THE ONE YOU WANT) -->
       <div class="wa-inline-avatar">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="#ffffff">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="#ffffff">
           <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/>
         </svg>
       </div>
@@ -91,10 +91,10 @@
         class="wa-inline-submit-btn"
         style="background-color: {{ block.settings.btn_bg_color }}; color: {{ block.settings.btn_text_color }};"
       >
+        <!-- ✅ ICON #3: OFFICIAL WHATSAPP (Start Chat Button) -->
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
           <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/>
         </svg>
-
         <span>Start Chat Now</span>
       </a>
     </div>
@@ -105,14 +105,11 @@
     class="wa-inline-popup-hidden"
   >
     <div class="wa-inline-paywall-icon">🔒</div>
-
     <h4>Free Limit Reached</h4>
-
     <p>
       You have used your 100 free WhatsApp clicks this month.
       Please upgrade to Pro Plan to continue chatting.
     </p>
-
     <a href="#" id="wa-inline-upgrade-link">
       Upgrade to Pro ($2.99/mo)
     </a>
@@ -178,7 +175,6 @@
       transform: scale(1);
       opacity: 0.6;
     }
-
     100% {
       transform: scale(2.5);
       opacity: 0;
@@ -358,7 +354,6 @@
       padding: 14px 20px;
       font-size: 15px;
     }
-
     .wa-inline-block-card {
       padding: 12px;
     }
