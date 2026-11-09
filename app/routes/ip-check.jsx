@@ -11,28 +11,34 @@ function json(data, status = 200) {
 
 export async function loader() {
   try {
-    const response = await fetch("https://ipapi.co/json/", {
-      headers: { Accept: "application/json" },
-      signal: AbortSignal.timeout(8000),
-    });
+    const response = await fetch(
+      "https://api.ipify.org?format=json",
+      {
+        headers: { Accept: "application/json" },
+        signal: AbortSignal.timeout(10000),
+      }
+    );
+
+    if (!response.ok) {
+      return json({
+        error: `IP service error: ${response.status}`,
+      }, 502);
+    }
 
     const data = await response.json();
 
-    if (!response.ok || !data.ip) {
-      return json({ error: "IP lookup failed", details: data }, 502);
+    if (!data.ip) {
+      return json({ error: "Public IP not found" }, 502);
     }
 
     return json({
-      ip: data.ip,
-      asn: data.asn,
-      organization: data.org,
-      country: data.country_name,
-      countryCode: data.country,
-      city: data.city,
+      outboundIP: data.ip,
+      source: "Vercel server function",
+      region: "iad1",
     });
   } catch (error) {
     return json({
-      error: error.message || "IP lookup failed",
+      error: error.message || "IP check failed",
     }, 502);
   }
 }
